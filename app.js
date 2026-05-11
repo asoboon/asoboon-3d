@@ -18,11 +18,16 @@ scene.background = new THREE.Color(0xdfeff7);
 scene.fog = new THREE.Fog(0xdfeff7, 10, 32);
 
 const camera = new THREE.PerspectiveCamera(72, 1, 0.01, 200);
-const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false });
+const renderer = new THREE.WebGLRenderer({
+  canvas,
+  antialias: true,
+  alpha: false,
+});
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 
 scene.add(new THREE.HemisphereLight(0xffffff, 0x90a4ae, 2.0));
+
 const dirLight = new THREE.DirectionalLight(0xffffff, 1.0);
 dirLight.position.set(4, 8, 3);
 scene.add(dirLight);
@@ -32,6 +37,11 @@ const clock = new THREE.Clock();
 const raycaster = new THREE.Raycaster();
 const downRayOrigin = new THREE.Vector3();
 const groundDir = new THREE.Vector3(0, -1, 0);
+const tempNormal = new THREE.Vector3();
+const tempForward = new THREE.Vector3();
+const tempRight = new THREE.Vector3();
+const tempMove = new THREE.Vector3();
+const tempBox = new THREE.Box3();
 
 let world = null;
 let worldMeshes = [];
@@ -44,7 +54,8 @@ let gravity = 7.5;
 let jumpStrength = 2.8;
 let velocityY = 0;
 let onGround = false;
-let lastGroundY = null;
+let safetyFloorY = 0;
+let spawnPoint = new THREE.Vector3(0, 1, 0);
 
 const player = {
   position: new THREE.Vector3(0, 1, 0),
@@ -75,6 +86,7 @@ function resize() {
   renderer.setSize(width, height, false);
   updateRotateNotice();
 }
+
 window.addEventListener('resize', resize);
 
 function updateRotateNotice() {
@@ -93,30 +105,77 @@ function clampPitch() {
   player.pitch = Math.max(-0.48, Math.min(0.32, player.pitch));
 }
 
+function createSafetyFloor() {
+  if (!bounds) return;
+
+  const sizeX = bounds.max.x - bounds.min.x;
+  const sizeZ = bounds.max.z - bounds.min.z;
+
+  const floor = new THREE.Mesh(
+    new THREE.PlaneGeometry(sizeX * 1.4, sizeZ * 1.4),
+    new THREE.MeshBasicMaterial({
+      color: 0xc6dbe2,
+      transparent: true,
+      opacity: 0.55,
+      depthWrite: false,
+    })
+  );
+
+  floor.rotation.x = -Math.PI / 2;
+  floor.position.set(
+    (bounds.min.x + bounds.max.x) * 0.5,
+    safetyFloorY - 0.01,
+    (bounds.min.z + bounds.max.z) * 0.5
+  );
+
+  scene.add(floor);
+}
+
+function isWalkableHit(hit) {
+  if (!hit.face) return false;
+  tempNormal.copy(hit.face.normal).transformDirection(hit.object.matrixWorld);
+  return tempNormal.y > 0.2;
+}
+
 function sampleGround(x, z) {
-  if (!worldMeshes.length || !bounds) return null;
+  if (!bounds) return null;
+
+  // メッシュが取れない時でも最低限の安全床を返す
+  if (!worldMeshes.length) return safetyFloorY;
+
   downRayOrigin.set(x, bounds.max.y + 5 * sceneScale, z);
   raycaster.set(downRayOrigin, groundDir);
   raycaster.far = (bounds.max.y - bounds.min.y) + 12 * sceneScale;
+
   const hits = raycaster.intersectObjects(worldMeshes, true);
-  const hit = hits.find((item) => item.face && Math.abs(item.face.normal.y) > 0.2);
-  return hit ? hit.point.y : null;
+
+  for (const hit of hits) {
+    if (isWalkableHit(hit)) {
+      return hit.point.y;
+    }
+  }
+
+  // 地面が拾えない時は安全床へ退避
+  return safetyFloorY;
 }
 
 function tryMove(delta) {
   if (!bounds) return;
 
-  const forward = new THREE.Vector3(Math.sin(player.yaw), 0, Math.cos(player.yaw));
-  const right = new THREE.Vector3(forward.z, 0, -forward.x);
-  const desired = new THREE.Vector3()
-    .addScaledVector(forward, -input.moveY)
-    .addScaledVector(right, input.moveX);
+  tempForward.set(Math.sin(player.yaw), 0, Math.cos(player.yaw));
+  tempRight.set(tempForward.z, 0, -tempForward.x);
 
-  if (desired.lengthSq() < 0.0001) return;
-  desired.normalize().multiplyScalar(moveSpeed * delta);
+  tempMove
+    .set(0, 0, 0)
+    .addScaledVector(tempForward, -input.moveY)
+    .addScaledVector(tempRight, input.moveX);
 
-  const nextX = player.position.x + desired.x;
-  const nextZ = player.position.z + desired.z;
+  if (tempMove.lengthSq() < 0.0001) return;
+
+  tempMove.normalize().multiplyScalar(moveSpeed * delta);
+
+  const nextX = player.position.x + tempMove.x;
+  const nextZ = player.position.z + tempMove.z;
 
   const margin = Math.max(0.12 * sceneScale, 0.12);
   if (nextX < bounds.min.x + margin || nextX > bounds.max.x - margin) return;
@@ -128,6 +187,7 @@ function tryMove(delta) {
   const currentFeetY = player.position.y - eyeOffset;
   const step = groundY - currentFeetY;
 
+  // 急すぎる段差は上がれない
   if (step > 0.48 * sceneScale) return;
 
   player.position.x = nextX;
@@ -135,28 +195,32 @@ function tryMove(delta) {
 
   if (onGround) {
     player.position.y = groundY + eyeOffset;
-    lastGroundY = groundY;
   }
 }
 
 function updateVertical(delta) {
   if (!bounds) return;
+
   velocityY -= gravity * delta;
   player.position.y += velocityY * delta;
 
-  const groundY = sampleGround(player.position.x, player.position.z);
-  if (groundY != null) {
-    const feetY = player.position.y - eyeOffset;
-    if (feetY <= groundY) {
-      onGround = true;
-      velocityY = 0;
-      player.position.y = groundY + eyeOffset;
-      lastGroundY = groundY;
-    } else {
-      onGround = false;
-    }
-  } else if (lastGroundY != null && player.position.y < lastGroundY + eyeOffset - 3 * sceneScale) {
-    player.position.set(bounds.min.x + (bounds.max.x - bounds.min.x) * 0.18, lastGroundY + eyeOffset, bounds.max.z - (bounds.max.z - bounds.min.z) * 0.18);
+  const groundY = sampleGround(player.position.x, player.position.z) ?? safetyFloorY;
+  const feetY = player.position.y - eyeOffset;
+
+  if (feetY <= groundY) {
+    onGround = true;
+    velocityY = 0;
+    player.position.y = groundY + eyeOffset;
+    return;
+  }
+
+  onGround = false;
+
+  const minAllowedY = safetyFloorY + eyeOffset - 0.05;
+
+  // 落ちすぎたらリスポーン
+  if (player.position.y < minAllowedY - 0.5 * sceneScale) {
+    player.position.copy(spawnPoint);
     velocityY = 0;
     onGround = true;
   }
@@ -185,6 +249,7 @@ function setupMoveJoystick() {
     const clampedLen = Math.min(len, radius);
     const nx = (dx / len) * clampedLen;
     const ny = (dy / len) * clampedLen;
+
     moveStick.style.transform = `translate(${nx}px, ${ny}px)`;
     input.moveX = nx / radius;
     input.moveY = ny / radius;
@@ -202,20 +267,30 @@ function setupMoveJoystick() {
     moveBase.setPointerCapture(activeId);
     update(event.clientX, event.clientY);
   });
+
   moveBase.addEventListener('pointermove', (event) => {
     if (event.pointerId !== activeId) return;
     update(event.clientX, event.clientY);
   });
+
   moveBase.addEventListener('pointerup', (event) => {
     if (event.pointerId === activeId) reset();
   });
+
   moveBase.addEventListener('pointercancel', reset);
 }
 
 function setupLookControls() {
   window.addEventListener('pointerdown', (event) => {
     if (!movementEnabled) return;
-    if (event.target.closest('.left-zone') || event.target.closest('.jump-btn') || event.target.closest('.panel')) return;
+    if (
+      event.target.closest('.left-zone') ||
+      event.target.closest('.jump-btn') ||
+      event.target.closest('.panel')
+    ) {
+      return;
+    }
+
     input.lookPointerId = event.pointerId;
     input.lookPrevX = event.clientX;
     input.lookPrevY = event.clientY;
@@ -223,8 +298,10 @@ function setupLookControls() {
 
   window.addEventListener('pointermove', (event) => {
     if (event.pointerId !== input.lookPointerId) return;
+
     const dx = event.clientX - input.lookPrevX;
     const dy = event.clientY - input.lookPrevY;
+
     input.lookPrevX = event.clientX;
     input.lookPrevY = event.clientY;
     input.lookDeltaX += dx;
@@ -238,6 +315,7 @@ function setupLookControls() {
       input.lookDeltaY = 0;
     }
   };
+
   window.addEventListener('pointerup', clearLook);
   window.addEventListener('pointercancel', clearLook);
 }
@@ -250,6 +328,7 @@ function startExperience() {
 }
 
 startButton.addEventListener('click', startExperience);
+
 setupMoveJoystick();
 setupLookControls();
 resize();
@@ -261,12 +340,14 @@ function animate() {
   if (movementEnabled) {
     const lookFactorX = 0.0036;
     const lookFactorY = 0.0028;
+
     player.yaw -= input.lookDeltaX * lookFactorX;
     player.pitch -= input.lookDeltaY * lookFactorY;
+
     input.lookDeltaX *= 0.55;
     input.lookDeltaY *= 0.55;
-    clampPitch();
 
+    clampPitch();
     tryMove(delta);
     updateVertical(delta);
   }
@@ -274,6 +355,7 @@ function animate() {
   setCameraTransform();
   renderer.render(scene, camera);
 }
+
 animate();
 
 loader.load(
@@ -282,14 +364,18 @@ loader.load(
     world = gltf.scene;
     scene.add(world);
 
-    const bbox = new THREE.Box3().setFromObject(world);
+    const bbox = tempBox.setFromObject(world);
     const size = new THREE.Vector3();
+    const center = new THREE.Vector3();
+
     bbox.getSize(size);
+    bbox.getCenter(center);
 
     bounds = {
       min: bbox.min.clone(),
       max: bbox.max.clone(),
       size: size.clone(),
+      center: center.clone(),
     };
 
     sceneScale = Math.max(size.x, size.y, size.z) / 8;
@@ -297,21 +383,29 @@ loader.load(
     moveSpeed = Math.max(size.z * 0.18, 0.95);
     gravity = Math.max(size.y * 3.2, 5.8);
     jumpStrength = Math.max(size.y * 0.9, 2.2);
+    safetyFloorY = bbox.min.y + 0.02 * sceneScale;
 
     world.traverse((child) => {
       if (child.isMesh) {
         child.castShadow = false;
         child.receiveShadow = false;
+        child.frustumCulled = false;
         worldMeshes.push(child);
       }
     });
 
-    const startX = bbox.min.x + size.x * 0.18;
-    const startZ = bbox.max.z - size.z * 0.18;
-    const startGround = sampleGround(startX, startZ) ?? bbox.min.y;
-    player.position.set(startX, startGround + eyeOffset, startZ);
-    lastGroundY = startGround;
+    createSafetyFloor();
+
+    // 開始地点は中央寄りに固定
+    const startX = center.x;
+    const startZ = center.z;
+    const startGround = sampleGround(startX, startZ) ?? safetyFloorY;
+
+    spawnPoint = new THREE.Vector3(startX, startGround + eyeOffset, startZ);
+    player.position.copy(spawnPoint);
     onGround = true;
+    velocityY = 0;
+
     setCameraTransform();
 
     setVisible(loadingScreen, false);
@@ -323,6 +417,7 @@ loader.load(
       loadingText.textContent = '3Dデータを読み込んでいます…';
       return;
     }
+
     const progress = Math.round((event.loaded / event.total) * 100);
     progressBar.style.width = `${progress}%`;
     loadingText.textContent = `3Dデータを読み込んでいます… ${progress}%`;
