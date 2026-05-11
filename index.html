@@ -2,582 +2,67 @@
 <html lang="ja">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>ASOBooN 3D テスト版</title>
-    <style>
-      :root {
-        --bg: #dfeff7;
-        --glass: rgba(11, 23, 33, 0.64);
-        --line: rgba(255,255,255,0.18);
-        --text: #fff;
-        --sub: rgba(255,255,255,0.82);
-        --accent: #ff8a3d;
-      }
-      * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-      html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background: var(--bg); }
-      body {
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-        color: var(--text);
-        touch-action: none;
-        overscroll-behavior: none;
-      }
-      #app, canvas { width: 100%; height: 100%; display: block; }
-      canvas { touch-action: none; }
-      .hidden { display: none !important; }
-      .overlay {
-        position: fixed; inset: 0; z-index: 30;
-        display: flex; align-items: center; justify-content: center;
-        padding: 24px;
-        background: linear-gradient(180deg, rgba(6,16,26,.46), rgba(6,16,26,.76));
-      }
-      .overlay.subtle {
-        background: rgba(6,16,26,.28);
-        pointer-events: none;
-        z-index: 40;
-      }
-      .panel {
-        width: min(720px, 100%);
-        padding: 28px;
-        border-radius: 26px;
-        background: linear-gradient(180deg, rgba(13,23,32,.84), rgba(9,17,26,.94));
-        border: 1px solid var(--line);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        box-shadow: 0 18px 52px rgba(0,0,0,.28);
-      }
-      .eyebrow {
-        font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: rgba(255,255,255,.68);
-      }
-      h1 { margin: 10px 0 14px; font-size: clamp(28px, 4vw, 42px); }
-      p { margin: 0; line-height: 1.7; color: var(--sub); }
-      .progress-wrap {
-        width: 100%; height: 12px; background: rgba(255,255,255,.08); border-radius: 999px; overflow: hidden; margin: 18px 0 10px;
-      }
-      .progress-bar {
-        width: 0%; height: 100%; border-radius: 999px; background: linear-gradient(90deg, #ffb072, #ff8a3d);
-      }
-      .pill-row { display:flex; gap:8px; flex-wrap:wrap; margin: 16px 0 22px; }
-      .pill {
-        padding: 9px 12px; border-radius: 999px; background: rgba(255,255,255,.11); border: 1px solid var(--line); color: var(--sub); font-size: 13px;
-      }
-      .primary-btn, .secondary-btn, .jump-btn, .close-btn {
-        border: none; cursor: pointer; color: #fff;
-      }
-      .primary-btn {
-        width: 100%; padding: 16px 20px; border-radius: 18px; font-size: 17px; font-weight: 800;
-        background: linear-gradient(90deg, #ff9b55, #ff7b24);
-      }
-      .secondary-btn {
-        padding: 12px 16px; border-radius: 14px; font-size: 14px; font-weight: 700;
-        background: rgba(255,255,255,.12); border: 1px solid var(--line);
-      }
-      #hud {
-        position: fixed; inset: 0; z-index: 10; pointer-events: none;
-      }
-      .glass {
-        background: var(--glass); border: 1px solid var(--line);
-        backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-        box-shadow: 0 14px 40px rgba(0,0,0,.16);
-      }
-      .hint {
-        position: fixed; top: max(18px, env(safe-area-inset-top)); left: 50%; transform: translateX(-50%);
-        padding: 10px 14px; border-radius: 999px; font-size: 13px; color: var(--sub); pointer-events: none;
-      }
-      .joystick-zone {
-        position: fixed; left: max(18px, env(safe-area-inset-left)); bottom: max(18px, env(safe-area-inset-bottom));
-        width: 180px; height: 180px; pointer-events: none;
-      }
-      .joystick-base {
-        position: absolute; left: 0; bottom: 0; width: 136px; height: 136px; border-radius: 999px;
-        background: rgba(255,255,255,.09); border: 1px solid var(--line); pointer-events: auto; touch-action: none;
-      }
-      .joystick-stick {
-        position: absolute; left: 50%; top: 50%; width: 58px; height: 58px; margin-left: -29px; margin-top: -29px;
-        border-radius: 999px; background: rgba(255,255,255,.94); box-shadow: 0 10px 24px rgba(0,0,0,.22);
-        transform: translate(0px, 0px);
-      }
-      .look-zone {
-        position: fixed; top: 0; right: 0; width: 52vw; height: 100vh; pointer-events: auto; touch-action: none;
-      }
-      .look-chip {
-        position: fixed; right: max(18px, env(safe-area-inset-right)); top: max(18px, env(safe-area-inset-top));
-        padding: 10px 12px; border-radius: 14px; font-size: 13px; color: var(--sub); pointer-events: none;
-      }
-      .jump-btn {
-        position: fixed; right: max(18px, env(safe-area-inset-right)); bottom: max(18px, env(safe-area-inset-bottom));
-        width: 78px; height: 78px; border-radius: 999px; font-size: 16px; font-weight: 800;
-        background: linear-gradient(180deg, #ff9b55, #ff7b24);
-        box-shadow: 0 14px 30px rgba(0,0,0,.22);
-        pointer-events: auto;
-      }
-      .popup {
-        position: fixed; left: 50%; transform: translateX(-50%); bottom: max(18px, env(safe-area-inset-bottom)); z-index: 18;
-        width: min(560px, calc(100vw - 36px));
-      }
-      .popup-panel {
-        border-radius: 24px; padding: 18px;
-        background: linear-gradient(180deg, rgba(13,23,32,.88), rgba(9,17,26,.95));
-        border: 1px solid var(--line); box-shadow: 0 18px 52px rgba(0,0,0,.28);
-      }
-      .popup-head { display:flex; justify-content: space-between; gap: 14px; align-items: flex-start; }
-      .popup-head h2 { margin: 4px 0 0; font-size: 28px; }
-      .close-btn {
-        width: 40px; height: 40px; border-radius: 999px; background: rgba(255,255,255,.08); border: 1px solid var(--line); font-size: 22px;
-      }
-      .popup-text { margin: 12px 0 16px; color: var(--sub); line-height: 1.7; }
-      .media-grid { display:grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-      .media-card { background: rgba(255,255,255,.06); border: 1px solid var(--line); border-radius: 18px; padding: 12px; }
-      .media-label { font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.65); margin-bottom: 8px; }
-      .media-placeholder {
-        min-height: 90px; border-radius: 14px; display:flex; align-items:center; justify-content:center; text-align:center; padding: 14px;
-        background: rgba(255,255,255,.04); color: rgba(255,255,255,.72);
-      }
-      .rotate-icon { font-size: 28px; text-align: center; margin-bottom: 6px; }
-      @media (max-width: 760px) {
-        .media-grid { grid-template-columns: 1fr; }
-        .popup-head h2 { font-size: 24px; }
-        .hint {
-          top: auto; bottom: calc(170px + max(18px, env(safe-area-inset-bottom))); max-width: calc(100vw - 36px); text-align: center;
+    <link rel="stylesheet" href="./styles.css" />
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://unpkg.com/three@0.166.1/build/three.module.js",
+          "three/addons/": "https://unpkg.com/three@0.166.1/examples/jsm/"
         }
       }
-    </style>
+    </script>
   </head>
   <body>
-    <div id="app">
-      <canvas id="scene"></canvas>
+    <canvas id="scene"></canvas>
 
-      <div id="loadingScreen" class="overlay">
-        <div class="panel">
-          <div class="eyebrow">ASOBooN 3D TEST BUILD</div>
-          <h1>アソブーン探検テスト版</h1>
-          <p>まずは <strong>動く・見られる</strong> を優先した試作です。</p>
-          <div class="progress-wrap"><div id="progressBar" class="progress-bar"></div></div>
-          <p id="loadingText">3Dデータを読み込んでいます…</p>
-        </div>
-      </div>
-
-      <div id="startScreen" class="overlay hidden">
-        <div class="panel">
-          <div class="eyebrow">TEST VERSION</div>
-          <h1>アソブーンを探検しよう</h1>
-          <p>横向き前提です。<br>左下スティックで移動、右側スワイプで視点移動、右下ボタンでジャンプできます。</p>
-          <div class="pill-row">
-            <span class="pill">横画面推奨</span>
-            <span class="pill">仮想スティック</span>
-            <span class="pill">右下ジャンプ</span>
-          </div>
-          <button id="startButton" class="primary-btn">探検をはじめる</button>
-        </div>
-      </div>
-
-      <div id="rotateNotice" class="overlay subtle hidden">
-        <div class="panel" style="width:min(320px,100%); padding:20px; border-radius:22px; text-align:center;">
-          <div class="rotate-icon">↻</div>
-          <p>横向きでご利用ください</p>
-        </div>
-      </div>
-
-      <div id="hud" class="hidden">
-        <div class="hint glass">左下で移動 / 右側スワイプで視点移動 / 右下でジャンプ</div>
-        <div class="look-chip glass">視点</div>
-        <div class="joystick-zone">
-          <div id="moveBase" class="joystick-base">
-            <div id="moveStick" class="joystick-stick"></div>
-          </div>
-        </div>
-        <div id="lookZone" class="look-zone"></div>
-        <button id="jumpButton" class="jump-btn">JUMP</button>
-      </div>
-
-      <div id="popupCard" class="popup hidden">
-        <div class="popup-panel">
-          <div class="popup-head">
-            <div>
-              <div class="eyebrow">AREA GUIDE</div>
-              <h2 id="popupTitle">エリア名</h2>
-            </div>
-            <button id="closePopup" class="close-btn">×</button>
-          </div>
-          <p id="popupDescription" class="popup-text"></p>
-          <div class="media-grid">
-            <div class="media-card">
-              <div class="media-label">写真</div>
-              <div class="media-placeholder">ここにエリア写真を入れます</div>
-            </div>
-            <div class="media-card">
-              <div class="media-label">動画 / 音声</div>
-              <div class="media-placeholder">ここに動画や音声案内を入れます</div>
-            </div>
-          </div>
-        </div>
+    <div id="loadingScreen" class="overlay visible">
+      <div class="panel center-panel">
+        <div class="eyebrow">ASOBooN 3D TEST</div>
+        <h1>読み込み中</h1>
+        <p class="muted">まずは軽く・確実に表示できる版です。</p>
+        <div class="progress-wrap"><div id="progressBar" class="progress-bar"></div></div>
+        <p id="loadingText" class="small">3Dデータを読み込んでいます…</p>
       </div>
     </div>
 
-    <script type="module">
-      import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.166.1/build/three.module.js';
-      import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.166.1/examples/jsm/loaders/GLTFLoader.js';
+    <div id="startScreen" class="overlay hidden">
+      <div class="panel center-panel start-card">
+        <div class="eyebrow">PHASE 1</div>
+        <h1>アソブーンを歩いてみる</h1>
+        <p class="muted">左下スティックで移動。右側スワイプで視点移動。右下ボタンでジャンプ。</p>
+        <div class="pill-row">
+          <span class="pill">横画面推奨</span>
+          <span class="pill">移動確認版</span>
+          <span class="pill">軽量GLB</span>
+        </div>
+        <button id="startButton" class="primary-btn">はじめる</button>
+      </div>
+    </div>
 
-      const HOTSPOT_NAMES = ['入口ガイド', 'メインエリア', '体験ポイント', 'ご案内スポット'];
-      function buildHotspots(bounds) {
-        const sizeX = bounds.max.x - bounds.min.x;
-        const sizeZ = bounds.max.z - bounds.min.z;
-        const centerX = (bounds.min.x + bounds.max.x) / 2;
-        const centerZ = (bounds.min.z + bounds.max.z) / 2;
-        const points = [
-          { x: centerX - sizeX * 0.22, z: centerZ + sizeZ * 0.25 },
-          { x: centerX + sizeX * 0.18, z: centerZ + sizeZ * 0.08 },
-          { x: centerX + sizeX * 0.12, z: centerZ - sizeZ * 0.26 },
-          { x: centerX - sizeX * 0.18, z: centerZ - sizeZ * 0.18 }
-        ];
-        return points.map((p, index) => ({
-          id: `area-${index + 1}`,
-          title: HOTSPOT_NAMES[index] ?? `エリア ${index + 1}`,
-          description: 'ここは仮配置の案内ポイントです。後で実際のエリア名・説明・写真・動画・音声に差し替える前提のテスト用データです。',
-          position: p,
-          radius: Math.max(sizeX, sizeZ) * 0.08,
-        }));
-      }
+    <div id="rotateNotice" class="overlay hidden subtle">
+      <div class="panel small-panel">
+        <div class="rotate-icon">↻</div>
+        <p>横向きでご利用ください</p>
+      </div>
+    </div>
 
-      const canvas = document.getElementById('scene');
-      const loadingScreen = document.getElementById('loadingScreen');
-      const loadingText = document.getElementById('loadingText');
-      const progressBar = document.getElementById('progressBar');
-      const startScreen = document.getElementById('startScreen');
-      const startButton = document.getElementById('startButton');
-      const rotateNotice = document.getElementById('rotateNotice');
-      const hud = document.getElementById('hud');
-      const popupCard = document.getElementById('popupCard');
-      const popupTitle = document.getElementById('popupTitle');
-      const popupDescription = document.getElementById('popupDescription');
-      const closePopup = document.getElementById('closePopup');
-      const moveBase = document.getElementById('moveBase');
-      const moveStick = document.getElementById('moveStick');
-      const lookZone = document.getElementById('lookZone');
-      const jumpButton = document.getElementById('jumpButton');
+    <div id="hud" class="hidden">
+      <div class="hint-bar glass">左下で移動 / 右側スワイプで視点 / 右下でジャンプ</div>
 
-      const scene = new THREE.Scene();
-      scene.background = new THREE.Color(0xdfeff7);
-      scene.fog = new THREE.Fog(0xdfeff7, 6, 18);
+      <div class="joystick-zone left-zone">
+        <div id="moveBase" class="joystick-base">
+          <div id="moveStick" class="joystick-stick"></div>
+        </div>
+      </div>
 
-      const camera = new THREE.PerspectiveCamera(72, 1, 0.01, 200);
-      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false });
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-      renderer.outputColorSpace = THREE.SRGBColorSpace;
+      <div class="joystick-zone right-zone">
+        <div class="look-label glass">視点</div>
+        <button id="jumpButton" class="jump-btn">JUMP</button>
+      </div>
+    </div>
 
-      scene.add(new THREE.HemisphereLight(0xffffff, 0x8fa3ad, 2.1));
-      const dirLight = new THREE.DirectionalLight(0xffffff, 1.35);
-      dirLight.position.set(3, 7, 2);
-      scene.add(dirLight);
-
-      const guideGroup = new THREE.Group();
-      scene.add(guideGroup);
-
-      const clock = new THREE.Clock();
-      const loader = new GLTFLoader();
-      const raycaster = new THREE.Raycaster();
-      const downRayOrigin = new THREE.Vector3();
-      const bbox = new THREE.Box3();
-      const tempForward = new THREE.Vector3();
-      const tempRight = new THREE.Vector3();
-      const tempMove = new THREE.Vector3();
-
-      let worldMeshes = [];
-      let hotspots = [];
-      let activeHotspot = null;
-      let boundsData = null;
-      let movementEnabled = false;
-      let eyeOffset = 0.5;
-      let moveSpeed = 1.5;
-      let sceneScale = 1;
-      let stepHeight = 0.55;
-      let gravity = 5.5;
-      let jumpVelocity = 2.5;
-
-      const player = {
-        position: new THREE.Vector3(0, 0.7, 0),
-        yaw: 0,
-        pitch: -0.08,
-        velocityY: 0,
-        grounded: false,
-      };
-
-      const input = {
-        moveX: 0,
-        moveForward: 0,
-        lookPointerId: null,
-        lookPrevX: 0,
-        lookPrevY: 0,
-      };
-
-      function show(el) { el.classList.remove('hidden'); }
-      function hide(el) { el.classList.add('hidden'); }
-      function updateRotateNotice() {
-        const portrait = window.innerHeight > window.innerWidth;
-        if (portrait && movementEnabled) show(rotateNotice); else hide(rotateNotice);
-      }
-      function resize() {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight, false);
-        updateRotateNotice();
-      }
-      window.addEventListener('resize', resize);
-      resize();
-
-      function setCameraTransform() {
-        camera.rotation.order = 'YXZ';
-        camera.position.copy(player.position);
-        camera.rotation.y = player.yaw;
-        camera.rotation.x = player.pitch;
-      }
-
-      function clearPopup() {
-        activeHotspot = null;
-        hide(popupCard);
-      }
-      function showHotspot(hotspot) {
-        activeHotspot = hotspot;
-        popupTitle.textContent = hotspot.title;
-        popupDescription.textContent = hotspot.description;
-        show(popupCard);
-      }
-      closePopup.addEventListener('click', clearPopup);
-
-      function sampleGround(x, z) {
-        if (!worldMeshes.length || !boundsData) return null;
-        downRayOrigin.set(x, boundsData.max.y + 4 * sceneScale, z);
-        raycaster.set(downRayOrigin, new THREE.Vector3(0, -1, 0));
-        raycaster.far = (boundsData.max.y - boundsData.min.y) + 20 * sceneScale;
-        const hits = raycaster.intersectObjects(worldMeshes, true);
-        const hit = hits.find((item) => item.face && Math.abs(item.face.normal.y) > 0.12);
-        return hit ? { y: hit.point.y } : null;
-      }
-
-      function addHotspotMarkers() {
-        guideGroup.clear();
-        const markerGeo = new THREE.CylinderGeometry(0.04 * sceneScale, 0.04 * sceneScale, 0.16 * sceneScale, 16);
-        const markerMat = new THREE.MeshStandardMaterial({ color: 0xff8a3d, emissive: 0x5f2400, roughness: 0.4 });
-        hotspots.forEach((hotspot) => {
-          const marker = new THREE.Mesh(markerGeo, markerMat);
-          const ground = sampleGround(hotspot.position.x, hotspot.position.z);
-          marker.position.set(hotspot.position.x, (ground?.y ?? 0) + 0.08 * sceneScale, hotspot.position.z);
-          guideGroup.add(marker);
-        });
-      }
-
-      function updateHotspotDetection() {
-        if (!hotspots.length) return;
-        const nearest = hotspots.map((hotspot) => {
-          const dx = hotspot.position.x - player.position.x;
-          const dz = hotspot.position.z - player.position.z;
-          return { hotspot, distance: Math.hypot(dx, dz) };
-        }).sort((a, b) => a.distance - b.distance)[0];
-        if (!nearest) return;
-        if (nearest.distance <= nearest.hotspot.radius) {
-          if (!activeHotspot || activeHotspot.id !== nearest.hotspot.id) showHotspot(nearest.hotspot);
-        } else if (activeHotspot && nearest.distance > nearest.hotspot.radius * 1.5) {
-          clearPopup();
-        }
-      }
-
-      function tryHorizontalMove(delta) {
-        if (!boundsData) return;
-        tempForward.set(Math.sin(player.yaw), 0, Math.cos(player.yaw));
-        tempRight.set(tempForward.z, 0, -tempForward.x);
-        tempMove.set(0, 0, 0)
-          .addScaledVector(tempForward, input.moveForward)
-          .addScaledVector(tempRight, input.moveX);
-
-        if (tempMove.lengthSq() < 0.0001) return;
-        tempMove.normalize().multiplyScalar(moveSpeed * delta);
-
-        const nextX = player.position.x + tempMove.x;
-        const nextZ = player.position.z + tempMove.z;
-        const margin = 0.12 * sceneScale;
-        if (nextX < boundsData.min.x + margin || nextX > boundsData.max.x - margin) return;
-        if (nextZ < boundsData.min.z + margin || nextZ > boundsData.max.z - margin) return;
-
-        const ground = sampleGround(nextX, nextZ);
-        if (!ground) return;
-        const targetEyeY = ground.y + eyeOffset;
-        if (Math.abs(targetEyeY - player.position.y) > stepHeight) return;
-
-        player.position.x = nextX;
-        player.position.z = nextZ;
-        if (player.grounded) player.position.y = targetEyeY;
-      }
-
-      function updateVertical(delta) {
-        const ground = sampleGround(player.position.x, player.position.z);
-        const groundEyeY = (ground?.y ?? bbox.min.y) + eyeOffset;
-
-        if (!player.grounded || player.velocityY > 0) {
-          player.velocityY -= gravity * delta;
-        }
-
-        player.position.y += player.velocityY * delta;
-
-        if (player.position.y <= groundEyeY) {
-          player.position.y = groundEyeY;
-          player.velocityY = 0;
-          player.grounded = true;
-        } else {
-          player.grounded = false;
-        }
-      }
-
-      function animate() {
-        requestAnimationFrame(animate);
-        const delta = Math.min(clock.getDelta(), 0.033);
-        if (movementEnabled && boundsData) {
-          tryHorizontalMove(delta);
-          updateVertical(delta);
-          updateHotspotDetection();
-        }
-        setCameraTransform();
-        renderer.render(scene, camera);
-      }
-      animate();
-
-      startButton.addEventListener('click', () => {
-        hide(startScreen);
-        show(hud);
-        movementEnabled = true;
-        updateRotateNotice();
-      });
-
-      function updateStickVisual(nx, ny) {
-        moveStick.style.transform = `translate(${nx * 34}px, ${ny * 34}px)`;
-      }
-      let movePointerId = null;
-      function handleMovePointer(event) {
-        const rect = moveBase.getBoundingClientRect();
-        const cx = rect.left + rect.width / 2;
-        const cy = rect.top + rect.height / 2;
-        const dx = event.clientX - cx;
-        const dy = event.clientY - cy;
-        const radius = rect.width * 0.34;
-        const len = Math.min(Math.hypot(dx, dy), radius);
-        const angle = Math.atan2(dy, dx);
-        const nx = Math.cos(angle) * (len / radius);
-        const ny = Math.sin(angle) * (len / radius);
-        input.moveX = nx;
-        input.moveForward = -ny;
-        updateStickVisual(nx, ny);
-      }
-      function resetMove() {
-        movePointerId = null;
-        input.moveX = 0;
-        input.moveForward = 0;
-        updateStickVisual(0, 0);
-      }
-      moveBase.addEventListener('pointerdown', (event) => {
-        movePointerId = event.pointerId;
-        moveBase.setPointerCapture(event.pointerId);
-        handleMovePointer(event);
-        event.preventDefault();
-      });
-      moveBase.addEventListener('pointermove', (event) => {
-        if (event.pointerId !== movePointerId) return;
-        handleMovePointer(event);
-        event.preventDefault();
-      });
-      moveBase.addEventListener('pointerup', (event) => {
-        if (event.pointerId === movePointerId) resetMove();
-      });
-      moveBase.addEventListener('pointercancel', (event) => {
-        if (event.pointerId === movePointerId) resetMove();
-      });
-
-      function endLook(event) {
-        if (event.pointerId === input.lookPointerId) input.lookPointerId = null;
-      }
-      lookZone.addEventListener('pointerdown', (event) => {
-        if (!movementEnabled) return;
-        input.lookPointerId = event.pointerId;
-        input.lookPrevX = event.clientX;
-        input.lookPrevY = event.clientY;
-        lookZone.setPointerCapture(event.pointerId);
-        event.preventDefault();
-      });
-      lookZone.addEventListener('pointermove', (event) => {
-        if (event.pointerId !== input.lookPointerId) return;
-        const dx = event.clientX - input.lookPrevX;
-        const dy = event.clientY - input.lookPrevY;
-        input.lookPrevX = event.clientX;
-        input.lookPrevY = event.clientY;
-        player.yaw -= dx * 0.005;
-        player.pitch = Math.max(-0.6, Math.min(0.38, player.pitch - dy * 0.0034));
-        event.preventDefault();
-      });
-      lookZone.addEventListener('pointerup', endLook);
-      lookZone.addEventListener('pointercancel', endLook);
-
-      function doJump() {
-        if (!movementEnabled || !player.grounded) return;
-        player.velocityY = jumpVelocity;
-        player.grounded = false;
-      }
-      jumpButton.addEventListener('click', doJump);
-      jumpButton.addEventListener('touchstart', (event) => {
-        doJump();
-        event.preventDefault();
-      }, { passive: false });
-
-      loadingText.textContent = '3Dデータを読み込んでいます…';
-      loader.load(
-        './asoboon.glb',
-        (gltf) => {
-          const world = gltf.scene;
-          scene.add(world);
-          bbox.setFromObject(world);
-          const size = new THREE.Vector3();
-          bbox.getSize(size);
-          const maxDim = Math.max(size.x, size.y, size.z) || 1;
-          sceneScale = Math.max(maxDim / 12, 0.75);
-          eyeOffset = 0.52 * sceneScale;
-          moveSpeed = 1.9 * sceneScale;
-          stepHeight = 0.68 * sceneScale;
-          gravity = 7.2 * sceneScale;
-          jumpVelocity = 2.85 * sceneScale;
-          boundsData = { min: bbox.min.clone(), max: bbox.max.clone() };
-
-          worldMeshes = [];
-          world.traverse((child) => {
-            if (child.isMesh) {
-              child.frustumCulled = false;
-              worldMeshes.push(child);
-            }
-          });
-
-          const centerX = (bbox.min.x + bbox.max.x) / 2;
-          const startZ = bbox.max.z - (size.z * 0.12);
-          const hit = sampleGround(centerX, startZ) || { y: bbox.min.y };
-          player.position.set(centerX, hit.y + eyeOffset, startZ);
-          player.yaw = Math.PI;
-          player.pitch = -0.08;
-          player.grounded = true;
-          setCameraTransform();
-
-          hotspots = buildHotspots(boundsData);
-          addHotspotMarkers();
-
-          progressBar.style.width = '100%';
-          loadingText.textContent = '読み込み完了';
-          hide(loadingScreen);
-          show(startScreen);
-        },
-        (event) => {
-          if (!event.total) return;
-          const pct = Math.min(100, Math.floor((event.loaded / event.total) * 100));
-          progressBar.style.width = `${pct}%`;
-          loadingText.textContent = `3Dデータを読み込んでいます… ${pct}%`;
-        },
-        (error) => {
-          console.error(error);
-          loadingText.textContent = '読み込みに失敗しました。asoboon.glb が同じ階層にあるか確認してください。';
-        }
-      );
-    </script>
+    <script type="module" src="./app.js"></script>
   </body>
 </html>
