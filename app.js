@@ -1,32 +1,46 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
-const canvas = document.getElementById('scene');
-const loadingScreen = document.getElementById('loadingScreen');
-const loadingText = document.getElementById('loadingText');
-const progressBar = document.getElementById('progressBar');
-const startScreen = document.getElementById('startScreen');
-const startButton = document.getElementById('startButton');
-const rotateNotice = document.getElementById('rotateNotice');
-const hud = document.getElementById('hud');
-const moveBase = document.getElementById('moveBase');
-const moveStick = document.getElementById('moveStick');
-const jumpButton = document.getElementById('jumpButton');
+const $ = (id) => document.getElementById(id);
+
+const canvas = $('scene');
+const loadingScreen = $('loadingScreen');
+const loadingText = $('loadingText');
+const progressBar = $('progressBar');
+const startScreen = $('startScreen');
+const startButton = $('startButton');
+const rotateNotice = $('rotateNotice');
+const hud = $('hud');
+const moveBase = $('moveBase');
+const moveStick = $('moveStick');
+
+const locationBadge = $('locationBadge');
+const areasButton = $('areasButton');
+const nextButton = $('nextButton');
+const popupCard = $('popupCard');
+const areasPanel = $('areasPanel');
+const hintBar = $('hintBar');
+
+let jumpButton = $('jumpButton');
 
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0xdfeff7);
-scene.fog = new THREE.Fog(0xdfeff7, 10, 32);
+scene.fog = new THREE.Fog(0xdfeff7, 10, 36);
 
-const camera = new THREE.PerspectiveCamera(72, 1, 0.01, 200);
+const camera = new THREE.PerspectiveCamera(72, 1, 0.01, 300);
+
 const renderer = new THREE.WebGLRenderer({
   canvas,
   antialias: true,
   alpha: false,
+  powerPreference: 'high-performance',
 });
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.25));
+renderer.setSize(window.innerWidth, window.innerHeight, false);
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 
-scene.add(new THREE.HemisphereLight(0xffffff, 0x90a4ae, 2.0));
+const hemiLight = new THREE.HemisphereLight(0xffffff, 0x8ea2ad, 2.1);
+scene.add(hemiLight);
 
 const dirLight = new THREE.DirectionalLight(0xffffff, 1.0);
 dirLight.position.set(4, 8, 3);
@@ -35,8 +49,9 @@ scene.add(dirLight);
 const loader = new GLTFLoader();
 const clock = new THREE.Clock();
 const raycaster = new THREE.Raycaster();
+
 const downRayOrigin = new THREE.Vector3();
-const groundDir = new THREE.Vector3(0, -1, 0);
+const downDir = new THREE.Vector3(0, -1, 0);
 const tempNormal = new THREE.Vector3();
 const tempForward = new THREE.Vector3();
 const tempRight = new THREE.Vector3();
@@ -47,15 +62,19 @@ let world = null;
 let worldMeshes = [];
 let bounds = null;
 let movementEnabled = false;
+
 let sceneScale = 1;
-let eyeOffset = 0.5;
-let moveSpeed = 1.25;
-let gravity = 7.5;
+let eyeOffset = 0.6;
+let moveSpeed = 1.4;
+let gravity = 8.5;
 let jumpStrength = 2.8;
+
 let velocityY = 0;
 let onGround = false;
 let safetyFloorY = 0;
+
 let spawnPoint = new THREE.Vector3(0, 1, 0);
+let lastSafePosition = new THREE.Vector3(0, 1, 0);
 
 const player = {
   position: new THREE.Vector3(0, 1, 0),
@@ -74,8 +93,54 @@ const input = {
 };
 
 function setVisible(el, show) {
+  if (!el) return;
   el.classList.toggle('hidden', !show);
   el.classList.toggle('visible', show);
+}
+
+function hideIfExists(el) {
+  if (!el) return;
+  el.classList.add('hidden');
+  el.style.display = 'none';
+}
+
+function ensureJumpButton() {
+  if (jumpButton) return jumpButton;
+
+  jumpButton = document.createElement('button');
+  jumpButton.id = 'jumpButton';
+  jumpButton.textContent = 'JUMP';
+  jumpButton.className = 'glass icon-btn jump-btn';
+
+  jumpButton.style.position = 'fixed';
+  jumpButton.style.right = 'max(18px, env(safe-area-inset-right))';
+  jumpButton.style.bottom = 'max(20px, env(safe-area-inset-bottom))';
+  jumpButton.style.zIndex = '12';
+  jumpButton.style.pointerEvents = 'auto';
+  jumpButton.style.padding = '16px 18px';
+  jumpButton.style.borderRadius = '16px';
+  jumpButton.style.fontWeight = '700';
+  jumpButton.style.minWidth = '88px';
+
+  (hud || document.body).appendChild(jumpButton);
+  return jumpButton;
+}
+
+function simplifyUI() {
+  hideIfExists(locationBadge);
+  hideIfExists(areasButton);
+  hideIfExists(nextButton);
+  hideIfExists(popupCard);
+  hideIfExists(areasPanel);
+
+  if (hintBar) {
+    hintBar.textContent = '左下で移動 / 右側スワイプで視点移動 / 右下でジャンプ';
+  }
+}
+
+function updateRotateNotice() {
+  const portrait = window.innerHeight > window.innerWidth;
+  setVisible(rotateNotice, portrait && movementEnabled);
 }
 
 function resize() {
@@ -88,11 +153,9 @@ function resize() {
 }
 
 window.addEventListener('resize', resize);
-
-function updateRotateNotice() {
-  const portrait = window.innerHeight > window.innerWidth;
-  setVisible(rotateNotice, portrait && movementEnabled);
-}
+resize();
+simplifyUI();
+ensureJumpButton();
 
 function setCameraTransform() {
   camera.rotation.order = 'YXZ';
@@ -116,7 +179,7 @@ function createSafetyFloor() {
     new THREE.MeshBasicMaterial({
       color: 0xc6dbe2,
       transparent: true,
-      opacity: 0.55,
+      opacity: 0.18,
       depthWrite: false,
     })
   );
@@ -137,15 +200,12 @@ function isWalkableHit(hit) {
   return tempNormal.y > 0.2;
 }
 
-function sampleGround(x, z) {
-  if (!bounds) return null;
+function sampleGroundStrict(x, z) {
+  if (!bounds || !worldMeshes.length) return null;
 
-  // メッシュが取れない時でも最低限の安全床を返す
-  if (!worldMeshes.length) return safetyFloorY;
-
-  downRayOrigin.set(x, bounds.max.y + 5 * sceneScale, z);
-  raycaster.set(downRayOrigin, groundDir);
-  raycaster.far = (bounds.max.y - bounds.min.y) + 12 * sceneScale;
+  downRayOrigin.set(x, bounds.max.y + Math.max(bounds.size.y, 1) + 6 * sceneScale, z);
+  raycaster.set(downRayOrigin, downDir);
+  raycaster.far = (bounds.max.y - bounds.min.y) + 20 * sceneScale;
 
   const hits = raycaster.intersectObjects(worldMeshes, true);
 
@@ -155,8 +215,59 @@ function sampleGround(x, z) {
     }
   }
 
-  // 地面が拾えない時は安全床へ退避
+  return null;
+}
+
+function sampleGround(x, z) {
+  const strict = sampleGroundStrict(x, z);
+  if (strict !== null) return strict;
   return safetyFloorY;
+}
+
+function findBestSpawnPoint() {
+  if (!bounds) {
+    return new THREE.Vector3(0, safetyFloorY + eyeOffset, 0);
+  }
+
+  const centerX = (bounds.min.x + bounds.max.x) * 0.5;
+  const centerZ = (bounds.min.z + bounds.max.z) * 0.5;
+  const sizeX = bounds.max.x - bounds.min.x;
+  const sizeZ = bounds.max.z - bounds.min.z;
+
+  const offsets = [0, 0.08, -0.08, 0.16, -0.16, 0.24, -0.24, 0.32, -0.32];
+  const candidates = [];
+
+  for (const ox of offsets) {
+    for (const oz of offsets) {
+      candidates.push({
+        x: centerX + sizeX * ox,
+        z: centerZ + sizeZ * oz,
+        d: Math.hypot(ox, oz),
+      });
+    }
+  }
+
+  candidates.sort((a, b) => a.d - b.d);
+
+  for (const c of candidates) {
+    const groundY = sampleGroundStrict(c.x, c.z);
+    if (groundY !== null) {
+      return new THREE.Vector3(c.x, groundY + eyeOffset, c.z);
+    }
+  }
+
+  return new THREE.Vector3(centerX, safetyFloorY + eyeOffset, centerZ);
+}
+
+function rememberSafePosition() {
+  const groundY = sampleGroundStrict(player.position.x, player.position.z);
+  if (groundY === null) return;
+
+  lastSafePosition.set(
+    player.position.x,
+    groundY + eyeOffset,
+    player.position.z
+  );
 }
 
 function tryMove(delta) {
@@ -181,11 +292,14 @@ function tryMove(delta) {
   if (nextX < bounds.min.x + margin || nextX > bounds.max.x - margin) return;
   if (nextZ < bounds.min.z + margin || nextZ > bounds.max.z - margin) return;
 
-  const groundY = sampleGround(nextX, nextZ);
-  if (groundY == null) return;
+  const strictGround = sampleGroundStrict(nextX, nextZ);
+  if (strictGround === null) {
+    // 本当の地面がない場所へは進ませない
+    return;
+  }
 
   const currentFeetY = player.position.y - eyeOffset;
-  const step = groundY - currentFeetY;
+  const step = strictGround - currentFeetY;
 
   // 急すぎる段差は上がれない
   if (step > 0.48 * sceneScale) return;
@@ -194,7 +308,7 @@ function tryMove(delta) {
   player.position.z = nextZ;
 
   if (onGround) {
-    player.position.y = groundY + eyeOffset;
+    player.position.y = strictGround + eyeOffset;
   }
 }
 
@@ -204,13 +318,16 @@ function updateVertical(delta) {
   velocityY -= gravity * delta;
   player.position.y += velocityY * delta;
 
-  const groundY = sampleGround(player.position.x, player.position.z) ?? safetyFloorY;
+  const groundY = sampleGround(player.position.x, player.position.z);
   const feetY = player.position.y - eyeOffset;
 
   if (feetY <= groundY) {
     onGround = true;
     velocityY = 0;
     player.position.y = groundY + eyeOffset;
+
+    // 本当に立てる面の上だけ安全位置として記憶
+    rememberSafePosition();
     return;
   }
 
@@ -218,9 +335,9 @@ function updateVertical(delta) {
 
   const minAllowedY = safetyFloorY + eyeOffset - 0.05;
 
-  // 落ちすぎたらリスポーン
+  // 落ちすぎたら最後に安全だった場所へ戻す
   if (player.position.y < minAllowedY - 0.5 * sceneScale) {
-    player.position.copy(spawnPoint);
+    player.position.copy(lastSafePosition);
     velocityY = 0;
     onGround = true;
   }
@@ -232,9 +349,11 @@ function jump() {
   onGround = false;
 }
 
-jumpButton.addEventListener('click', jump);
+ensureJumpButton().addEventListener('click', jump);
 
 function setupMoveJoystick() {
+  if (!moveBase || !moveStick) return;
+
   const baseRect = () => moveBase.getBoundingClientRect();
   let activeId = null;
 
@@ -283,9 +402,11 @@ function setupMoveJoystick() {
 function setupLookControls() {
   window.addEventListener('pointerdown', (event) => {
     if (!movementEnabled) return;
+
     if (
+      event.target.closest('#moveBase') ||
+      event.target.closest('#jumpButton') ||
       event.target.closest('.left-zone') ||
-      event.target.closest('.jump-btn') ||
       event.target.closest('.panel')
     ) {
       return;
@@ -304,6 +425,7 @@ function setupLookControls() {
 
     input.lookPrevX = event.clientX;
     input.lookPrevY = event.clientY;
+
     input.lookDeltaX += dx;
     input.lookDeltaY += dy;
   });
@@ -327,14 +449,16 @@ function startExperience() {
   updateRotateNotice();
 }
 
-startButton.addEventListener('click', startExperience);
+if (startButton) {
+  startButton.addEventListener('click', startExperience);
+}
 
 setupMoveJoystick();
 setupLookControls();
-resize();
 
 function animate() {
   requestAnimationFrame(animate);
+
   const delta = Math.min(clock.getDelta(), 0.033);
 
   if (movementEnabled) {
@@ -378,13 +502,17 @@ loader.load(
       center: center.clone(),
     };
 
-    sceneScale = Math.max(size.x, size.y, size.z) / 8;
-    eyeOffset = Math.max(size.y * 0.22, 0.23);
-    moveSpeed = Math.max(size.z * 0.18, 0.95);
-    gravity = Math.max(size.y * 3.2, 5.8);
-    jumpStrength = Math.max(size.y * 0.9, 2.2);
+    const maxXZ = Math.max(size.x, size.z);
+    const maxDim = Math.max(size.x, size.y, size.z);
+
+    sceneScale = THREE.MathUtils.clamp(maxDim / 10, 0.5, 6);
+    eyeOffset = THREE.MathUtils.clamp(size.y * 0.05, 0.45, 1.1);
+    moveSpeed = THREE.MathUtils.clamp(maxXZ * 0.06, 1.0, 3.0);
+    gravity = 8.5;
+    jumpStrength = THREE.MathUtils.clamp(eyeOffset * 4.2, 2.2, 4.2);
     safetyFloorY = bbox.min.y + 0.02 * sceneScale;
 
+    worldMeshes = [];
     world.traverse((child) => {
       if (child.isMesh) {
         child.castShadow = false;
@@ -396,23 +524,28 @@ loader.load(
 
     createSafetyFloor();
 
-    // 開始地点は中央寄りに固定
-    const startX = center.x;
-    const startZ = center.z;
-    const startGround = sampleGround(startX, startZ) ?? safetyFloorY;
-
-    spawnPoint = new THREE.Vector3(startX, startGround + eyeOffset, startZ);
+    spawnPoint = findBestSpawnPoint();
+    lastSafePosition.copy(spawnPoint);
     player.position.copy(spawnPoint);
+
     onGround = true;
     velocityY = 0;
 
     setCameraTransform();
 
     setVisible(loadingScreen, false);
-    setVisible(startScreen, true);
-    loadingText.textContent = '読み込み完了';
+    if (startScreen) {
+      setVisible(startScreen, true);
+    } else {
+      movementEnabled = true;
+      setVisible(hud, true);
+    }
+
+    if (loadingText) loadingText.textContent = '読み込み完了';
   },
   (event) => {
+    if (!loadingText || !progressBar) return;
+
     if (!event.total) {
       loadingText.textContent = '3Dデータを読み込んでいます…';
       return;
@@ -424,6 +557,8 @@ loader.load(
   },
   (error) => {
     console.error(error);
-    loadingText.textContent = '読み込みに失敗しました。GLB配置をご確認ください。';
+    if (loadingText) {
+      loadingText.textContent = '読み込みに失敗しました。GLB配置をご確認ください。';
+    }
   }
 );
