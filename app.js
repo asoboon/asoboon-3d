@@ -64,7 +64,7 @@ let bounds = null;
 let movementEnabled = false;
 
 let sceneScale = 1;
-let eyeOffset = 0.6;
+let eyeOffset = 0.9;
 let moveSpeed = 1.4;
 let gravity = 8.5;
 let jumpStrength = 2.8;
@@ -278,7 +278,7 @@ function tryMove(delta) {
 
   tempMove
     .set(0, 0, 0)
-    .addScaledVector(tempForward, -input.moveY)
+    .addScaledVector(tempForward, input.moveY)
     .addScaledVector(tempRight, input.moveX);
 
   if (tempMove.lengthSq() < 0.0001) return;
@@ -294,14 +294,12 @@ function tryMove(delta) {
 
   const strictGround = sampleGroundStrict(nextX, nextZ);
   if (strictGround === null) {
-    // 本当の地面がない場所へは進ませない
     return;
   }
 
   const currentFeetY = player.position.y - eyeOffset;
   const step = strictGround - currentFeetY;
 
-  // 急すぎる段差は上がれない
   if (step > 0.48 * sceneScale) return;
 
   player.position.x = nextX;
@@ -325,8 +323,6 @@ function updateVertical(delta) {
     onGround = true;
     velocityY = 0;
     player.position.y = groundY + eyeOffset;
-
-    // 本当に立てる面の上だけ安全位置として記憶
     rememberSafePosition();
     return;
   }
@@ -335,7 +331,6 @@ function updateVertical(delta) {
 
   const minAllowedY = safetyFloorY + eyeOffset - 0.05;
 
-  // 落ちすぎたら最後に安全だった場所へ戻す
   if (player.position.y < minAllowedY - 0.5 * sceneScale) {
     player.position.copy(lastSafePosition);
     velocityY = 0;
@@ -506,7 +501,10 @@ loader.load(
     const maxDim = Math.max(size.x, size.y, size.z);
 
     sceneScale = THREE.MathUtils.clamp(maxDim / 10, 0.5, 6);
-    eyeOffset = THREE.MathUtils.clamp(size.y * 0.05, 0.45, 1.1);
+
+    // 視点高さを従来の約1.5倍へ調整
+    eyeOffset = THREE.MathUtils.clamp(size.y * 0.075, 0.68, 1.65);
+
     moveSpeed = THREE.MathUtils.clamp(maxXZ * 0.06, 1.0, 3.0);
     gravity = 8.5;
     jumpStrength = THREE.MathUtils.clamp(eyeOffset * 4.2, 2.2, 4.2);
