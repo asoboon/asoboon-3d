@@ -86,14 +86,12 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 .mini{display:grid;gap:2px}.mcell{width:9px;height:9px;border-radius:2px;background:#8090ae}
 .preview .mcell{width:14px;height:14px;border-radius:3px;background:var(--accent)}
 .control{
-  display:grid;grid-template-columns:1fr 1fr 1.65fr;gap:6px;margin-top:7px;
+  display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:7px;
   position:sticky;bottom:calc(6px + env(safe-area-inset-bottom));z-index:8;
   padding:6px;background:rgba(11,16,32,.94);backdrop-filter:blur(8px);
   border:1px solid var(--line);border-radius:14px;
 }
 .control button,.reset{min-height:48px;border:1px solid rgba(83,125,165,.5);border-radius:12px;background:linear-gradient(180deg,#203652,#15263d);font-weight:850;box-shadow:inset 0 1px 0 rgba(255,255,255,.06)}
-.place{background:linear-gradient(180deg,#78e7ff,#45c9ef)!important;border-color:#89edff!important;color:#06111a!important;font-size:15px;box-shadow:0 0 18px rgba(93,220,255,.16),inset 0 1px 0 rgba(255,255,255,.55)!important}
-.place:disabled{opacity:.35}
 .control button:active,.reset:active,.piece:active{transform:scale(.98)}
 .tray-head{display:flex;justify-content:space-between;align-items:center;margin:10px 2px 5px;font-size:12px}
 .tray-head strong{letter-spacing:.06em}.tray-head span{color:var(--muted)}
@@ -150,14 +148,13 @@ button{font:inherit;color:inherit;touch-action:manipulation}
   <section class="control">
     <button id="rotate" type="button">↻ 回転</button>
     <button id="flip" type="button">↔ 反転</button>
-    <button id="place" type="button" class="place" disabled>ここに置く</button>
   </section>
 
   <div class="tray-head"><strong>PIECES</strong><span><b id="count">0</b> / 12 格納</span></div>
   <section id="tray" class="tray" aria-label="ピース一覧"></section>
 
   <div class="bottom"><button id="reset" type="button" class="reset">最初から</button></div>
-  <p class="note">指でドラッグ中はブロックが追従します。離してもまだ仮置き。「ここに置く」で確定します。</p>
+  <p class="note">ピースをつかんで盤面へ。置ける場所で指を離すと、そのまま確定します。</p>
 </main>
 
 <div id="dragVisual" class="drag-visual" aria-hidden="true"></div>
@@ -190,7 +187,7 @@ const ids=Object.keys(defs);
 const blocked=new Set(["3,3","3,4","4,3","4,4"]);
 const colors=["var(--c0)","var(--c1)","var(--c2)","var(--c3)","var(--c4)","var(--c5)","var(--c6)","var(--c7)","var(--c8)","var(--c9)","var(--c10)","var(--c11)"];
 const $=s=>document.querySelector(s);
-const board=$("#board"),tray=$("#tray"),msg=$("#msg"),selName=$("#selName"),preview=$("#preview"),placeBtn=$("#place");
+const board=$("#board"),tray=$("#tray"),msg=$("#msg"),selName=$("#selName"),preview=$("#preview");
 const timeEl=$("#time"),movesEl=$("#moves"),countEl=$("#count"),overlay=$("#overlay"),clearText=$("#clearText"),dragVisual=$("#dragVisual");
 
 const norm=s=>{
@@ -297,18 +294,43 @@ function updateDragTarget(x,y){
  moveDragVisual(x,y);
  if(pointerNearBoard(x,y)){
    target=targetFromPointer(x,y);
-   renderBoard();updatePlace();
-   setMsg(valid(ghostCells())?"半透明で仮置き中":"そこには置けません",valid(ghostCells())?"ok":"bad");
+   renderBoard();
+   setMsg(valid(ghostCells())?"ここで離すと置けます":"そこには置けません",valid(ghostCells())?"ok":"bad");
  }else{
-   target=null;renderBoard();updatePlace();
+   target=null;renderBoard();
  }
+}
+function lockSelected(){
+ const cells=ghostCells();
+ if(!valid(cells))return false;
+ startClock();
+ const lockedId=selected;
+ pieces[lockedId].placed=cells.map(a=>[...a]);
+ justPlaced=lockedId;
+ moves++;movesEl.textContent=moves;
+ const next=ids.find(id=>!pieces[id].placed);
+ target=null;
+ if(next)selected=next;
+ renderAll();
+ setMsg("カチッ！","ok");
+ if(ids.every(id=>pieces[id].placed)){
+   clearInterval(timer);timeEl.textContent=fmt(Date.now()-start);
+   clearText.textContent="TIME "+timeEl.textContent+" / MOVE "+moves;
+   board.classList.add("clear-pulse");
+   setTimeout(()=>overlay.classList.add("show"),620);
+ }
+ return true;
 }
 function endDrag(){
  if(!drag)return;
  drag=null;dragVisual.classList.remove("show");
- if(target&&valid(ghostCells()))setMsg("位置OK。「ここに置く」で確定","ok");
- else if(target)setMsg("その位置には置けません","bad");
- else setMsg("盤面へドラッグしてください");
+ if(target&&valid(ghostCells())){
+   lockSelected();
+ }else if(target){
+   target=null;renderAll();setMsg("そこには置けません","bad");
+ }else{
+   setMsg("盤面へドラッグしてください");
+ }
 }
 
 function renderBoard(){
@@ -361,8 +383,7 @@ function renderPreview(){
  m.querySelectorAll(".mcell").forEach(x=>x.style.background=colors[ids.indexOf(selected)]);
  preview.appendChild(m);
 }
-function updatePlace(){placeBtn.disabled=!valid(ghostCells());}
-function renderAll(){renderBoard();renderTray();renderPreview();updatePlace();}
+function renderAll(){renderBoard();renderTray();renderPreview();}
 
 window.addEventListener("pointermove",e=>{
  if(!drag||e.pointerId!==drag.pointerId)return;
@@ -388,24 +409,6 @@ $("#flip").addEventListener("click",()=>{
  pieces[selected].shape=flip(pieces[selected].shape);
  renderAll();
  if(target)setMsg(valid(ghostCells())?"反転しました。位置OK":"その向きでは置けません",valid(ghostCells())?"ok":"bad");
-});
-placeBtn.addEventListener("click",()=>{
- const cells=ghostCells();if(!valid(cells))return;
- startClock();
- const lockedId=selected;
- pieces[lockedId].placed=cells.map(a=>[...a]);
- justPlaced=lockedId;
- moves++;movesEl.textContent=moves;
- const next=ids.find(id=>!pieces[id].placed);
- target=null;
- if(next)selected=next;
- renderAll();setMsg("確定しました","ok");
- if(ids.every(id=>pieces[id].placed)){
-   clearInterval(timer);timeEl.textContent=fmt(Date.now()-start);
-   clearText.textContent="TIME "+timeEl.textContent+" / MOVE "+moves;
-   board.classList.add("clear-pulse");
-   setTimeout(()=>overlay.classList.add("show"),620);
- }
 });
 function reset(){
  clearInterval(timer);start=0;timer=0;moves=0;movesEl.textContent="0";timeEl.textContent="00:00";
