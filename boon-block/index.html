@@ -82,6 +82,17 @@ button{font:inherit;color:inherit;touch-action:manipulation}
  box-shadow:inset 0 0 20px rgba(93,220,255,.18),0 0 14px rgba(93,220,255,.17)}
 .core-device::before,.core-device::after{content:"";position:absolute;inset:10%;border:1px solid rgba(199,244,255,.28);border-radius:10px}
 .core-device::after{inset:28%;border-radius:50%;border-color:rgba(226,251,255,.62);box-shadow:0 0 10px rgba(93,220,255,.35)}
+.board.return-mode .core-device{
+  border-color:#a7f4ff;
+  filter:brightness(1.25);
+  box-shadow:inset 0 0 24px rgba(93,220,255,.30),0 0 24px rgba(93,220,255,.38);
+}
+.board.return-mode .core-device::after{
+  content:"WAIT";
+  inset:18%;display:flex;align-items:center;justify-content:center;
+  border-radius:10px;font-size:10px;font-weight:900;letter-spacing:.08em;
+  color:#eaffff;background:rgba(7,17,31,.58);border-color:rgba(226,251,255,.72)
+}
 .board.clear-pulse .core-device{animation:coreClear .65s ease-out}
 .board.clear-pulse .cell.filled{animation:boardCelebrate .45s ease-out}
 @keyframes coreClear{0%{filter:brightness(1);transform:scale(1)}45%{filter:brightness(2.2);transform:scale(1.08);box-shadow:0 0 38px rgba(93,220,255,.75)}100%{filter:brightness(1);transform:scale(1)}}
@@ -297,6 +308,11 @@ function pointerNearBoard(x,y){
  const r=board.getBoundingClientRect(),pad=34;
  return x>=r.left-pad&&x<=r.right+pad&&y>=r.top-pad&&y<=r.bottom+pad;
 }
+function pointerOnCore(x,y){
+ const r=board.getBoundingClientRect(),cell=r.width/8;
+ const left=r.left+cell*3,right=r.left+cell*5,top=r.top+cell*3,bottom=r.top+cell*5;
+ return x>=left&&x<=right&&y>=top&&y<=bottom;
+}
 function placementAnchor(cells){
  return {r:Math.min(...cells.map(a=>a[0])),c:Math.min(...cells.map(a=>a[1]))};
 }
@@ -352,7 +368,14 @@ function beginDrag(){
 function updateDragTarget(x,y){
  if(!drag)return;
  moveDragVisual(x,y);
- if(pointerNearBoard(x,y)){
+ const onCore=pointerOnCore(x,y);
+ board.classList.toggle("return-mode",onCore);
+ if(onCore){
+   target=null;
+   renderBoard();
+   board.classList.add("return-mode");
+   setMsg("ここで離すと WAIT に戻ります","ok");
+ }else if(pointerNearBoard(x,y)){
    target=targetFromPointer(x,y);
    renderBoard();
    setMsg(valid(ghostCells())?"ここで離すと置けます":"そこには置けません",valid(ghostCells())?"ok":"bad");
@@ -367,7 +390,20 @@ function restoreOriginal(){
  pieces[gesture.id].floating=!!gesture.originalFloating;
  target=null;
  drag=null;
+ board.classList.remove("return-mode");
  dragVisual.classList.remove("show");
+}
+function returnToWait(id){
+ pieces[id].placed=null;
+ pieces[id].floating=false;
+ selected=id;
+ target=null;
+ drag=null;
+ board.classList.remove("return-mode");
+ dragVisual.classList.remove("show");
+ renderAll();
+ setMsg(id+" を WAIT に戻しました","ok");
+ haptic(16);
 }
 function lockSelected(){
  const cells=ghostCells();
@@ -411,8 +447,12 @@ function finishGesture(e){
  }
 
  if(g.dragging){
-   if(target&&valid(ghostCells())){
+   if(pointerOnCore(e.clientX,e.clientY)){
      gesture=null;
+     returnToWait(g.id);
+   }else if(target&&valid(ghostCells())){
+     gesture=null;
+     board.classList.remove("return-mode");
      lockSelected();
    }else{
      restoreOriginal();
@@ -506,6 +546,7 @@ window.addEventListener("pointerup",finishGesture);
 window.addEventListener("pointercancel",e=>{
  if(!gesture||e.pointerId!==gesture.pointerId)return;
  if(gesture.dragging)restoreOriginal();
+ board.classList.remove("return-mode");
  gesture=null;
  renderAll();
  setMsg("操作をキャンセルしました");
@@ -520,6 +561,7 @@ function reset(){
  dragVisual.classList.remove("show");
  overlay.classList.remove("show");
  board.classList.remove("clear-pulse");
+ board.classList.remove("return-mode");
  setMsg("タップ=回転 / 横フリック=反転 / ドラッグ=移動");
  renderAll();
 }
