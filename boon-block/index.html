@@ -43,7 +43,7 @@ button{font:inherit;color:inherit;touch-action:manipulation}
   width:calc(var(--cell-size) * 8);
   height:calc(var(--cell-size) * 8);
   margin:0 auto;
-  overflow:hidden;
+  overflow:visible;
   border-radius:11px;
   border:1px solid var(--line);
   background:#091422;
@@ -63,10 +63,17 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 }
 .cell:nth-child(8n){border-right:0}
 .cell.core{background:rgba(34,63,86,.7);border-color:rgba(93,220,255,.16)}
-.cell.filled,.cell.ghost{box-shadow:inset 0 2px 0 rgba(255,255,255,.22),inset 0 -3px 6px rgba(4,12,22,.16)}
-.cell.filled::after,.cell.ghost::after{content:"";position:absolute;left:18%;top:12%;width:42%;height:16%;border-radius:99px;background:rgba(255,255,255,.22);transform:rotate(-8deg)}
-.cell.ghost{opacity:.48;outline:2px solid rgba(93,220,255,.9);outline-offset:-2px;filter:saturate(1.12) brightness(1.06)}
-.cell.ghost.bad{background:linear-gradient(145deg,#ff788e,#dc3858)!important;outline-color:#ff90a2;opacity:.42}
+.cell.filled{box-shadow:inset 0 2px 0 rgba(255,255,255,.22),inset 0 -3px 6px rgba(4,12,22,.16)}
+.cell.filled::after{content:"";position:absolute;left:18%;top:12%;width:42%;height:16%;border-radius:99px;background:rgba(255,255,255,.22);transform:rotate(-8deg)}
+.preview-cell{
+  position:absolute;z-index:8;width:var(--cell-size);height:var(--cell-size);
+  border-radius:4px;opacity:.50;pointer-events:none;
+  outline:2px solid rgba(93,220,255,.92);outline-offset:-2px;
+  box-shadow:inset 0 2px 0 rgba(255,255,255,.28),inset 0 -3px 6px rgba(4,12,22,.2),0 0 8px rgba(93,220,255,.18);
+}
+.preview-cell::after{content:"";position:absolute;left:18%;top:12%;width:42%;height:16%;border-radius:99px;background:rgba(255,255,255,.26);transform:rotate(-8deg)}
+.preview-cell.bad{opacity:.48;outline-color:#ff6f88;box-shadow:inset 0 2px 0 rgba(255,255,255,.25),0 0 9px rgba(255,94,120,.22)}
+.preview-cell.interactive{pointer-events:auto;touch-action:none;cursor:grab}
 .cell.confirm-pop{animation:blockLock .22s ease-out}
 @keyframes blockLock{0%{transform:scale(.84);filter:brightness(1.35)}70%{transform:scale(1.05)}100%{transform:scale(1)}}
 .core-device{position:absolute;z-index:5;left:calc(var(--cell-size) * 3);top:calc(var(--cell-size) * 3);width:calc(var(--cell-size) * 2);height:calc(var(--cell-size) * 2);pointer-events:none;border-radius:13px;border:1px solid rgba(158,235,255,.58);background:
@@ -140,7 +147,7 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 
   <section class="board-wrap">
     <div id="board" class="board" aria-label="8×8パズル盤"></div>
-    <div id="msg" class="msg">タップ=回転 / 横フリック=反転 / ドラッグ=移動</div>
+    <div id="msg" class="msg">重なってもはみ出ても仮表示できます</div>
   </section>
 
   <section class="gesture-guide" aria-label="操作方法">
@@ -198,7 +205,7 @@ const norm=s=>{
 };
 const rot=s=>norm(s.map(([r,c])=>[c,-r]));
 const flip=s=>norm(s.map(([r,c])=>[r,-c]));
-const pieces={};ids.forEach(id=>pieces[id]={shape:norm(defs[id]),placed:null});
+const pieces={};ids.forEach(id=>pieces[id]={shape:norm(defs[id]),placed:null,floating:false});
 
 let selected="F",target=null,moves=0,start=0,timer=0;
 let gesture=null,drag=null,justPlaced=null;
@@ -208,7 +215,7 @@ function occupied(ignore){
  ids.forEach(id=>{
    if(id===ignore)return;
    const p=pieces[id];
-   if(p.placed)p.placed.forEach(([r,c])=>m.set(r+","+c,id));
+   if(p.placed&&!p.floating)p.placed.forEach(([r,c])=>m.set(r+","+c,id));
  });
  return m;
 }
@@ -299,21 +306,20 @@ function transformPiece(id,kind){
  if(p.placed){
    const a=placementAnchor(p.placed);
    const cells=nextShape.map(([r,c])=>[a.r+r,a.c+c]);
-   if(!validFor(id,cells)){
-     renderAll();
-     setMsg(kind==="rotate"?"ここでは回せません":"ここでは反転できません","bad");
-     haptic(25);
-     return;
-   }
    p.shape=nextShape;
    p.placed=cells;
-   justPlaced=id;
+   p.floating=!validFor(id,cells);
+   if(!p.floating)justPlaced=id;
  }else{
    p.shape=nextShape;
  }
  target=null;
  renderAll();
- setMsg(kind==="rotate"?"↻ 回転":"↔ 反転","ok");
+ if(p.floating){
+   setMsg((kind==="rotate"?"↻ 回転":"↔ 反転")+"：重なり・はみ出しは仮表示中","bad");
+ }else{
+   setMsg(kind==="rotate"?"↻ 回転":"↔ 反転","ok");
+ }
  haptic();
 }
 
@@ -326,7 +332,8 @@ function beginGesture(id,e){
    id,pointerId:e.pointerId,
    startX:e.clientX,startY:e.clientY,lastX:e.clientX,lastY:e.clientY,
    startTime:performance.now(),dragging:false,
-   originalPlacement:pieces[id].placed?pieces[id].placed.map(a=>[...a]):null
+   originalPlacement:pieces[id].placed?pieces[id].placed.map(a=>[...a]):null,
+   originalFloating:!!pieces[id].floating
  };
  renderTray();
 }
@@ -335,6 +342,7 @@ function beginDrag(){
  gesture.dragging=true;
  selected=gesture.id;
  if(pieces[selected].placed)pieces[selected].placed=null;
+ pieces[selected].floating=false;
  drag={id:selected,pointerId:gesture.pointerId};
  buildDragVisual();
  dragVisual.classList.add("show");
@@ -356,6 +364,7 @@ function updateDragTarget(x,y){
 function restoreOriginal(){
  if(!gesture)return;
  if(gesture.originalPlacement)pieces[gesture.id].placed=gesture.originalPlacement.map(a=>[...a]);
+ pieces[gesture.id].floating=!!gesture.originalFloating;
  target=null;
  drag=null;
  dragVisual.classList.remove("show");
@@ -366,6 +375,7 @@ function lockSelected(){
  startClock();
  const lockedId=selected;
  pieces[lockedId].placed=cells.map(a=>[...a]);
+ pieces[lockedId].floating=false;
  justPlaced=lockedId;
  moves++;movesEl.textContent=moves;
  const next=ids.find(id=>!pieces[id].placed);
@@ -376,7 +386,7 @@ function lockSelected(){
  renderAll();
  setMsg("カチッ！","ok");
  haptic(18);
- if(ids.every(id=>pieces[id].placed)){
+ if(ids.every(id=>pieces[id].placed&&!pieces[id].floating)){
    clearInterval(timer);timeEl.textContent=fmt(Date.now()-start);
    clearText.textContent="TIME "+timeEl.textContent+" / MOVE "+moves;
    board.classList.add("clear-pulse");
@@ -421,9 +431,20 @@ function finishGesture(e){
  }
 }
 
+function addPreviewCells(cells,id,bad=false,interactive=false){
+ cells.forEach(([r,c])=>{
+   const x=document.createElement("div");
+   x.className="preview-cell"+(bad?" bad":"")+(interactive?" interactive":"");
+   x.style.left="calc(var(--cell-size) * "+c+")";
+   x.style.top="calc(var(--cell-size) * "+r+")";
+   x.style.background=colors[ids.indexOf(id)];
+   if(interactive)x.addEventListener("pointerdown",e=>beginGesture(id,e));
+   board.appendChild(x);
+ });
+}
 function renderBoard(){
  board.innerHTML="";
- const occ=occupied(),ghost=ghostCells(),ghostSet=new Set(ghost.map(a=>a.join(","))),ghostOK=valid(ghost);
+ const occ=occupied();
  for(let r=0;r<8;r++)for(let c=0;c<8;c++){
    const k=r+","+c,v=occ.get(k),b=document.createElement("button");
    b.type="button";b.className="cell";b.setAttribute("aria-label",(r+1)+"行 "+(c+1)+"列");
@@ -431,11 +452,6 @@ function renderBoard(){
    else if(v){
      b.classList.add("filled");b.dataset.piece=v;b.style.background=colors[ids.indexOf(v)];
      if(v===justPlaced)b.classList.add("confirm-pop");
-   }
-   if(ghostSet.has(k)){
-     b.classList.add("ghost");
-     if(!ghostOK)b.classList.add("bad");
-     if(ghostOK)b.style.background=colors[ids.indexOf(selected)];
    }
    b.addEventListener("pointerdown",e=>{
      if(v==="CORE")return;
@@ -447,6 +463,15 @@ function renderBoard(){
  core.className="core-device";
  core.setAttribute("aria-hidden","true");
  board.appendChild(core);
+
+ const ghost=ghostCells();
+ if(ghost.length)addPreviewCells(ghost,selected,!valid(ghost),false);
+
+ ids.forEach(id=>{
+   const p=pieces[id];
+   if(p.floating&&p.placed)addPreviewCells(p.placed,id,true,true);
+ });
+
  if(justPlaced)setTimeout(()=>{justPlaced=null;},260);
 }
 function renderTray(){
@@ -455,14 +480,15 @@ function renderTray(){
    const b=document.createElement("button");
    b.type="button";b.className="piece";
    if(id===selected)b.classList.add("selected");
-   if(pieces[id].placed)b.classList.add("placed");
+   if(pieces[id].placed&&!pieces[id].floating)b.classList.add("placed");
+   if(pieces[id].floating)b.classList.add("selected");
    const n=document.createElement("span");n.className="piece-name";n.textContent=id;
    const m=mini(pieces[id].shape);m.querySelectorAll(".mcell").forEach(x=>x.style.background=colors[i]);
    b.append(n,m);
    b.addEventListener("pointerdown",e=>beginGesture(id,e));
    tray.appendChild(b);
  });
- countEl.textContent=ids.filter(id=>pieces[id].placed).length;
+ countEl.textContent=ids.filter(id=>pieces[id].placed&&!pieces[id].floating).length;
 }
 function renderAll(){renderBoard();renderTray();requestAnimationFrame(sizeBoard);}
 
@@ -489,7 +515,7 @@ function reset(){
  clearInterval(timer);
  start=0;timer=0;moves=0;
  movesEl.textContent="0";timeEl.textContent="00:00";
- ids.forEach(id=>{pieces[id].shape=norm(defs[id]);pieces[id].placed=null;});
+ ids.forEach(id=>{pieces[id].shape=norm(defs[id]);pieces[id].placed=null;pieces[id].floating=false;});
  selected="F";target=null;gesture=null;drag=null;justPlaced=null;
  dragVisual.classList.remove("show");
  overlay.classList.remove("show");
