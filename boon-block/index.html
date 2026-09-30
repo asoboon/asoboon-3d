@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="format-detection" content="telephone=no">
 <title>BOON BLOCK</title>
-<!-- BOON BLOCK live build v19: 16,146-solution database hint engine -->
+<!-- BOON BLOCK live build v20: polished exhaustive hint engine -->
 <style>
 :root{
   --bg:#07111f;--panel:#0f1b2d;--panel2:#17283e;--line:#29415f;--text:#f5fbff;--muted:#8ea7bf;
@@ -202,7 +202,7 @@ button{font:inherit;color:inherit;touch-action:manipulation}
   </div>
 </div>
 
-<script src="solutions.js?v=19"></script>
+<script src="solutions.js?v=20"></script>
 <script>
 (()=>{
 const defs={
@@ -459,13 +459,12 @@ function placementDistribution(codes,id){
  for(const code of codes){
    const cells=variantPieceCells(code,id),key=cellsKey(cells);
    let g=map.get(key);
-   if(!g){g={cells,count:0,solutions:new Set()};map.set(key,g);}
+   if(!g){g={cells,count:0};map.set(key,g);}
    g.count++;
-   g.solutions.add(code>>3);
    for(const [r,c] of cells)heat[r*8+c]++;
  }
  let best=null;
- for(const g of map.values())if(!best||g.solutions.size>best.solutions.size||(g.solutions.size===best.solutions.size&&g.count>best.count))best=g;
+ for(const g of map.values())if(!best||g.count>best.count)best=g;
  let max=0;for(const n of heat)max=Math.max(max,n);
  const areaCells=[];
  if(max)for(let i=0;i<64;i++)if(heat[i])areaCells.push({r:Math.floor(i/8),c:i%8,score:heat[i]/max});
@@ -475,7 +474,7 @@ function chooseNextPiece(codes,choices){
  let pick=null;
  for(const id of choices){
    const d=placementDistribution(codes,id);
-   const score=[d.distinct,-(d.best?d.best.solutions.size:0)];
+   const score=[d.distinct,-(d.best?d.best.count:0)];
    if(!pick||score[0]<pick.score[0]||(score[0]===pick.score[0]&&score[1]<pick.score[1]))pick={id,d,score};
  }
  return pick;
@@ -563,17 +562,17 @@ function useHint(){
 
  if(hintPlan.type==="repair"){
    const names=hintPlan.wrongIds.join("・");
-   if(hintStage===1)setMsg("候補0 → 赤い "+names+" を直せば "+hintPlan.candidateCount+"通りに復帰","bad");
-   else if(hintStage===2)setMsg(hintPlan.piece+" の置き直し候補を表示（"+hintPlan.placementCount+"パターン）","ok");
-   else setMsg(hintPlan.piece+" の有力な置き直し位置を表示","ok");
+   if(hintStage===1)setMsg("候補0｜赤:"+names+" → 修正後 "+hintPlan.candidateCount+"通り","bad");
+   else if(hintStage===2)setMsg(hintPlan.piece+"：置き直し候補 "+hintPlan.placementCount+"パターン","ok");
+   else setMsg(hintPlan.piece+"：有力な置き直し位置","ok");
  }else{
    const n=hintPlan.candidateCount.toLocaleString("ja-JP");
    if(hintStage===1){
-     setMsg("正解ルート "+n+"通り｜シアン=そのままOK"+(hintPlan.piece?"｜次は "+hintPlan.piece:""),"ok");
+     setMsg("候補 "+n+"/"+SOLUTION_TOTAL.toLocaleString("ja-JP")+"｜シアン=OK"+(hintPlan.piece?"｜次 "+hintPlan.piece:""),"ok");
    }else if(hintStage===2){
-     setMsg(hintPlan.piece+" が入り得る場所（"+hintPlan.placementCount+"パターン）","ok");
+     setMsg(hintPlan.piece+"：候補エリア "+hintPlan.placementCount+"パターン","ok");
    }else{
-     setMsg(hintPlan.piece+" の有力な正解位置を表示","ok");
+     setMsg(hintPlan.piece+"：有力な正解位置","ok");
    }
  }
  haptic(10);
@@ -785,7 +784,7 @@ function renderBoard(){
      if(v===justPlaced)b.classList.add("confirm-pop");
      if(hintPlan&&hintStage>=1){
        if(hintPlan.goodIds&&hintPlan.goodIds.includes(v))b.classList.add("hint-good");
-       if(hintPlan.wrongIds&&hintPlan.wrongIds.includes(v))b.classList.add("hint-bad");
+       if(hintPlan.wrongIds&&hintPlan.wrongIds.includes(v)&&!(hintStage>=2&&v===hintPlan.piece))b.classList.add("hint-bad");
        if(hintStage>=2&&v===hintPlan.piece)b.classList.add("hint-focus");
      }
    }
@@ -801,7 +800,7 @@ function renderBoard(){
    core.className="core-device";
    if(hintPlan&&hintStage>=1){
      if(hintPlan.goodIds&&hintPlan.goodIds.includes("CORE"))core.classList.add("hint-good");
-     if(hintPlan.wrongIds&&hintPlan.wrongIds.includes("CORE"))core.classList.add("hint-bad");
+     if(hintPlan.wrongIds&&hintPlan.wrongIds.includes("CORE")&&!(hintStage>=2&&hintPlan.piece==="CORE"))core.classList.add("hint-bad");
      if(hintStage>=2&&hintPlan.piece==="CORE")core.classList.add("hint-focus");
    }
    core.style.left="calc(var(--cell-size) * "+a.c+")";
@@ -850,7 +849,7 @@ function renderTray(){
    if(id===selected)b.classList.add("selected");
    if(hintPlan&&hintStage>=1){
      if(hintPlan.goodIds&&hintPlan.goodIds.includes(id))b.classList.add("hint-good");
-     if(hintPlan.wrongIds&&hintPlan.wrongIds.includes(id))b.classList.add("hint-bad");
+     if(hintPlan.wrongIds&&hintPlan.wrongIds.includes(id)&&!(hintStage>=2&&id===hintPlan.piece))b.classList.add("hint-bad");
      if(id===hintPlan.piece)b.classList.add("hint-focus");
    }
    if(pieces[id].placed&&!pieces[id].floating)b.classList.add("placed");
