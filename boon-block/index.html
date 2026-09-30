@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="format-detection" content="telephone=no">
 <title>BOON BLOCK</title>
-<!-- BOON BLOCK live build v17: concrete recovery hints -->
+<!-- BOON BLOCK live build v18: movable 2x2 CORE piece -->
 <style>
 :root{
   --bg:#07111f;--panel:#0f1b2d;--panel2:#17283e;--line:#29415f;--text:#f5fbff;--muted:#8ea7bf;
@@ -19,6 +19,7 @@
   --c6:linear-gradient(145deg,#ffc06f,#f39743);--c7:linear-gradient(145deg,#ed8a38,#cc6425);
   --c8:linear-gradient(145deg,#ffed7c,#f5d34d);--c9:linear-gradient(145deg,#dfbd34,#b99520);
   --c10:linear-gradient(145deg,#ff96aa,#ff718d);--c11:linear-gradient(145deg,#e65d7c,#c33e62);
+  --core:linear-gradient(145deg,#eaffff,#69dcff 58%,#319dcc);
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;background:
@@ -63,7 +64,7 @@ button{font:inherit;color:inherit;touch-action:manipulation}
   transition:filter .12s ease,opacity .12s ease,transform .12s ease;
 }
 .cell:nth-child(8n){border-right:0}
-.cell.core{background:rgba(34,63,86,.7);border-color:rgba(93,220,255,.16)}
+.cell.core{background:linear-gradient(145deg,rgba(218,251,255,.9),rgba(73,184,226,.78));border-color:rgba(169,240,255,.42)}
 .cell.filled{box-shadow:inset 0 2px 0 rgba(255,255,255,.22),inset 0 -3px 6px rgba(4,12,22,.16)}
 .cell.filled::after{content:"";position:absolute;left:18%;top:12%;width:42%;height:16%;border-radius:99px;background:rgba(255,255,255,.22);transform:rotate(-8deg)}
 .preview-cell{
@@ -83,7 +84,7 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 @keyframes hintZone{from{opacity:.58}to{opacity:1}}
 .cell.confirm-pop{animation:blockLock .22s ease-out}
 @keyframes blockLock{0%{transform:scale(.84);filter:brightness(1.35)}70%{transform:scale(1.05)}100%{transform:scale(1)}}
-.core-device{position:absolute;z-index:5;left:calc(var(--cell-size) * 3);top:calc(var(--cell-size) * 3);width:calc(var(--cell-size) * 2);height:calc(var(--cell-size) * 2);pointer-events:none;border-radius:13px;border:1px solid rgba(158,235,255,.58);background:
+.core-device{position:absolute;z-index:7;width:calc(var(--cell-size) * 2);height:calc(var(--cell-size) * 2);pointer-events:auto;touch-action:none;cursor:grab;border-radius:13px;border:1px solid rgba(158,235,255,.72);background:
  radial-gradient(circle at 50% 48%,rgba(214,249,255,.98) 0 7%,rgba(93,220,255,.78) 8% 18%,rgba(70,162,210,.25) 19% 38%,transparent 39%),
  linear-gradient(145deg,rgba(206,243,255,.22),rgba(42,116,158,.12));
  box-shadow:inset 0 0 20px rgba(93,220,255,.18),0 0 14px rgba(93,220,255,.17)}
@@ -105,9 +106,9 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 .gesture-chip b{display:inline;color:var(--text);font-size:10px;margin-right:2px}
 .tray-head{display:flex;justify-content:space-between;align-items:center;margin:6px 2px 3px;font-size:10px;flex:0 0 auto}
 .tray-head strong{letter-spacing:.06em}.tray-head span{color:var(--muted)}
-.tray{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:repeat(3,minmax(0,1fr));gap:4px;flex:0 0 auto}
+.tray{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));grid-template-rows:repeat(3,minmax(0,1fr));gap:4px;flex:0 0 auto}
 .piece{
-  position:relative;height:58px;min-height:58px;border:1px solid rgba(83,125,165,.38);border-radius:11px;background:linear-gradient(180deg,#122039,#0d192b);
+  position:relative;height:52px;min-height:52px;border:1px solid rgba(83,125,165,.38);border-radius:11px;background:linear-gradient(180deg,#122039,#0d192b);
   padding:4px 3px;display:flex;align-items:center;justify-content:center;
   touch-action:none;overflow:hidden;
 }
@@ -142,7 +143,7 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 @media(max-width:360px){
   .app{padding-left:6px;padding-right:6px}.brand{font-size:14px}.sub{display:none}
   .stat{min-width:44px;padding:3px 4px}.gesture-chip{font-size:8px;padding:3px 1px}.gesture-chip b{font-size:9px}
-  .piece{height:52px;min-height:52px}.mini{gap:1px}.mcell{width:9px;height:9px}
+  .piece{height:48px;min-height:48px}.mini{gap:1px}.mcell{width:8px;height:8px}
   .hint-mini,.reset-mini{height:34px}.hint-mini{width:43px;font-size:7px}.reset-mini{width:34px}
 }
 </style>
@@ -176,7 +177,7 @@ button{font:inherit;color:inherit;touch-action:manipulation}
     <div class="gesture-chip"><b>◉ 長押し</b>WAIT</div>
   </section>
 
-  <div class="tray-head"><strong>WAITING BLOCKS</strong><span><b id="count">0</b> / 12</span></div>
+  <div class="tray-head"><strong>WAITING BLOCKS</strong><span><b id="count">0</b> / 13</span></div>
   <section id="tray" class="tray" aria-label="ピース一覧"></section>
 </main>
 
@@ -208,11 +209,12 @@ const defs={
  W:[[0,0],[1,0],[1,1],[2,1],[2,2]],
  X:[[0,1],[1,0],[1,1],[1,2],[2,1]],
  Y:[[0,0],[1,0],[2,0],[3,0],[1,1]],
- Z:[[0,0],[0,1],[1,1],[2,1],[2,2]]
+ Z:[[0,0],[0,1],[1,1],[2,1],[2,2]],
+ CORE:[[0,0],[0,1],[1,0],[1,1]]
 };
 const ids=Object.keys(defs);
-const blocked=new Set(["3,3","3,4","4,3","4,4"]);
-const colors=["var(--c0)","var(--c1)","var(--c2)","var(--c3)","var(--c4)","var(--c5)","var(--c6)","var(--c7)","var(--c8)","var(--c9)","var(--c10)","var(--c11)"];
+const blocked=new Set();
+const colors=["var(--c0)","var(--c1)","var(--c2)","var(--c3)","var(--c4)","var(--c5)","var(--c6)","var(--c7)","var(--c8)","var(--c9)","var(--c10)","var(--c11)","var(--core)"];
 const $=s=>document.querySelector(s);
 const board=$("#board"),tray=$("#tray"),msg=$("#msg");
 const timeEl=$("#time"),movesEl=$("#moves"),countEl=$("#count"),overlay=$("#overlay"),clearText=$("#clearText"),dragVisual=$("#dragVisual"),holdRing=$("#holdRing"),hintCountEl=$("#hintCount");
@@ -232,13 +234,14 @@ const norm=s=>{
 const rot=s=>norm(s.map(([r,c])=>[c,-r]));
 const flip=s=>norm(s.map(([r,c])=>[r,-c]));
 const pieces={};ids.forEach(id=>pieces[id]={shape:norm(defs[id]),placed:null,floating:false});
+pieces.CORE.placed=[[3,3],[3,4],[4,3],[4,4]];
 
 let selected="F",target=null,moves=0,start=0,timer=0;
 let gesture=null,drag=null,justPlaced=null,longPressTimer=null;
 let hintCount=0,hintStage=0,hintPlan=null;
 
 function occupied(ignore){
- const m=new Map();blocked.forEach(k=>m.set(k,"CORE"));
+ const m=new Map();
  ids.forEach(id=>{
    if(id===ignore)return;
    const p=pieces[id];
@@ -248,7 +251,7 @@ function occupied(ignore){
 }
 function validFor(id,cells){
  const occ=occupied(id);
- return cells.length===5&&cells.every(([r,c])=>r>=0&&r<8&&c>=0&&c<8&&!occ.has(r+","+c));
+ return cells.length===defs[id].length&&cells.every(([r,c])=>r>=0&&r<8&&c>=0&&c<8&&!occ.has(r+","+c));
 }
 function ghostCells(){
  if(!selected||!target||pieces[selected].placed)return [];
@@ -328,7 +331,7 @@ function placementAnchor(cells){
  return {r:Math.min(...cells.map(a=>a[0])),c:Math.min(...cells.map(a=>a[1]))};
 }
 const boardKeys=[];
-for(let r=0;r<8;r++)for(let c=0;c<8;c++)if(!blocked.has(r+","+c))boardKeys.push(r+","+c);
+for(let r=0;r<8;r++)for(let c=0;c<8;c++)boardKeys.push(r+","+c);
 
 function uniqueOrients(shape){
  const seen=new Map();
@@ -351,7 +354,6 @@ ids.forEach(id=>{
    const b=bounds(shape);
    for(let r0=0;r0<=8-b.h;r0++)for(let c0=0;c0<=8-b.w;c0++){
      const cells=shape.map(([r,c])=>[r0+r,c0+c]);
-     if(cells.some(([r,c])=>blocked.has(r+","+c)))continue;
      const p={id,cells,keys:cells.map(([r,c])=>r+","+c)};
      hintPlacements[id].push(p);
      p.keys.forEach(k=>hintByCell[k].push(p));
@@ -372,7 +374,7 @@ function solveHint(excludedFixed=new Set()){
  }
  let nodes=0;
  function dfs(){
-   if(++nodes>180000)return false;
+   if(++nodes>650000)return false;
    if(covered.size===boardKeys.length)return true;
    let best=null,opts=null;
    for(const k of boardKeys){
@@ -465,6 +467,12 @@ function useHint(){
 function transformPiece(id,kind){
  resetHintPlan();
  selected=id;
+ if(id==="CORE"){
+   renderAll();
+   setMsg("COREは2×2のまま動かせます","ok");
+   haptic();
+   return;
+ }
  const p=pieces[id],nextShape=kind==="rotate"?rot(p.shape):flip(p.shape);
  if(p.placed){
    const a=placementAnchor(p.placed);
@@ -657,22 +665,28 @@ function renderBoard(){
  for(let r=0;r<8;r++)for(let c=0;c<8;c++){
    const k=r+","+c,v=occ.get(k),b=document.createElement("button");
    b.type="button";b.className="cell";b.setAttribute("aria-label",(r+1)+"行 "+(c+1)+"列");
-   if(v==="CORE")b.classList.add("core");
-   else if(v){
+   if(v){
      b.classList.add("filled");b.dataset.piece=v;b.style.background=colors[ids.indexOf(v)];
+     if(v==="CORE")b.classList.add("core");
      if(v===justPlaced)b.classList.add("confirm-pop");
      if(hintPlan&&hintStage===1&&((hintPlan.type==="return"&&hintPlan.returnIds.includes(v))||(hintPlan.type!=="return"&&v===hintPlan.piece)))b.classList.add("hint-focus");
    }
    b.addEventListener("pointerdown",e=>{
-     if(v==="CORE")return;
-     if(v&&v!=="CORE")beginGesture(v,e);
+     if(v)beginGesture(v,e);
    });
    board.appendChild(b);
  }
- const core=document.createElement("div");
- core.className="core-device";
- core.setAttribute("aria-hidden","true");
- board.appendChild(core);
+ const cp=pieces.CORE;
+ if(cp.placed&&!cp.floating){
+   const a=placementAnchor(cp.placed);
+   const core=document.createElement("div");
+   core.className="core-device";
+   core.style.left="calc(var(--cell-size) * "+a.c+")";
+   core.style.top="calc(var(--cell-size) * "+a.r+")";
+   core.setAttribute("aria-label","CORE 2×2");
+   core.addEventListener("pointerdown",e=>beginGesture("CORE",e));
+   board.appendChild(core);
+ }
 
  const ghost=ghostCells();
  if(ghost.length)addPreviewCells(ghost,selected,!valid(ghost),false);
@@ -716,7 +730,7 @@ function renderTray(){
    if(hintPlan&&hintStage===1&&((hintPlan.type==="return"&&hintPlan.returnIds.includes(id))||(hintPlan.type!=="return"&&id===hintPlan.piece)))b.classList.add("hint-focus");
    if(pieces[id].placed&&!pieces[id].floating)b.classList.add("placed");
    if(pieces[id].floating)b.classList.add("selected");
-   const n=document.createElement("span");n.className="piece-name";n.textContent=id;
+   const n=document.createElement("span");n.className="piece-name";n.textContent=id==="CORE"?"CORE":id;
    const m=mini(pieces[id].shape);m.querySelectorAll(".mcell").forEach(x=>x.style.background=colors[i]);
    b.append(n,m);
    b.addEventListener("pointerdown",e=>beginGesture(id,e));
@@ -753,6 +767,7 @@ function reset(){
  start=0;timer=0;moves=0;
  movesEl.textContent="0";timeEl.textContent="00:00";
  ids.forEach(id=>{pieces[id].shape=norm(defs[id]);pieces[id].placed=null;pieces[id].floating=false;});
+ pieces.CORE.placed=[[3,3],[3,4],[4,3],[4,4]];
  selected="F";target=null;gesture=null;drag=null;justPlaced=null;
  hintCount=0;hintCountEl.textContent="0";resetHintPlan();
  holdRing.classList.remove("show");
