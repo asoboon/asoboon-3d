@@ -459,7 +459,7 @@ function renderTray(){
  });
  countEl.textContent=ids.filter(id=>pieces[id].placed).length;
 }
-function renderAll(){renderBoard();renderTray();}
+function renderAll(){renderBoard();renderTray();requestAnimationFrame(sizeBoard);}
 
 window.addEventListener("pointermove",e=>{
  if(!gesture||e.pointerId!==gesture.pointerId)return;
@@ -495,8 +495,8 @@ function reset(){
 $("#reset").addEventListener("click",reset);
 $("#again").addEventListener("click",reset);
 
-sizeBoard();
 renderAll();
+requestAnimationFrame(sizeBoard);
 setMsg("タップ=回転 / 横フリック=反転 / ドラッグ=移動");
 })();
 </script>
