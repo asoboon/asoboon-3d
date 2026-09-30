@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - '.github/workflows/generate-boon-solutions.yml'
+      - 'boon-block/generate_solutions.cpp'
   workflow_dispatch:
 
 permissions:
@@ -22,8 +23,10 @@ jobs:
       - name: Generate all 16,146 solutions
         run: /tmp/boon_solution_generator
 
-      - name: Verify solution count
-        run: grep -q 'window.BOON_SOLUTION_COUNT=16146;' boon-block/solutions.js
+      - name: Verify generated JavaScript
+        run: |
+          node --check boon-block/solutions.js
+          node -e "global.window=global; require('./boon-block/solutions.js'); if (!Array.isArray(window.BOON_SOLUTIONS) || window.BOON_SOLUTIONS.length !== 16146 || window.BOON_SOLUTION_COUNT !== 16146) process.exit(1); console.log('verified', window.BOON_SOLUTIONS.length)"
 
       - name: Commit generated database
         run: |
