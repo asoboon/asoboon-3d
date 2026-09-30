@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="format-detection" content="telephone=no">
 <title>BOON BLOCK</title>
-<!-- BOON BLOCK live build v15: long-press returns placed blocks to WAIT -->
+<!-- BOON BLOCK live build v17: concrete recovery hints -->
 <style>
 :root{
   --bg:#07111f;--panel:#0f1b2d;--panel2:#17283e;--line:#29415f;--text:#f5fbff;--muted:#8ea7bf;
@@ -359,11 +359,12 @@ ids.forEach(id=>{
  });
 });
 
-function solveHint(excludedFixed=null){
+function solveHint(excludedFixed=new Set()){
+ const excluded=excludedFixed instanceof Set?excludedFixed:new Set(excludedFixed?[excludedFixed]:[]);
  const covered=new Set(),used=new Set(),solution={};
  for(const id of ids){
    const p=pieces[id];
-   if(id!==excludedFixed&&p.placed&&!p.floating){
+   if(!excluded.has(id)&&p.placed&&!p.floating){
      used.add(id);
      solution[id]=p.placed.map(a=>[...a]);
      p.placed.forEach(([r,c])=>covered.add(r+","+c));
@@ -397,16 +398,34 @@ function solveHint(excludedFixed=null){
  }
  return dfs()?solution:null;
 }
+function sameCells(a,b){
+ if(!a||!b||a.length!==b.length)return false;
+ const A=[...a].map(x=>x.join(",")).sort().join(";");
+ const B=[...b].map(x=>x.join(",")).sort().join(";");
+ return A===B;
+}
+function solveFromScratch(){
+ const saved=ids.map(id=>({id,placed:pieces[id].placed,floating:pieces[id].floating}));
+ ids.forEach(id=>{pieces[id].placed=null;pieces[id].floating=false;});
+ const solution=solveHint(new Set());
+ saved.forEach(s=>{pieces[s.id].placed=s.placed;pieces[s.id].floating=s.floating;});
+ return solution;
+}
 function buildHintPlan(){
- let solution=solveHint(null);
+ let solution=solveHint(new Set());
  if(solution){
    const id=ids.find(x=>!pieces[x].placed||pieces[x].floating);
-   if(id)return {piece:id,cells:solution[id],move:false};
+   if(id)return {type:"place",piece:id,cells:solution[id],move:false};
  }
  const solids=ids.filter(id=>pieces[id].placed&&!pieces[id].floating);
  for(const id of solids){
-   solution=solveHint(id);
-   if(solution&&solution[id])return {piece:id,cells:solution[id],move:true};
+   solution=solveHint(new Set([id]));
+   if(solution&&solution[id])return {type:"place",piece:id,cells:solution[id],move:true};
+ }
+ const fresh=solveFromScratch();
+ if(fresh){
+   const returnIds=solids.filter(id=>!sameCells(pieces[id].placed,fresh[id]));
+   if(returnIds.length)return {type:"return",returnIds};
  }
  return null;
 }
@@ -419,13 +438,23 @@ function useHint(){
    hintStage=0;
  }
  if(!hintPlan){
-   setMsg("HINT：いくつかのブロックをWAITに戻してみよう","bad");
+   setMsg("HINT：現在の状態から有効な手順を計算できませんでした","bad");
    haptic(18);
    return;
  }
- hintStage++;
  hintCount++;
  hintCountEl.textContent=hintCount;
+
+ if(hintPlan.type==="return"){
+   hintStage=1;
+   renderAll();
+   const names=hintPlan.returnIds.join("・");
+   setMsg("HINT："+names+" を長押ししてWAITへ戻そう","bad");
+   haptic(10);
+   return;
+ }
+
+ hintStage++;
  renderAll();
  const id=hintPlan.piece;
  if(hintStage===1)setMsg("HINT 1："+id+(hintPlan.move?" を動かそう":" を使おう"),"ok");
@@ -632,7 +661,7 @@ function renderBoard(){
    else if(v){
      b.classList.add("filled");b.dataset.piece=v;b.style.background=colors[ids.indexOf(v)];
      if(v===justPlaced)b.classList.add("confirm-pop");
-     if(hintPlan&&hintStage===1&&v===hintPlan.piece)b.classList.add("hint-focus");
+     if(hintPlan&&hintStage===1&&((hintPlan.type==="return"&&hintPlan.returnIds.includes(v))||(hintPlan.type!=="return"&&v===hintPlan.piece)))b.classList.add("hint-focus");
    }
    b.addEventListener("pointerdown",e=>{
      if(v==="CORE")return;
@@ -653,7 +682,7 @@ function renderBoard(){
    if(p.floating&&p.placed)addPreviewCells(p.placed,id,true,true);
  });
 
- if(hintPlan&&hintStage>=2&&hintPlan.cells){
+ if(hintPlan&&hintPlan.type!=="return"&&hintStage>=2&&hintPlan.cells){
    const rs=hintPlan.cells.map(a=>a[0]),cs=hintPlan.cells.map(a=>a[1]);
    const minR=Math.min(...rs),maxR=Math.max(...rs),minC=Math.min(...cs),maxC=Math.max(...cs);
    if(hintStage===2){
@@ -684,7 +713,7 @@ function renderTray(){
    const b=document.createElement("button");
    b.type="button";b.className="piece";
    if(id===selected)b.classList.add("selected");
-   if(hintPlan&&hintStage===1&&id===hintPlan.piece)b.classList.add("hint-focus");
+   if(hintPlan&&hintStage===1&&((hintPlan.type==="return"&&hintPlan.returnIds.includes(id))||(hintPlan.type!=="return"&&id===hintPlan.piece)))b.classList.add("hint-focus");
    if(pieces[id].placed&&!pieces[id].floating)b.classList.add("placed");
    if(pieces[id].floating)b.classList.add("selected");
    const n=document.createElement("span");n.className="piece-name";n.textContent=id;
