@@ -142,9 +142,9 @@ int main(){
  }
 
  out.open("boon-block/solutions.js");
- out<<"// AUTO-GENERATED: BOON BLOCK 8x8, 12 pentominoes + movable 2x2 CORE.\\n";
- out<<"// Symmetry-reduced exhaustive solution database.\\n";
- out<<"window.BOON_SOLUTIONS=[\\n";
+ out<<"// AUTO-GENERATED: BOON BLOCK 8x8, 12 pentominoes + movable 2x2 CORE.\n";
+ out<<"// Symmetry-reduced exhaustive solution database.\n";
+ out<<"window.BOON_SOLUTIONS=[\n";
 
  const int CORE=12,X=9,I=1;
  for(int ci=0;ci<(int)bypiece[CORE].size();ci++){
@@ -171,13 +171,13 @@ int main(){
   }
  }
 
- out<<"];\\nwindow.BOON_SOLUTION_COUNT="<<solutionCount<<";\\n";
+ out<<"];\\nwindow.BOON_SOLUTION_COUNT="<<solutionCount<<";\n";
  out.close();
 
  if(solutionCount!=16146){
-  cerr<<"Expected 16146, got "<<solutionCount<<"\\n";
+  cerr<<"Expected 16146, got "<<solutionCount<<"\n";
   return 2;
  }
- cout<<"Generated "<<solutionCount<<" solutions.\\n";
+ cout<<"Generated "<<solutionCount<<" solutions.\n";
  return 0;
 }
