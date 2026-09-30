@@ -28,12 +28,12 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 .stat b{display:block;font-size:14px}.stat span{display:block;color:var(--muted);font-size:9px;margin-top:1px}
 .board-wrap{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:7px}
 .board{
+  --cell-size:40px;
   display:grid;
-  grid-template-columns:repeat(8,minmax(0,1fr));
-  grid-template-rows:repeat(8,minmax(0,1fr));
-  width:100%;
-  max-width:430px;
-  aspect-ratio:1/1;
+  grid-template-columns:repeat(8,var(--cell-size));
+  grid-template-rows:repeat(8,var(--cell-size));
+  width:calc(var(--cell-size) * 8);
+  height:calc(var(--cell-size) * 8);
   margin:0 auto;
   overflow:hidden;
   border-radius:11px;
@@ -43,7 +43,9 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 }
 .cell{
   position:relative;
-  min-width:0;min-height:0;width:100%;height:100%;
+  width:var(--cell-size);height:var(--cell-size);
+  min-width:var(--cell-size);min-height:var(--cell-size);
+  max-width:var(--cell-size);max-height:var(--cell-size);
   border:0;border-right:1px solid rgba(255,255,255,.08);border-bottom:1px solid rgba(255,255,255,.08);
   background:#11192e;display:flex;align-items:center;justify-content:center;
   font-size:11px;font-weight:900;padding:0;touch-action:none;
@@ -199,6 +201,14 @@ function valid(cells){
 function setMsg(t,kind=""){msg.textContent=t;msg.className="msg"+(kind?" "+kind:"");}
 function fmt(ms){const s=Math.floor(ms/1000),m=Math.floor(s/60);return String(m).padStart(2,"0")+":"+String(s%60).padStart(2,"0");}
 function startClock(){if(start)return;start=Date.now();timer=setInterval(()=>timeEl.textContent=fmt(Date.now()-start),500);}
+
+function sizeBoard(){
+ const wrap=board.parentElement;
+ const available=Math.max(240,Math.min(430,wrap.clientWidth-2));
+ const cell=Math.max(30,Math.floor(available/8));
+ board.style.setProperty("--cell-size",cell+"px");
+}
+window.addEventListener("resize",()=>{sizeBoard();});
 
 function bounds(shape){
  return {h:Math.max(...shape.map(a=>a[0]))+1,w:Math.max(...shape.map(a=>a[1]))+1};
@@ -374,6 +384,7 @@ function reset(){
 }
 $("#reset").addEventListener("click",reset);
 $("#again").addEventListener("click",reset);
+sizeBoard();
 renderAll();
 })();
 </script>
