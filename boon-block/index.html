@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="format-detection" content="telephone=no">
 <title>BOON BLOCK</title>
-<!-- BOON BLOCK live build v18: movable 2x2 CORE piece -->
+<!-- BOON BLOCK live build v19: 16,146-solution database hint engine -->
 <style>
 :root{
   --bg:#07111f;--panel:#0f1b2d;--panel2:#17283e;--line:#29415f;--text:#f5fbff;--muted:#8ea7bf;
@@ -76,12 +76,19 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 .preview-cell::after{content:"";position:absolute;left:18%;top:12%;width:42%;height:16%;border-radius:99px;background:rgba(255,255,255,.26);transform:rotate(-8deg)}
 .preview-cell.bad{opacity:.48;outline-color:#ff6f88;box-shadow:inset 0 2px 0 rgba(255,255,255,.25),0 0 9px rgba(255,94,120,.22)}
 .preview-cell.interactive{pointer-events:auto;touch-action:none;cursor:grab}
+.cell.hint-good{outline:2px solid #67e8ff;outline-offset:-3px;filter:brightness(1.18);box-shadow:inset 0 0 12px rgba(93,220,255,.28),0 0 7px rgba(93,220,255,.22)}
+.piece.hint-good{opacity:.82!important;filter:saturate(1)!important;outline:2px solid #67e8ff;outline-offset:1px;box-shadow:0 0 14px rgba(93,220,255,.28)}
 .cell.hint-focus{filter:brightness(1.35);outline:2px solid #fff3a3;outline-offset:-3px;animation:hintPulse .9s ease-in-out infinite alternate}
-.piece.hint-focus{outline:2px solid #fff3a3;outline-offset:1px;box-shadow:0 0 16px rgba(255,234,117,.34)}
-.hint-zone{position:absolute;z-index:6;pointer-events:none;border:2px dashed rgba(116,232,255,.92);border-radius:10px;background:rgba(93,220,255,.08);box-shadow:0 0 16px rgba(93,220,255,.16);animation:hintZone 1s ease-in-out infinite alternate}
-.hint-cell{position:absolute;z-index:9;width:var(--cell-size);height:var(--cell-size);pointer-events:none;border-radius:4px;opacity:.52;outline:2px solid #dffbff;outline-offset:-2px;box-shadow:0 0 12px rgba(93,220,255,.44),inset 0 2px 0 rgba(255,255,255,.28)}
+.piece.hint-focus{opacity:1!important;filter:saturate(1)!important;outline:2px solid #fff3a3;outline-offset:1px;box-shadow:0 0 16px rgba(255,234,117,.34)}
+.cell.hint-bad{outline:2px solid #ff785f;outline-offset:-3px;filter:brightness(1.18);animation:hintBad .72s ease-in-out infinite alternate}
+.piece.hint-bad{opacity:.95!important;filter:saturate(1)!important;outline:2px solid #ff785f;outline-offset:1px;box-shadow:0 0 16px rgba(255,94,120,.32);animation:hintBad .72s ease-in-out infinite alternate}
+.core-device.hint-good{box-shadow:inset 0 0 24px rgba(93,220,255,.34),0 0 19px rgba(93,220,255,.38)}
+.core-device.hint-focus{border-color:#fff3a3;box-shadow:inset 0 0 24px rgba(255,243,163,.2),0 0 20px rgba(255,230,115,.42)}
+.core-device.hint-bad{border-color:#ff785f;box-shadow:inset 0 0 24px rgba(255,94,120,.18),0 0 20px rgba(255,94,120,.42);animation:hintBad .72s ease-in-out infinite alternate}
+.hint-area-cell{position:absolute;z-index:8;width:var(--cell-size);height:var(--cell-size);pointer-events:none;border-radius:5px;background:rgba(93,220,255,.22);outline:1px solid rgba(116,232,255,.48);outline-offset:-2px;box-shadow:inset 0 0 10px rgba(93,220,255,.16)}
+.hint-cell{position:absolute;z-index:9;width:var(--cell-size);height:var(--cell-size);pointer-events:none;border-radius:4px;opacity:.55;outline:2px solid #dffbff;outline-offset:-2px;box-shadow:0 0 12px rgba(93,220,255,.44),inset 0 2px 0 rgba(255,255,255,.28)}
 @keyframes hintPulse{from{filter:brightness(1.1)}to{filter:brightness(1.5)}}
-@keyframes hintZone{from{opacity:.58}to{opacity:1}}
+@keyframes hintBad{from{filter:brightness(1)}to{filter:brightness(1.42)}}
 .cell.confirm-pop{animation:blockLock .22s ease-out}
 @keyframes blockLock{0%{transform:scale(.84);filter:brightness(1.35)}70%{transform:scale(1.05)}100%{transform:scale(1)}}
 .core-device{position:absolute;z-index:7;width:calc(var(--cell-size) * 2);height:calc(var(--cell-size) * 2);pointer-events:auto;touch-action:none;cursor:grab;border-radius:13px;border:1px solid rgba(158,235,255,.72);background:
@@ -195,6 +202,7 @@ button{font:inherit;color:inherit;touch-action:manipulation}
   </div>
 </div>
 
+<script src="solutions.js?v=19"></script>
 <script>
 (()=>{
 const defs={
@@ -361,107 +369,213 @@ ids.forEach(id=>{
  });
 });
 
-function solveHint(excludedFixed=new Set()){
- const excluded=excludedFixed instanceof Set?excludedFixed:new Set(excludedFixed?[excludedFixed]:[]);
- const covered=new Set(),used=new Set(),solution={};
- for(const id of ids){
-   const p=pieces[id];
-   if(!excluded.has(id)&&p.placed&&!p.floating){
-     used.add(id);
-     solution[id]=p.placed.map(a=>[...a]);
-     p.placed.forEach(([r,c])=>covered.add(r+","+c));
-   }
+
+const SOLUTIONS=Array.isArray(window.BOON_SOLUTIONS)?window.BOON_SOLUTIONS:[];
+const SOLUTION_TOTAL=Number(window.BOON_SOLUTION_COUNT||SOLUTIONS.length||0);
+const pieceIndex=Object.fromEntries(ids.map((id,i)=>[id,i]));
+const pieceChars=ids.map(id=>id==="CORE"?"O":id);
+const charToPiece={F:0,I:1,L:2,P:3,N:4,T:5,U:6,V:7,W:8,X:9,Y:10,Z:11,O:12};
+const dbLo=ids.map(()=>new Uint32Array(SOLUTIONS.length));
+const dbHi=ids.map(()=>new Uint32Array(SOLUTIONS.length));
+
+for(let s=0;s<SOLUTIONS.length;s++){
+ const row=SOLUTIONS[s];
+ for(let i=0;i<64;i++){
+   const pi=charToPiece[row[i]];
+   if(pi===undefined)continue;
+   if(i<32)dbLo[pi][s]=(dbLo[pi][s]|(1<<i))>>>0;
+   else dbHi[pi][s]=(dbHi[pi][s]|(1<<(i-32)))>>>0;
  }
- let nodes=0;
- function dfs(){
-   if(++nodes>650000)return false;
-   if(covered.size===boardKeys.length)return true;
-   let best=null,opts=null;
-   for(const k of boardKeys){
-     if(covered.has(k))continue;
-     const list=[];
-     for(const p of hintByCell[k]){
-       if(used.has(p.id))continue;
-       let ok=true;
-       for(const q of p.keys)if(covered.has(q)){ok=false;break;}
-       if(ok)list.push(p);
+}
+
+const INV_T=[0,3,2,1,4,5,6,7];
+function transformIndex(i,t){
+ const r=Math.floor(i/8),c=i%8;
+ let nr=r,nc=c;
+ if(t===1){nr=c;nc=7-r;}
+ else if(t===2){nr=7-r;nc=7-c;}
+ else if(t===3){nr=7-c;nc=r;}
+ else if(t===4){nr=r;nc=7-c;}
+ else if(t===5){nr=7-r;nc=c;}
+ else if(t===6){nr=c;nc=r;}
+ else if(t===7){nr=7-c;nc=7-r;}
+ return nr*8+nc;
+}
+function cellsToMask(cells,t=0){
+ let lo=0,hi=0;
+ for(const [r,c] of cells){
+   const x=transformIndex(r*8+c,t);
+   if(x<32)lo=(lo|(1<<x))>>>0;
+   else hi=(hi|(1<<(x-32)))>>>0;
+ }
+ return [lo>>>0,hi>>>0];
+}
+function fixedMaskTable(fixedIds){
+ const table={};
+ for(const id of fixedIds){
+   table[id]=[];
+   for(let t=0;t<8;t++)table[id][t]=cellsToMask(pieces[id].placed,INV_T[t]);
+ }
+ return table;
+}
+function variantMatches(s,t,fixedIds,table){
+ for(const id of fixedIds){
+   const pi=pieceIndex[id],m=table[id][t];
+   if(dbLo[pi][s]!==m[0]||dbHi[pi][s]!==m[1])return false;
+ }
+ return true;
+}
+function matchingVariants(fixedIds){
+ if(!SOLUTIONS.length)return {codes:[],solutionCount:0};
+ const table=fixedMaskTable(fixedIds),codes=[];
+ let solutionCount=0;
+ for(let s=0;s<SOLUTIONS.length;s++){
+   let any=false;
+   for(let t=0;t<8;t++){
+     if(variantMatches(s,t,fixedIds,table)){
+       codes.push((s<<3)|t);
+       any=true;
      }
-     if(!list.length)return false;
-     if(opts===null||list.length<opts.length){best=k;opts=list;if(list.length===1)break;}
    }
-   for(const p of opts){
-     used.add(p.id);solution[p.id]=p.cells.map(a=>[...a]);
-     p.keys.forEach(k=>covered.add(k));
-     if(dfs())return true;
-     p.keys.forEach(k=>covered.delete(k));
-     used.delete(p.id);delete solution[p.id];
-   }
-   return false;
+   if(any)solutionCount++;
  }
- return dfs()?solution:null;
+ return {codes,solutionCount};
 }
-function sameCells(a,b){
- if(!a||!b||a.length!==b.length)return false;
- const A=[...a].map(x=>x.join(",")).sort().join(";");
- const B=[...b].map(x=>x.join(",")).sort().join(";");
- return A===B;
+function variantPieceCells(code,id){
+ const s=code>>3,t=code&7,pi=pieceIndex[id],out=[];
+ let lo=dbLo[pi][s]>>>0,hi=dbHi[pi][s]>>>0;
+ for(let b=0;b<32;b++)if(((lo>>>b)&1)===1){
+   const x=transformIndex(b,t);out.push([Math.floor(x/8),x%8]);
+ }
+ for(let b=0;b<32;b++)if(((hi>>>b)&1)===1){
+   const x=transformIndex(b+32,t);out.push([Math.floor(x/8),x%8]);
+ }
+ out.sort((a,b)=>a[0]-b[0]||a[1]-b[1]);
+ return out;
 }
-function solveFromScratch(){
- const saved=ids.map(id=>({id,placed:pieces[id].placed,floating:pieces[id].floating}));
- ids.forEach(id=>{pieces[id].placed=null;pieces[id].floating=false;});
- const solution=solveHint(new Set());
- saved.forEach(s=>{pieces[s.id].placed=s.placed;pieces[s.id].floating=s.floating;});
- return solution;
+function cellsKey(cells){return cells.map(([r,c])=>r*8+c).sort((a,b)=>a-b).join(",");}
+function placementDistribution(codes,id){
+ const map=new Map(),heat=new Uint32Array(64);
+ for(const code of codes){
+   const cells=variantPieceCells(code,id),key=cellsKey(cells);
+   let g=map.get(key);
+   if(!g){g={cells,count:0,solutions:new Set()};map.set(key,g);}
+   g.count++;
+   g.solutions.add(code>>3);
+   for(const [r,c] of cells)heat[r*8+c]++;
+ }
+ let best=null;
+ for(const g of map.values())if(!best||g.solutions.size>best.solutions.size||(g.solutions.size===best.solutions.size&&g.count>best.count))best=g;
+ let max=0;for(const n of heat)max=Math.max(max,n);
+ const areaCells=[];
+ if(max)for(let i=0;i<64;i++)if(heat[i])areaCells.push({r:Math.floor(i/8),c:i%8,score:heat[i]/max});
+ return {distinct:map.size,best,areaCells};
+}
+function chooseNextPiece(codes,choices){
+ let pick=null;
+ for(const id of choices){
+   const d=placementDistribution(codes,id);
+   const score=[d.distinct,-(d.best?d.best.solutions.size:0)];
+   if(!pick||score[0]<pick.score[0]||(score[0]===pick.score[0]&&score[1]<pick.score[1]))pick={id,d,score};
+ }
+ return pick;
+}
+function bestRepair(fixedIds){
+ if(!fixedIds.length||!SOLUTIONS.length)return null;
+ const table=fixedMaskTable(fixedIds);
+ let bestScore=-1,groups=new Map();
+ for(let s=0;s<SOLUTIONS.length;s++)for(let t=0;t<8;t++){
+   const good=[],wrong=[];
+   for(const id of fixedIds){
+     const pi=pieceIndex[id],m=table[id][t];
+     if(dbLo[pi][s]===m[0]&&dbHi[pi][s]===m[1])good.push(id);
+     else wrong.push(id);
+   }
+   const score=good.length;
+   if(score<bestScore)continue;
+   if(score>bestScore){bestScore=score;groups=new Map();}
+   const key=wrong.join("|");
+   let g=groups.get(key);
+   if(!g){g={wrongIds:wrong,keepIds:good,count:0,code:(s<<3)|t};groups.set(key,g);}
+   g.count++;
+ }
+ let chosen=null;
+ for(const g of groups.values())if(!chosen||g.count>chosen.count)chosen=g;
+ if(!chosen)return null;
+ const recovered=matchingVariants(chosen.keepIds);
+ const focus=chooseNextPiece(recovered.codes,chosen.wrongIds);
+ return {
+   type:"repair",
+   wrongIds:chosen.wrongIds,
+   goodIds:chosen.keepIds,
+   candidateCount:recovered.solutionCount,
+   variantCount:recovered.codes.length,
+   piece:focus?focus.id:chosen.wrongIds[0],
+   areaCells:focus?focus.d.areaCells:[],
+   cells:focus&&focus.d.best?focus.d.best.cells:variantPieceCells(chosen.code,chosen.wrongIds[0]),
+   placementCount:focus?focus.d.distinct:1
+ };
 }
 function buildHintPlan(){
- let solution=solveHint(new Set());
- if(solution){
-   const id=ids.find(x=>!pieces[x].placed||pieces[x].floating);
-   if(id)return {type:"place",piece:id,cells:solution[id],move:false};
+ if(!SOLUTIONS.length)return {type:"loading"};
+ const fixedIds=ids.filter(id=>pieces[id].placed&&!pieces[id].floating);
+ const matched=matchingVariants(fixedIds);
+ if(matched.codes.length){
+   const choices=ids.filter(id=>!pieces[id].placed||pieces[id].floating);
+   const focus=choices.length?chooseNextPiece(matched.codes,choices):null;
+   return {
+     type:"route",
+     goodIds:fixedIds,
+     wrongIds:[],
+     candidateCount:matched.solutionCount,
+     variantCount:matched.codes.length,
+     piece:focus?focus.id:null,
+     areaCells:focus?focus.d.areaCells:[],
+     cells:focus&&focus.d.best?focus.d.best.cells:null,
+     placementCount:focus?focus.d.distinct:0
+   };
  }
- const solids=ids.filter(id=>pieces[id].placed&&!pieces[id].floating);
- for(const id of solids){
-   solution=solveHint(new Set([id]));
-   if(solution&&solution[id])return {type:"place",piece:id,cells:solution[id],move:true};
- }
- const fresh=solveFromScratch();
- if(fresh){
-   const returnIds=solids.filter(id=>!sameCells(pieces[id].placed,fresh[id]));
-   if(returnIds.length)return {type:"return",returnIds};
- }
- return null;
+ return bestRepair(fixedIds)||{type:"none"};
 }
 function resetHintPlan(){
- hintStage=0;hintPlan=null;
+ hintStage=0;
+ hintPlan=null;
 }
 function useHint(){
+ if(!SOLUTIONS.length){
+   setMsg("HINT：16,146解DBを読み込めませんでした","bad");
+   haptic(18);
+   return;
+ }
  if(hintStage===0||hintStage>=3||!hintPlan){
    hintPlan=buildHintPlan();
    hintStage=0;
  }
- if(!hintPlan){
-   setMsg("HINT：現在の状態から有効な手順を計算できませんでした","bad");
+ if(!hintPlan||hintPlan.type==="none"){
+   setMsg("HINT：正解ルートを特定できませんでした","bad");
    haptic(18);
    return;
  }
  hintCount++;
  hintCountEl.textContent=hintCount;
-
- if(hintPlan.type==="return"){
-   hintStage=1;
-   renderAll();
-   const names=hintPlan.returnIds.join("・");
-   setMsg("HINT："+names+" を長押ししてWAITへ戻そう","bad");
-   haptic(10);
-   return;
- }
-
  hintStage++;
  renderAll();
- const id=hintPlan.piece;
- if(hintStage===1)setMsg("HINT 1："+id+(hintPlan.move?" を動かそう":" を使おう"),"ok");
- else if(hintStage===2)setMsg("HINT 2：光っているエリアを狙おう","ok");
- else setMsg("HINT 3：半透明の形が正解位置","ok");
+
+ if(hintPlan.type==="repair"){
+   const names=hintPlan.wrongIds.join("・");
+   if(hintStage===1)setMsg("候補0 → 赤い "+names+" を直せば "+hintPlan.candidateCount+"通りに復帰","bad");
+   else if(hintStage===2)setMsg(hintPlan.piece+" の置き直し候補を表示（"+hintPlan.placementCount+"パターン）","ok");
+   else setMsg(hintPlan.piece+" の有力な置き直し位置を表示","ok");
+ }else{
+   const n=hintPlan.candidateCount.toLocaleString("ja-JP");
+   if(hintStage===1){
+     setMsg("正解ルート "+n+"通り｜シアン=そのままOK"+(hintPlan.piece?"｜次は "+hintPlan.piece:""),"ok");
+   }else if(hintStage===2){
+     setMsg(hintPlan.piece+" が入り得る場所（"+hintPlan.placementCount+"パターン）","ok");
+   }else{
+     setMsg(hintPlan.piece+" の有力な正解位置を表示","ok");
+   }
+ }
  haptic(10);
 }
 function transformPiece(id,kind){
@@ -669,7 +783,11 @@ function renderBoard(){
      b.classList.add("filled");b.dataset.piece=v;b.style.background=colors[ids.indexOf(v)];
      if(v==="CORE")b.classList.add("core");
      if(v===justPlaced)b.classList.add("confirm-pop");
-     if(hintPlan&&hintStage===1&&((hintPlan.type==="return"&&hintPlan.returnIds.includes(v))||(hintPlan.type!=="return"&&v===hintPlan.piece)))b.classList.add("hint-focus");
+     if(hintPlan&&hintStage>=1){
+       if(hintPlan.goodIds&&hintPlan.goodIds.includes(v))b.classList.add("hint-good");
+       if(hintPlan.wrongIds&&hintPlan.wrongIds.includes(v))b.classList.add("hint-bad");
+       if(hintStage>=2&&v===hintPlan.piece)b.classList.add("hint-focus");
+     }
    }
    b.addEventListener("pointerdown",e=>{
      if(v)beginGesture(v,e);
@@ -681,6 +799,11 @@ function renderBoard(){
    const a=placementAnchor(cp.placed);
    const core=document.createElement("div");
    core.className="core-device";
+   if(hintPlan&&hintStage>=1){
+     if(hintPlan.goodIds&&hintPlan.goodIds.includes("CORE"))core.classList.add("hint-good");
+     if(hintPlan.wrongIds&&hintPlan.wrongIds.includes("CORE"))core.classList.add("hint-bad");
+     if(hintStage>=2&&hintPlan.piece==="CORE")core.classList.add("hint-focus");
+   }
    core.style.left="calc(var(--cell-size) * "+a.c+")";
    core.style.top="calc(var(--cell-size) * "+a.r+")";
    core.setAttribute("aria-label","CORE 2×2");
@@ -696,27 +819,25 @@ function renderBoard(){
    if(p.floating&&p.placed)addPreviewCells(p.placed,id,true,true);
  });
 
- if(hintPlan&&hintPlan.type!=="return"&&hintStage>=2&&hintPlan.cells){
-   const rs=hintPlan.cells.map(a=>a[0]),cs=hintPlan.cells.map(a=>a[1]);
-   const minR=Math.min(...rs),maxR=Math.max(...rs),minC=Math.min(...cs),maxC=Math.max(...cs);
-   if(hintStage===2){
-     const z=document.createElement("div");
-     z.className="hint-zone";
-     z.style.left="calc(var(--cell-size) * "+minC+" - 3px)";
-     z.style.top="calc(var(--cell-size) * "+minR+" - 3px)";
-     z.style.width="calc(var(--cell-size) * "+(maxC-minC+1)+" + 6px)";
-     z.style.height="calc(var(--cell-size) * "+(maxR-minR+1)+" + 6px)";
-     board.appendChild(z);
-   }else{
-     hintPlan.cells.forEach(([r,c])=>{
-       const x=document.createElement("div");
-       x.className="hint-cell";
-       x.style.left="calc(var(--cell-size) * "+c+")";
-       x.style.top="calc(var(--cell-size) * "+r+")";
-       x.style.background=colors[ids.indexOf(hintPlan.piece)];
-       board.appendChild(x);
-     });
-   }
+ if(hintPlan&&hintStage===2&&hintPlan.areaCells&&hintPlan.areaCells.length){
+   hintPlan.areaCells.forEach(a=>{
+     const x=document.createElement("div");
+     x.className="hint-area-cell";
+     x.style.left="calc(var(--cell-size) * "+a.c+")";
+     x.style.top="calc(var(--cell-size) * "+a.r+")";
+     x.style.opacity=String(.16+.58*a.score);
+     board.appendChild(x);
+   });
+ }
+ if(hintPlan&&hintStage>=3&&hintPlan.cells&&hintPlan.piece){
+   hintPlan.cells.forEach(([r,c])=>{
+     const x=document.createElement("div");
+     x.className="hint-cell";
+     x.style.left="calc(var(--cell-size) * "+c+")";
+     x.style.top="calc(var(--cell-size) * "+r+")";
+     x.style.background=colors[ids.indexOf(hintPlan.piece)];
+     board.appendChild(x);
+   });
  }
 
  if(justPlaced)setTimeout(()=>{justPlaced=null;},260);
@@ -727,7 +848,11 @@ function renderTray(){
    const b=document.createElement("button");
    b.type="button";b.className="piece";
    if(id===selected)b.classList.add("selected");
-   if(hintPlan&&hintStage===1&&((hintPlan.type==="return"&&hintPlan.returnIds.includes(id))||(hintPlan.type!=="return"&&id===hintPlan.piece)))b.classList.add("hint-focus");
+   if(hintPlan&&hintStage>=1){
+     if(hintPlan.goodIds&&hintPlan.goodIds.includes(id))b.classList.add("hint-good");
+     if(hintPlan.wrongIds&&hintPlan.wrongIds.includes(id))b.classList.add("hint-bad");
+     if(id===hintPlan.piece)b.classList.add("hint-focus");
+   }
    if(pieces[id].placed&&!pieces[id].floating)b.classList.add("placed");
    if(pieces[id].floating)b.classList.add("selected");
    const n=document.createElement("span");n.className="piece-name";n.textContent=id==="CORE"?"CORE":id;
@@ -783,7 +908,7 @@ $("#again").addEventListener("click",reset);
 
 renderAll();
 requestAnimationFrame(sizeBoard);
-setMsg("タップ=回転 / 横フリック=反転 / ドラッグ=移動 / 長押し=WAIT");
+setMsg(SOLUTION_TOTAL.toLocaleString("ja-JP")+"解DB READY / 長押し=WAIT");
 })();
 </script>
 </body>
