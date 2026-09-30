@@ -313,6 +313,14 @@ function pointerOnCore(x,y){
  const left=r.left+cell*3,right=r.left+cell*5,top=r.top+cell*3,bottom=r.top+cell*5;
  return x>=left&&x<=right&&y>=top&&y<=bottom;
 }
+function pieceOverCoreAt(x,y){
+ if(!selected)return false;
+ const t=targetFromPointer(x,y);
+ return pieces[selected].shape.some(([r,c])=>blocked.has((t.r+r)+","+(t.c+c)));
+}
+function shouldReturnToWait(x,y){
+ return pointerOnCore(x,y)||pieceOverCoreAt(x,y);
+}
 function placementAnchor(cells){
  return {r:Math.min(...cells.map(a=>a[0])),c:Math.min(...cells.map(a=>a[1]))};
 }
@@ -368,7 +376,7 @@ function beginDrag(){
 function updateDragTarget(x,y){
  if(!drag)return;
  moveDragVisual(x,y);
- const onCore=pointerOnCore(x,y);
+ const onCore=shouldReturnToWait(x,y);
  board.classList.toggle("return-mode",onCore);
  if(onCore){
    target=null;
@@ -447,7 +455,7 @@ function finishGesture(e){
  }
 
  if(g.dragging){
-   if(pointerOnCore(e.clientX,e.clientY)){
+   if(shouldReturnToWait(e.clientX,e.clientY)){
      gesture=null;
      returnToWait(g.id);
    }else if(target&&valid(ghostCells())){
