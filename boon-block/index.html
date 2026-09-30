@@ -75,6 +75,12 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 .preview-cell::after{content:"";position:absolute;left:18%;top:12%;width:42%;height:16%;border-radius:99px;background:rgba(255,255,255,.26);transform:rotate(-8deg)}
 .preview-cell.bad{opacity:.48;outline-color:#ff6f88;box-shadow:inset 0 2px 0 rgba(255,255,255,.25),0 0 9px rgba(255,94,120,.22)}
 .preview-cell.interactive{pointer-events:auto;touch-action:none;cursor:grab}
+.cell.hint-focus{filter:brightness(1.35);outline:2px solid #fff3a3;outline-offset:-3px;animation:hintPulse .9s ease-in-out infinite alternate}
+.piece.hint-focus{outline:2px solid #fff3a3;outline-offset:1px;box-shadow:0 0 16px rgba(255,234,117,.34)}
+.hint-zone{position:absolute;z-index:6;pointer-events:none;border:2px dashed rgba(116,232,255,.92);border-radius:10px;background:rgba(93,220,255,.08);box-shadow:0 0 16px rgba(93,220,255,.16);animation:hintZone 1s ease-in-out infinite alternate}
+.hint-cell{position:absolute;z-index:9;width:var(--cell-size);height:var(--cell-size);pointer-events:none;border-radius:4px;opacity:.52;outline:2px solid #dffbff;outline-offset:-2px;box-shadow:0 0 12px rgba(93,220,255,.44),inset 0 2px 0 rgba(255,255,255,.28)}
+@keyframes hintPulse{from{filter:brightness(1.1)}to{filter:brightness(1.5)}}
+@keyframes hintZone{from{opacity:.58}to{opacity:1}}
 .cell.confirm-pop{animation:blockLock .22s ease-out}
 @keyframes blockLock{0%{transform:scale(.84);filter:brightness(1.35)}70%{transform:scale(1.05)}100%{transform:scale(1)}}
 .core-device{position:absolute;z-index:5;left:calc(var(--cell-size) * 3);top:calc(var(--cell-size) * 3);width:calc(var(--cell-size) * 2);height:calc(var(--cell-size) * 2);pointer-events:none;border-radius:13px;border:1px solid rgba(158,235,255,.58);background:
@@ -89,8 +95,11 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 @keyframes boardCelebrate{0%,100%{filter:brightness(1)}50%{filter:brightness(1.28)}}
 .msg{min-height:15px;margin:3px 2px 0;color:var(--muted);font-size:10px;text-align:center;line-height:15px}
 .msg.ok{color:var(--ok)}.msg.bad{color:var(--danger)}
-.reset-mini{width:38px;height:38px;border:1px solid rgba(83,125,165,.5);border-radius:10px;background:linear-gradient(180deg,#203652,#15263d);font-weight:900;font-size:16px;line-height:1;box-shadow:inset 0 1px 0 rgba(255,255,255,.06);padding:0}
-.reset-mini:active,.piece:active{transform:scale(.97)}
+.hint-mini,.reset-mini{height:38px;border:1px solid rgba(83,125,165,.5);border-radius:10px;background:linear-gradient(180deg,#203652,#15263d);font-weight:900;line-height:1;box-shadow:inset 0 1px 0 rgba(255,255,255,.06);padding:0}
+.hint-mini{width:48px;font-size:8px;letter-spacing:.03em;color:#dff9ff}
+.hint-mini span{color:var(--accent);font-size:9px}
+.reset-mini{width:38px;font-size:16px}
+.hint-mini:active,.reset-mini:active,.piece:active{transform:scale(.97)}
 .gesture-guide{display:grid;grid-template-columns:repeat(4,1fr);gap:3px;margin-top:5px;flex:0 0 auto}
 .gesture-chip{border:1px solid rgba(83,125,165,.30);background:rgba(13,27,46,.68);border-radius:9px;padding:4px 2px;text-align:center;font-size:9px;color:var(--muted);line-height:1.15}
 .gesture-chip b{display:inline;color:var(--text);font-size:10px;margin-right:2px}
@@ -117,6 +126,14 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 .drag-visual.show{display:block}
 .drag-grid{display:grid;gap:2px}
 .drag-cell{width:25px;height:25px;border-radius:6px;border:1px solid rgba(255,255,255,.5);box-shadow:inset 0 2px 0 rgba(255,255,255,.2),inset 0 -3px 5px rgba(0,0,0,.15)}
+.hold-ring{position:fixed;left:0;top:0;width:54px;height:54px;z-index:36;pointer-events:none;transform:translate(-50%,-50%);opacity:0;transition:opacity .08s ease}
+.hold-ring.show{opacity:1}
+.hold-ring svg{width:100%;height:100%;transform:rotate(-90deg);filter:drop-shadow(0 0 6px rgba(93,220,255,.35))}
+.hold-ring .track{fill:rgba(7,17,31,.55);stroke:rgba(142,167,191,.28);stroke-width:4}
+.hold-ring .progress{fill:none;stroke:#74e8ff;stroke-width:5;stroke-linecap:round;stroke-dasharray:138.23;stroke-dashoffset:138.23}
+.hold-ring.show .progress{animation:holdFill .52s linear forwards}
+.hold-ring .hold-label{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:950;letter-spacing:.06em;color:#eaffff}
+@keyframes holdFill{to{stroke-dashoffset:0}}
 .overlay{position:fixed;inset:0;background:rgba(5,8,18,.78);display:none;align-items:center;justify-content:center;padding:24px;z-index:40}
 .overlay.show{display:flex}
 .clear-card{width:min(360px,100%);background:linear-gradient(180deg,#14253f,#0b1728);border:1px solid rgba(113,184,225,.42);border-radius:24px;padding:24px;text-align:center;box-shadow:0 18px 60px rgba(0,0,0,.38),inset 0 1px 0 rgba(255,255,255,.05)}
@@ -126,7 +143,7 @@ button{font:inherit;color:inherit;touch-action:manipulation}
   .app{padding-left:6px;padding-right:6px}.brand{font-size:14px}.sub{display:none}
   .stat{min-width:44px;padding:3px 4px}.gesture-chip{font-size:8px;padding:3px 1px}.gesture-chip b{font-size:9px}
   .piece{height:52px;min-height:52px}.mini{gap:1px}.mcell{width:9px;height:9px}
-  .reset-mini{width:34px;height:34px}
+  .hint-mini,.reset-mini{height:34px}.hint-mini{width:43px;font-size:7px}.reset-mini{width:34px}
 }
 </style>
 </head>
@@ -142,13 +159,14 @@ button{font:inherit;color:inherit;touch-action:manipulation}
         <div class="stat"><b id="time">00:00</b><span>TIME</span></div>
         <div class="stat"><b id="moves">0</b><span>MOVE</span></div>
       </div>
+      <button id="hint" type="button" class="hint-mini" aria-label="ヒント">HINT <span id="hintCount">0</span></button>
       <button id="reset" type="button" class="reset-mini" aria-label="最初から">↺</button>
     </div>
   </header>
 
   <section class="board-wrap">
     <div id="board" class="board" aria-label="8×8パズル盤"></div>
-    <div id="msg" class="msg">盤面のブロックを長押しすると WAIT へ戻ります</div>
+    <div id="msg" class="msg">長押し=WAIT / HINTは3段階</div>
   </section>
 
   <section class="gesture-guide" aria-label="操作方法">
@@ -163,6 +181,10 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 </main>
 
 <div id="dragVisual" class="drag-visual" aria-hidden="true"></div>
+<div id="holdRing" class="hold-ring" aria-hidden="true">
+  <svg viewBox="0 0 54 54"><circle class="track" cx="27" cy="27" r="22"></circle><circle class="progress" cx="27" cy="27" r="22"></circle></svg>
+  <div class="hold-label">WAIT</div>
+</div>
 
 <div id="overlay" class="overlay" role="dialog" aria-modal="true" aria-labelledby="clearTitle">
   <div class="clear-card">
@@ -193,7 +215,7 @@ const blocked=new Set(["3,3","3,4","4,3","4,4"]);
 const colors=["var(--c0)","var(--c1)","var(--c2)","var(--c3)","var(--c4)","var(--c5)","var(--c6)","var(--c7)","var(--c8)","var(--c9)","var(--c10)","var(--c11)"];
 const $=s=>document.querySelector(s);
 const board=$("#board"),tray=$("#tray"),msg=$("#msg");
-const timeEl=$("#time"),movesEl=$("#moves"),countEl=$("#count"),overlay=$("#overlay"),clearText=$("#clearText"),dragVisual=$("#dragVisual");
+const timeEl=$("#time"),movesEl=$("#moves"),countEl=$("#count"),overlay=$("#overlay"),clearText=$("#clearText"),dragVisual=$("#dragVisual"),holdRing=$("#holdRing"),hintCountEl=$("#hintCount");
 
 const TAP_MOVE=10;
 const DRAG_START=13;
@@ -213,6 +235,7 @@ const pieces={};ids.forEach(id=>pieces[id]={shape:norm(defs[id]),placed:null,flo
 
 let selected="F",target=null,moves=0,start=0,timer=0;
 let gesture=null,drag=null,justPlaced=null,longPressTimer=null;
+let hintCount=0,hintStage=0,hintPlan=null;
 
 function occupied(ignore){
  const m=new Map();blocked.forEach(k=>m.set(k,"CORE"));
@@ -304,7 +327,114 @@ function pointerNearBoard(x,y){
 function placementAnchor(cells){
  return {r:Math.min(...cells.map(a=>a[0])),c:Math.min(...cells.map(a=>a[1]))};
 }
+const boardKeys=[];
+for(let r=0;r<8;r++)for(let c=0;c<8;c++)if(!blocked.has(r+","+c))boardKeys.push(r+","+c);
+
+function uniqueOrients(shape){
+ const seen=new Map();
+ let a=norm(shape);
+ for(let f=0;f<2;f++){
+   let t=f?flip(a):a;
+   for(let i=0;i<4;i++){
+     const n=norm(t),k=n.map(x=>x.join(",")).join(";");
+     if(!seen.has(k))seen.set(k,n);
+     t=rot(t);
+   }
+ }
+ return [...seen.values()];
+}
+const hintPlacements={},hintByCell={};
+boardKeys.forEach(k=>hintByCell[k]=[]);
+ids.forEach(id=>{
+ hintPlacements[id]=[];
+ uniqueOrients(defs[id]).forEach(shape=>{
+   const b=bounds(shape);
+   for(let r0=0;r0<=8-b.h;r0++)for(let c0=0;c0<=8-b.w;c0++){
+     const cells=shape.map(([r,c])=>[r0+r,c0+c]);
+     if(cells.some(([r,c])=>blocked.has(r+","+c)))continue;
+     const p={id,cells,keys:cells.map(([r,c])=>r+","+c)};
+     hintPlacements[id].push(p);
+     p.keys.forEach(k=>hintByCell[k].push(p));
+   }
+ });
+});
+
+function solveHint(excludedFixed=null){
+ const covered=new Set(),used=new Set(),solution={};
+ for(const id of ids){
+   const p=pieces[id];
+   if(id!==excludedFixed&&p.placed&&!p.floating){
+     used.add(id);
+     solution[id]=p.placed.map(a=>[...a]);
+     p.placed.forEach(([r,c])=>covered.add(r+","+c));
+   }
+ }
+ let nodes=0;
+ function dfs(){
+   if(++nodes>180000)return false;
+   if(covered.size===boardKeys.length)return true;
+   let best=null,opts=null;
+   for(const k of boardKeys){
+     if(covered.has(k))continue;
+     const list=[];
+     for(const p of hintByCell[k]){
+       if(used.has(p.id))continue;
+       let ok=true;
+       for(const q of p.keys)if(covered.has(q)){ok=false;break;}
+       if(ok)list.push(p);
+     }
+     if(!list.length)return false;
+     if(opts===null||list.length<opts.length){best=k;opts=list;if(list.length===1)break;}
+   }
+   for(const p of opts){
+     used.add(p.id);solution[p.id]=p.cells.map(a=>[...a]);
+     p.keys.forEach(k=>covered.add(k));
+     if(dfs())return true;
+     p.keys.forEach(k=>covered.delete(k));
+     used.delete(p.id);delete solution[p.id];
+   }
+   return false;
+ }
+ return dfs()?solution:null;
+}
+function buildHintPlan(){
+ let solution=solveHint(null);
+ if(solution){
+   const id=ids.find(x=>!pieces[x].placed||pieces[x].floating);
+   if(id)return {piece:id,cells:solution[id],move:false};
+ }
+ const solids=ids.filter(id=>pieces[id].placed&&!pieces[id].floating);
+ for(const id of solids){
+   solution=solveHint(id);
+   if(solution&&solution[id])return {piece:id,cells:solution[id],move:true};
+ }
+ return null;
+}
+function resetHintPlan(){
+ hintStage=0;hintPlan=null;
+}
+function useHint(){
+ if(hintStage===0||hintStage>=3||!hintPlan){
+   hintPlan=buildHintPlan();
+   hintStage=0;
+ }
+ if(!hintPlan){
+   setMsg("HINT：いくつかのブロックをWAITに戻してみよう","bad");
+   haptic(18);
+   return;
+ }
+ hintStage++;
+ hintCount++;
+ hintCountEl.textContent=hintCount;
+ renderAll();
+ const id=hintPlan.piece;
+ if(hintStage===1)setMsg("HINT 1："+id+(hintPlan.move?" を動かそう":" を使おう"),"ok");
+ else if(hintStage===2)setMsg("HINT 2：光っているエリアを狙おう","ok");
+ else setMsg("HINT 3：半透明の形が正解位置","ok");
+ haptic(10);
+}
 function transformPiece(id,kind){
+ resetHintPlan();
  selected=id;
  const p=pieces[id],nextShape=kind==="rotate"?rot(p.shape):flip(p.shape);
  if(p.placed){
@@ -327,21 +457,31 @@ function transformPiece(id,kind){
  haptic();
 }
 
+function showHoldRing(x,y){
+ holdRing.style.left=x+"px";
+ holdRing.style.top=y+"px";
+ holdRing.classList.remove("show");
+ void holdRing.offsetWidth;
+ holdRing.classList.add("show");
+}
 function clearLongPress(){
  if(longPressTimer){
    clearTimeout(longPressTimer);
    longPressTimer=null;
  }
+ holdRing.classList.remove("show");
 }
-function armLongPress(id,pointerId){
+function armLongPress(id,pointerId,x,y){
  clearLongPress();
  if(!pieces[id].placed)return;
+ showHoldRing(x,y);
  longPressTimer=setTimeout(()=>{
    if(!gesture||gesture.id!==id||gesture.pointerId!==pointerId||gesture.dragging)return;
    const dx=gesture.lastX-gesture.startX,dy=gesture.lastY-gesture.startY;
    if(Math.hypot(dx,dy)>LONG_PRESS_MOVE)return;
    gesture=null;
    longPressTimer=null;
+   holdRing.classList.remove("show");
    returnToWait(id);
  },LONG_PRESS_MS);
 }
@@ -357,13 +497,14 @@ function beginGesture(id,e){
    originalPlacement:pieces[id].placed?pieces[id].placed.map(a=>[...a]):null,
    originalFloating:!!pieces[id].floating
  };
- armLongPress(id,e.pointerId);
+ armLongPress(id,e.pointerId,e.clientX,e.clientY);
  if(pieces[id].placed)setMsg("そのまま長押しで WAIT に戻せます");
  renderTray();
 }
 function beginDrag(){
  if(!gesture||gesture.dragging)return;
  clearLongPress();
+ resetHintPlan();
  gesture.dragging=true;
  selected=gesture.id;
  if(pieces[selected].placed)pieces[selected].placed=null;
@@ -395,6 +536,7 @@ function restoreOriginal(){
  dragVisual.classList.remove("show");
 }
 function returnToWait(id){
+ resetHintPlan();
  pieces[id].placed=null;
  pieces[id].floating=false;
  selected=id;
@@ -406,6 +548,7 @@ function returnToWait(id){
  haptic(16);
 }
 function lockSelected(){
+ resetHintPlan();
  const cells=ghostCells();
  if(!valid(cells))return false;
  startClock();
@@ -424,7 +567,7 @@ function lockSelected(){
  haptic(18);
  if(ids.every(id=>pieces[id].placed&&!pieces[id].floating)){
    clearInterval(timer);timeEl.textContent=fmt(Date.now()-start);
-   clearText.textContent="TIME "+timeEl.textContent+" / MOVE "+moves;
+   clearText.textContent="TIME "+timeEl.textContent+" / MOVE "+moves+" / HINT "+hintCount;
    board.classList.add("clear-pulse");
    haptic(35);
    setTimeout(()=>overlay.classList.add("show"),620);
@@ -489,6 +632,7 @@ function renderBoard(){
    else if(v){
      b.classList.add("filled");b.dataset.piece=v;b.style.background=colors[ids.indexOf(v)];
      if(v===justPlaced)b.classList.add("confirm-pop");
+     if(hintPlan&&hintStage===1&&v===hintPlan.piece)b.classList.add("hint-focus");
    }
    b.addEventListener("pointerdown",e=>{
      if(v==="CORE")return;
@@ -509,6 +653,29 @@ function renderBoard(){
    if(p.floating&&p.placed)addPreviewCells(p.placed,id,true,true);
  });
 
+ if(hintPlan&&hintStage>=2&&hintPlan.cells){
+   const rs=hintPlan.cells.map(a=>a[0]),cs=hintPlan.cells.map(a=>a[1]);
+   const minR=Math.min(...rs),maxR=Math.max(...rs),minC=Math.min(...cs),maxC=Math.max(...cs);
+   if(hintStage===2){
+     const z=document.createElement("div");
+     z.className="hint-zone";
+     z.style.left="calc(var(--cell-size) * "+minC+" - 3px)";
+     z.style.top="calc(var(--cell-size) * "+minR+" - 3px)";
+     z.style.width="calc(var(--cell-size) * "+(maxC-minC+1)+" + 6px)";
+     z.style.height="calc(var(--cell-size) * "+(maxR-minR+1)+" + 6px)";
+     board.appendChild(z);
+   }else{
+     hintPlan.cells.forEach(([r,c])=>{
+       const x=document.createElement("div");
+       x.className="hint-cell";
+       x.style.left="calc(var(--cell-size) * "+c+")";
+       x.style.top="calc(var(--cell-size) * "+r+")";
+       x.style.background=colors[ids.indexOf(hintPlan.piece)];
+       board.appendChild(x);
+     });
+   }
+ }
+
  if(justPlaced)setTimeout(()=>{justPlaced=null;},260);
 }
 function renderTray(){
@@ -517,6 +684,7 @@ function renderTray(){
    const b=document.createElement("button");
    b.type="button";b.className="piece";
    if(id===selected)b.classList.add("selected");
+   if(hintPlan&&hintStage===1&&id===hintPlan.piece)b.classList.add("hint-focus");
    if(pieces[id].placed&&!pieces[id].floating)b.classList.add("placed");
    if(pieces[id].floating)b.classList.add("selected");
    const n=document.createElement("span");n.className="piece-name";n.textContent=id;
@@ -557,12 +725,15 @@ function reset(){
  movesEl.textContent="0";timeEl.textContent="00:00";
  ids.forEach(id=>{pieces[id].shape=norm(defs[id]);pieces[id].placed=null;pieces[id].floating=false;});
  selected="F";target=null;gesture=null;drag=null;justPlaced=null;
+ hintCount=0;hintCountEl.textContent="0";resetHintPlan();
+ holdRing.classList.remove("show");
  dragVisual.classList.remove("show");
  overlay.classList.remove("show");
  board.classList.remove("clear-pulse");
  setMsg("タップ=回転 / 横フリック=反転 / ドラッグ=移動 / 長押し=WAIT");
  renderAll();
 }
+$("#hint").addEventListener("click",useHint);
 $("#reset").addEventListener("click",reset);
 $("#again").addEventListener("click",reset);
 
