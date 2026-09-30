@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-<meta name="theme-color" content="#0b1020">
+<meta name="theme-color" content="#0b1020">\n<meta name="apple-mobile-web-app-capable" content="yes">\n<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">\n<meta name="format-detection" content="telephone=no">
 <title>BOON BLOCK</title>
 <style>
 :root{
@@ -21,7 +21,7 @@ button{font:inherit;color:inherit}
 .brand{font-weight:900;letter-spacing:.08em;font-size:19px}
 .sub{font-size:12px;color:var(--muted);margin-top:3px}
 .stats{display:grid;grid-template-columns:repeat(2,auto);gap:6px}
-.stat{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:7px 10px;text-align:center;min-width:66px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:5px 8px;text-align:center;min-width:58px}
 .stat b{display:block;font-size:15px}.stat span{display:block;color:var(--muted);font-size:10px;margin-top:1px}
 .board-wrap{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:10px}
 .board{display:grid;grid-template-columns:repeat(8,1fr);aspect-ratio:1;width:100%;overflow:hidden;border-radius:12px;border:1px solid var(--line);background:#0f162a;touch-action:manipulation}
@@ -32,7 +32,7 @@ button{font:inherit;color:inherit}
 .cell.filled::after,.cell.ghost::after{content:attr(data-piece);color:#071020}
 .cell.ghost{opacity:.48;outline:2px dashed rgba(255,255,255,.85);outline-offset:-2px}
 .cell.ghost.bad{background:var(--danger)!important;opacity:.42}
-.msg{min-height:22px;margin:8px 2px 0;color:var(--muted);font-size:13px;text-align:center}
+.msg{min-height:18px;margin:5px 2px 0;color:var(--muted);font-size:12px;text-align:center}
 .msg.ok{color:var(--ok)}.msg.bad{color:var(--danger)}
 .selected-card{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:10px;padding:10px 12px;border:1px solid var(--line);background:var(--panel);border-radius:14px}
 .sel-title{font-size:12px;color:var(--muted)}.sel-name{font-size:22px;font-weight:900;line-height:1.1}
@@ -44,7 +44,7 @@ button{font:inherit;color:inherit}
 .place{grid-column:1/-1;background:var(--accent)!important;border-color:var(--accent)!important;color:#06111a!important;font-size:16px}
 .place:disabled{opacity:.35}
 .control button:active,.reset:active,.piece:active{transform:scale(.98)}
-.tray-head{display:flex;justify-content:space-between;align-items:center;margin:14px 2px 8px;font-size:13px}
+.tray-head{display:flex;justify-content:space-between;align-items:center;margin:10px 2px 5px;font-size:12px}
 .tray-head strong{letter-spacing:.06em}.tray-head span{color:var(--muted)}
 .tray{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
 .piece{min-height:68px;border:1px solid var(--line);border-radius:13px;background:var(--panel);padding:7px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px}
@@ -56,7 +56,7 @@ button{font:inherit;color:inherit}
 .clear-card{width:min(360px,100%);background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:24px;text-align:center}
 .clear-card h2{margin:0;font-size:34px;letter-spacing:.08em}.clear-card p{color:var(--muted);line-height:1.6}
 .clear-card button{width:100%;min-height:50px;border:0;border-radius:14px;background:var(--accent);color:#06111a;font-weight:900}
-@media (min-width:560px){.tray{grid-template-columns:repeat(6,1fr)}.app{padding-left:18px;padding-right:18px}}
+@media (max-width:360px){.app{padding-left:7px;padding-right:7px}.brand{font-size:15px}.sub{display:none}.stat{min-width:52px;padding:4px 6px}.control{gap:4px}.control button{font-size:13px}.piece{min-height:50px}.mini{gap:1px}.mcell{width:8px;height:8px}}\n@media (orientation:landscape) and (max-height:520px){.app{max-width:820px}.top{margin-bottom:5px}.board-wrap{width:52%;float:left}.selected-card,.control,.tray-head,.tray,.bottom,.note{margin-left:54%}.selected-card{margin-top:0}.tray{grid-template-columns:repeat(6,1fr)}}
 </style>
 </head>
 <body>
