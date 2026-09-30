@@ -85,14 +85,11 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 .preview{min-width:68px;min-height:42px;display:flex;align-items:center;justify-content:center}
 .mini{display:grid;gap:2px}.mcell{width:9px;height:9px;border-radius:2px;background:#8090ae}
 .preview .mcell{width:14px;height:14px;border-radius:3px;background:var(--accent)}
-.control{
-  display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:7px;
-  position:sticky;bottom:calc(6px + env(safe-area-inset-bottom));z-index:8;
-  padding:6px;background:rgba(11,16,32,.94);backdrop-filter:blur(8px);
-  border:1px solid var(--line);border-radius:14px;
-}
-.control button,.reset{min-height:48px;border:1px solid rgba(83,125,165,.5);border-radius:12px;background:linear-gradient(180deg,#203652,#15263d);font-weight:850;box-shadow:inset 0 1px 0 rgba(255,255,255,.06)}
-.control button:active,.reset:active,.piece:active{transform:scale(.98)}
+.reset{min-height:48px;border:1px solid rgba(83,125,165,.5);border-radius:12px;background:linear-gradient(180deg,#203652,#15263d);font-weight:850;box-shadow:inset 0 1px 0 rgba(255,255,255,.06)}
+.reset:active,.piece:active{transform:scale(.98)}
+.gesture-guide{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-top:7px}
+.gesture-chip{border:1px solid rgba(83,125,165,.34);background:rgba(13,27,46,.72);border-radius:10px;padding:6px 4px;text-align:center;font-size:10px;color:var(--muted)}
+.gesture-chip b{display:block;color:var(--text);font-size:12px;margin-bottom:1px}
 .tray-head{display:flex;justify-content:space-between;align-items:center;margin:10px 2px 5px;font-size:12px}
 .tray-head strong{letter-spacing:.06em}.tray-head span{color:var(--muted)}
 .tray{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px}
@@ -120,7 +117,7 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 .clear-card button{width:100%;min-height:50px;border:0;border-radius:14px;background:var(--accent);color:#06111a;font-weight:900}
 @media(max-width:360px){
   .app{padding-left:7px;padding-right:7px}.brand{font-size:15px}.sub{display:none}
-  .stat{min-width:50px;padding:4px 5px}.control{gap:4px}.control button{font-size:13px}
+  .stat{min-width:50px;padding:4px 5px}.gesture-chip{font-size:9px;padding:5px 2px}.gesture-chip b{font-size:11px}
   .piece{min-height:50px}.mini{gap:1px}.mcell{width:8px;height:8px}
 }
 </style>
@@ -145,16 +142,17 @@ button{font:inherit;color:inherit;touch-action:manipulation}
     <div id="preview" class="preview"></div>
   </section>
 
-  <section class="control">
-    <button id="rotate" type="button">↻ 回転</button>
-    <button id="flip" type="button">↔ 反転</button>
+  <section class="gesture-guide" aria-label="操作方法">
+    <div class="gesture-chip"><b>タップ ↻</b>回転</div>
+    <div class="gesture-chip"><b>横フリック ↔</b>反転</div>
+    <div class="gesture-chip"><b>ドラッグ</b>移動</div>
   </section>
 
   <div class="tray-head"><strong>PIECES</strong><span><b id="count">0</b> / 12 格納</span></div>
   <section id="tray" class="tray" aria-label="ピース一覧"></section>
 
   <div class="bottom"><button id="reset" type="button" class="reset">最初から</button></div>
-  <p class="note">ピースをつかんで盤面へ。置ける場所で指を離すと、そのまま確定します。</p>
+  <p class="note">タップで回転、横フリックで反転、ドラッグで移動。置ける場所で指を離すと確定します。</p>
 </main>
 
 <div id="dragVisual" class="drag-visual" aria-hidden="true"></div>
@@ -190,6 +188,12 @@ const $=s=>document.querySelector(s);
 const board=$("#board"),tray=$("#tray"),msg=$("#msg"),selName=$("#selName"),preview=$("#preview");
 const timeEl=$("#time"),movesEl=$("#moves"),countEl=$("#count"),overlay=$("#overlay"),clearText=$("#clearText"),dragVisual=$("#dragVisual");
 
+const TAP_MOVE=10;
+const DRAG_START=13;
+const FLICK_DISTANCE=46;
+const FLICK_TIME=280;
+const FLICK_RATIO=1.45;
+
 const norm=s=>{
  const mr=Math.min(...s.map(a=>a[0])),mc=Math.min(...s.map(a=>a[1]));
  return s.map(([r,c])=>[r-mr,c-mc]).sort((a,b)=>a[0]-b[0]||a[1]-b[1]);
@@ -197,8 +201,9 @@ const norm=s=>{
 const rot=s=>norm(s.map(([r,c])=>[c,-r]));
 const flip=s=>norm(s.map(([r,c])=>[r,-c]));
 const pieces={};ids.forEach(id=>pieces[id]={shape:norm(defs[id]),placed:null});
+
 let selected="F",target=null,moves=0,start=0,timer=0;
-let drag=null,justPlaced=null;
+let gesture=null,drag=null,justPlaced=null;
 
 function occupied(ignore){
  const m=new Map();blocked.forEach(k=>m.set(k,"CORE"));
@@ -209,17 +214,19 @@ function occupied(ignore){
  });
  return m;
 }
+function validFor(id,cells){
+ const occ=occupied(id);
+ return cells.length===5&&cells.every(([r,c])=>r>=0&&r<8&&c>=0&&c<8&&!occ.has(r+","+c));
+}
 function ghostCells(){
  if(!selected||!target||pieces[selected].placed)return [];
  return pieces[selected].shape.map(([r,c])=>[target.r+r,target.c+c]);
 }
-function valid(cells){
- const occ=occupied(selected);
- return cells.length===5&&cells.every(([r,c])=>r>=0&&r<8&&c>=0&&c<8&&!occ.has(r+","+c));
-}
+function valid(cells){return validFor(selected,cells);}
 function setMsg(t,kind=""){msg.textContent=t;msg.className="msg"+(kind?" "+kind:"");}
 function fmt(ms){const s=Math.floor(ms/1000),m=Math.floor(s/60);return String(m).padStart(2,"0")+":"+String(s%60).padStart(2,"0");}
 function startClock(){if(start)return;start=Date.now();timer=setInterval(()=>timeEl.textContent=fmt(Date.now()-start),500);}
+function haptic(ms=12){if(navigator.vibrate)navigator.vibrate(ms);}
 
 function sizeBoard(){
  const wrap=board.parentElement;
@@ -227,7 +234,7 @@ function sizeBoard(){
  const cell=Math.max(30,Math.floor(available/8));
  board.style.setProperty("--cell-size",cell+"px");
 }
-window.addEventListener("resize",()=>{sizeBoard();});
+window.addEventListener("resize",sizeBoard);
 
 function bounds(shape){
  return {h:Math.max(...shape.map(a=>a[0]))+1,w:Math.max(...shape.map(a=>a[1]))+1};
@@ -266,28 +273,65 @@ function moveDragVisual(x,y){
 }
 function targetFromPointer(x,y){
  const rect=board.getBoundingClientRect(),cell=rect.width/8,b=bounds(pieces[selected].shape);
- const liftedY=y-cell*0.85;
+ const liftedY=y-cell*.85;
  const c=Math.floor((x-rect.left)/cell)-Math.floor((b.w-1)/2);
  const r=Math.floor((liftedY-rect.top)/cell)-Math.floor((b.h-1)/2);
  return {r,c};
 }
 function pointerNearBoard(x,y){
- const r=board.getBoundingClientRect(),pad=32;
+ const r=board.getBoundingClientRect(),pad=34;
  return x>=r.left-pad&&x<=r.right+pad&&y>=r.top-pad&&y<=r.bottom+pad;
 }
-function startDrag(id,e){
+function placementAnchor(cells){
+ return {r:Math.min(...cells.map(a=>a[0])),c:Math.min(...cells.map(a=>a[1]))};
+}
+function transformPiece(id,kind){
+ selected=id;
+ const p=pieces[id],nextShape=kind==="rotate"?rot(p.shape):flip(p.shape);
+ if(p.placed){
+   const a=placementAnchor(p.placed);
+   const cells=nextShape.map(([r,c])=>[a.r+r,a.c+c]);
+   if(!validFor(id,cells)){
+     renderAll();
+     setMsg(kind==="rotate"?"ここでは回せません":"ここでは反転できません","bad");
+     haptic(25);
+     return;
+   }
+   p.shape=nextShape;
+   p.placed=cells;
+   justPlaced=id;
+ }else{
+   p.shape=nextShape;
+ }
+ target=null;
+ renderAll();
+ setMsg(kind==="rotate"?"↻ 回転":"↔ 反転","ok");
+ haptic();
+}
+
+function beginGesture(id,e){
  if(e.pointerType==="mouse"&&e.button!==0)return;
  e.preventDefault();
  selected=id;
- if(pieces[id].placed)pieces[id].placed=null;
  target=null;
- drag={id,pointerId:e.pointerId};
+ gesture={
+   id,pointerId:e.pointerId,
+   startX:e.clientX,startY:e.clientY,lastX:e.clientX,lastY:e.clientY,
+   startTime:performance.now(),dragging:false,
+   originalPlacement:pieces[id].placed?pieces[id].placed.map(a=>[...a]):null
+ };
+ renderTray();renderPreview();
+}
+function beginDrag(){
+ if(!gesture||gesture.dragging)return;
+ gesture.dragging=true;
+ selected=gesture.id;
+ if(pieces[selected].placed)pieces[selected].placed=null;
+ drag={id:selected,pointerId:gesture.pointerId};
  buildDragVisual();
  dragVisual.classList.add("show");
- moveDragVisual(e.clientX,e.clientY);
- renderTray();renderPreview();
- updateDragTarget(e.clientX,e.clientY);
- setMsg("指を動かして位置を合わせる");
+ renderAll();
+ setMsg("そのまま盤面へ");
 }
 function updateDragTarget(x,y){
  if(!drag)return;
@@ -297,8 +341,16 @@ function updateDragTarget(x,y){
    renderBoard();
    setMsg(valid(ghostCells())?"ここで離すと置けます":"そこには置けません",valid(ghostCells())?"ok":"bad");
  }else{
-   target=null;renderBoard();
+   target=null;
+   renderBoard();
  }
+}
+function restoreOriginal(){
+ if(!gesture)return;
+ if(gesture.originalPlacement)pieces[gesture.id].placed=gesture.originalPlacement.map(a=>[...a]);
+ target=null;
+ drag=null;
+ dragVisual.classList.remove("show");
 }
 function lockSelected(){
  const cells=ghostCells();
@@ -311,25 +363,53 @@ function lockSelected(){
  const next=ids.find(id=>!pieces[id].placed);
  target=null;
  if(next)selected=next;
+ drag=null;
+ dragVisual.classList.remove("show");
  renderAll();
  setMsg("カチッ！","ok");
+ haptic(18);
  if(ids.every(id=>pieces[id].placed)){
    clearInterval(timer);timeEl.textContent=fmt(Date.now()-start);
    clearText.textContent="TIME "+timeEl.textContent+" / MOVE "+moves;
    board.classList.add("clear-pulse");
+   haptic(35);
    setTimeout(()=>overlay.classList.add("show"),620);
  }
  return true;
 }
-function endDrag(){
- if(!drag)return;
- drag=null;dragVisual.classList.remove("show");
- if(target&&valid(ghostCells())){
-   lockSelected();
- }else if(target){
-   target=null;renderAll();setMsg("そこには置けません","bad");
+function finishGesture(e){
+ if(!gesture||e.pointerId!==gesture.pointerId)return;
+ const g=gesture;
+ const dx=e.clientX-g.startX,dy=e.clientY-g.startY;
+ const ax=Math.abs(dx),ay=Math.abs(dy),dist=Math.hypot(dx,dy);
+ const dt=performance.now()-g.startTime;
+ const isFlick=ax>=FLICK_DISTANCE&&dt<=FLICK_TIME&&ax>ay*FLICK_RATIO;
+
+ if(isFlick){
+   if(g.dragging)restoreOriginal();
+   gesture=null;
+   transformPiece(g.id,"flip");
+   return;
+ }
+
+ if(g.dragging){
+   if(target&&valid(ghostCells())){
+     gesture=null;
+     lockSelected();
+   }else{
+     restoreOriginal();
+     gesture=null;
+     renderAll();
+     setMsg(target?"そこには置けません":"元の位置に戻しました",target?"bad":"");
+   }
+   return;
+ }
+
+ gesture=null;
+ if(dist<=TAP_MOVE){
+   transformPiece(g.id,"rotate");
  }else{
-   setMsg("盤面へドラッグしてください");
+   setMsg("ドラッグで移動 / 横フリックで反転");
  }
 }
 
@@ -347,13 +427,11 @@ function renderBoard(){
    if(ghostSet.has(k)){
      b.classList.add("ghost");
      if(!ghostOK)b.classList.add("bad");
-     b.dataset.piece=selected;
      if(ghostOK)b.style.background=colors[ids.indexOf(selected)];
    }
    b.addEventListener("pointerdown",e=>{
      if(v==="CORE")return;
-     if(v&&v!=="CORE"){startDrag(v,e);return;}
-     if(selected&&!pieces[selected].placed)startDrag(selected,e);
+     if(v&&v!=="CORE")beginGesture(v,e);
    });
    board.appendChild(b);
  }
@@ -366,19 +444,21 @@ function renderBoard(){
 function renderTray(){
  tray.innerHTML="";
  ids.forEach((id,i)=>{
-   const b=document.createElement("button");b.type="button";b.className="piece";
+   const b=document.createElement("button");
+   b.type="button";b.className="piece";
    if(id===selected)b.classList.add("selected");
    if(pieces[id].placed)b.classList.add("placed");
    const n=document.createElement("span");n.className="piece-name";n.textContent=id;
    const m=mini(defs[id]);m.querySelectorAll(".mcell").forEach(x=>x.style.background=colors[i]);
    b.append(n,m);
-   b.addEventListener("pointerdown",e=>startDrag(id,e));
+   b.addEventListener("pointerdown",e=>beginGesture(id,e));
    tray.appendChild(b);
  });
  countEl.textContent=ids.filter(id=>pieces[id].placed).length;
 }
 function renderPreview(){
- preview.innerHTML="";selName.textContent=selected;
+ preview.innerHTML="";
+ selName.textContent=selected;
  const m=mini(pieces[selected].shape,true);
  m.querySelectorAll(".mcell").forEach(x=>x.style.background=colors[ids.indexOf(selected)]);
  preview.appendChild(m);
@@ -386,40 +466,42 @@ function renderPreview(){
 function renderAll(){renderBoard();renderTray();renderPreview();}
 
 window.addEventListener("pointermove",e=>{
- if(!drag||e.pointerId!==drag.pointerId)return;
- e.preventDefault();updateDragTarget(e.clientX,e.clientY);
+ if(!gesture||e.pointerId!==gesture.pointerId)return;
+ e.preventDefault();
+ gesture.lastX=e.clientX;gesture.lastY=e.clientY;
+ const dx=e.clientX-gesture.startX,dy=e.clientY-gesture.startY;
+ const dist=Math.hypot(dx,dy);
+ if(!gesture.dragging&&dist>=DRAG_START)beginDrag();
+ if(gesture.dragging)updateDragTarget(e.clientX,e.clientY);
 },{passive:false});
-window.addEventListener("pointerup",e=>{
- if(!drag||e.pointerId!==drag.pointerId)return;
- endDrag();
-});
+
+window.addEventListener("pointerup",finishGesture);
 window.addEventListener("pointercancel",e=>{
- if(!drag||e.pointerId!==drag.pointerId)return;
- endDrag();
+ if(!gesture||e.pointerId!==gesture.pointerId)return;
+ if(gesture.dragging)restoreOriginal();
+ gesture=null;
+ renderAll();
+ setMsg("操作をキャンセルしました");
 });
 
-$("#rotate").addEventListener("click",()=>{
- if(pieces[selected].placed)return setMsg("確定済みは一度つかんで外してください","bad");
- pieces[selected].shape=rot(pieces[selected].shape);
- renderAll();
- if(target)setMsg(valid(ghostCells())?"回転しました。位置OK":"その向きでは置けません",valid(ghostCells())?"ok":"bad");
-});
-$("#flip").addEventListener("click",()=>{
- if(pieces[selected].placed)return setMsg("確定済みは一度つかんで外してください","bad");
- pieces[selected].shape=flip(pieces[selected].shape);
- renderAll();
- if(target)setMsg(valid(ghostCells())?"反転しました。位置OK":"その向きでは置けません",valid(ghostCells())?"ok":"bad");
-});
 function reset(){
- clearInterval(timer);start=0;timer=0;moves=0;movesEl.textContent="0";timeEl.textContent="00:00";
+ clearInterval(timer);
+ start=0;timer=0;moves=0;
+ movesEl.textContent="0";timeEl.textContent="00:00";
  ids.forEach(id=>{pieces[id].shape=norm(defs[id]);pieces[id].placed=null;});
- selected="F";target=null;drag=null;justPlaced=null;dragVisual.classList.remove("show");overlay.classList.remove("show");board.classList.remove("clear-pulse");
- setMsg("下のピースを指でつかんで盤面へ");renderAll();
+ selected="F";target=null;gesture=null;drag=null;justPlaced=null;
+ dragVisual.classList.remove("show");
+ overlay.classList.remove("show");
+ board.classList.remove("clear-pulse");
+ setMsg("タップ=回転 / 横フリック=反転 / ドラッグ=移動");
+ renderAll();
 }
 $("#reset").addEventListener("click",reset);
 $("#again").addEventListener("click",reset);
+
 sizeBoard();
 renderAll();
+setMsg("タップ=回転 / 横フリック=反転 / ドラッグ=移動");
 })();
 </script>
 </body>
