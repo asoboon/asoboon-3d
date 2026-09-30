@@ -90,12 +90,17 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 .tray-head strong{letter-spacing:.06em}.tray-head span{color:var(--muted)}
 .tray{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));gap:3px;flex:0 0 auto}
 .piece{
-  height:46px;min-height:46px;border:1px solid rgba(83,125,165,.38);border-radius:10px;background:linear-gradient(180deg,#122039,#0d192b);
+  height:48px;min-height:48px;border:1px solid rgba(83,125,165,.38);border-radius:10px;background:linear-gradient(180deg,#122039,#0d192b);
   padding:3px 1px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
   touch-action:none;
 }
 .piece.selected{outline:2px solid var(--accent);outline-offset:1px;box-shadow:0 0 14px rgba(93,220,255,.18)}.piece.placed{opacity:.28;filter:saturate(.6)}
-.piece-name{font-weight:900;font-size:9px}
+.piece-name{font-weight:900;font-size:9px;line-height:1}
+.mini{display:grid;gap:1px;align-items:center;justify-content:center}
+.mcell{width:8px;height:8px;border-radius:2px;background:#8090ae;box-shadow:inset 0 1px 0 rgba(255,255,255,.28),0 1px 2px rgba(0,0,0,.18)}
+.piece .mini{min-width:30px;min-height:24px;place-content:center}
+.piece:not(.placed) .mini{filter:drop-shadow(0 0 4px rgba(255,255,255,.08))}
+.piece.placed .piece-name::after{content:" ✓";color:var(--ok)}
 .drag-visual{
   position:fixed;left:0;top:0;z-index:30;pointer-events:none;display:none;
   filter:drop-shadow(0 12px 14px rgba(0,0,0,.42)) drop-shadow(0 0 10px rgba(93,220,255,.16));opacity:.94;
@@ -112,7 +117,7 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 @media(max-width:360px){
   .app{padding-left:6px;padding-right:6px}.brand{font-size:14px}.sub{display:none}
   .stat{min-width:44px;padding:3px 4px}.gesture-chip{font-size:8px;padding:3px 1px}.gesture-chip b{font-size:9px}
-  .piece{height:42px;min-height:42px}.mini{gap:1px}.mcell{width:7px;height:7px}
+  .piece{height:44px;min-height:44px}.mini{gap:1px}.mcell{width:7px;height:7px}
   .reset-mini{width:34px;height:34px}
 }
 </style>
@@ -144,7 +149,7 @@ button{font:inherit;color:inherit;touch-action:manipulation}
     <div class="gesture-chip"><b>☝ ドラッグ</b>移動</div>
   </section>
 
-  <div class="tray-head"><strong>PIECES</strong><span><b id="count">0</b> / 12</span></div>
+  <div class="tray-head"><strong>WAITING BLOCKS</strong><span><b id="count">0</b> / 12</span></div>
   <section id="tray" class="tray" aria-label="ピース一覧"></section>
 </main>
 
@@ -452,7 +457,7 @@ function renderTray(){
    if(id===selected)b.classList.add("selected");
    if(pieces[id].placed)b.classList.add("placed");
    const n=document.createElement("span");n.className="piece-name";n.textContent=id;
-   const m=mini(defs[id]);m.querySelectorAll(".mcell").forEach(x=>x.style.background=colors[i]);
+   const m=mini(pieces[id].shape);m.querySelectorAll(".mcell").forEach(x=>x.style.background=colors[i]);
    b.append(n,m);
    b.addEventListener("pointerdown",e=>beginGesture(id,e));
    tray.appendChild(b);
