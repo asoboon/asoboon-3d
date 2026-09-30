@@ -171,7 +171,7 @@ int main(){
   }
  }
 
- out<<"];\\nwindow.BOON_SOLUTION_COUNT="<<solutionCount<<";\n";
+ out<<"];\nwindow.BOON_SOLUTION_COUNT="<<solutionCount<<";\n";
  out.close();
 
  if(solutionCount!=16146){
