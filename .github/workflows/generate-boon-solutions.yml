@@ -23,16 +23,18 @@ jobs:
       - name: Generate all 16,146 solutions
         run: /tmp/boon_solution_generator
 
-      - name: Verify generated JavaScript
+      - name: Verify generated database
         run: |
           node --check boon-block/solutions.js
           node -e "global.window=global; require('./boon-block/solutions.js'); if (!Array.isArray(window.BOON_SOLUTIONS) || window.BOON_SOLUTIONS.length !== 16146 || window.BOON_SOLUTION_COUNT !== 16146) process.exit(1); console.log('verified', window.BOON_SOLUTIONS.length)"
+          sha256sum boon-block/solutions.js | awk '{print $1}' > boon-block/solutions.sha256
+          test -s boon-block/IP_PROVENANCE.md
 
       - name: Commit generated database
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add boon-block/solutions.js
+          git add boon-block/solutions.js boon-block/solutions.sha256
           if git diff --cached --quiet; then
             echo "solutions.js is already up to date"
           else
