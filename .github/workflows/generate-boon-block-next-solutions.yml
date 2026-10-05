@@ -26,7 +26,7 @@ jobs:
       - name: Verify generated database
         run: |
           node --check boon-block-next/solutions.js
-          node -e "global.window=global; require('./boon-block-next/solutions.js'); if (!Array.isArray(window.BOON_NEXT_SOLUTIONS) || window.BOON_NEXT_SOLUTIONS.length !== 1832 || window.BOON_NEXT_SOLUTION_COUNT !== 1832 || window.BOON_NEXT_CENTER_COUNT !== 192) process.exit(1); console.log('verified', window.BOON_NEXT_SOLUTIONS.length, 'center', window.BOON_NEXT_CENTER_COUNT)"
+          node -e "global.window=global; require('./boon-block-next/solutions.js'); if (!Array.isArray(window.BOON_KIDS_SOLUTIONS) || window.BOON_KIDS_SOLUTIONS.length !== 192 || window.BOON_KIDS_SOLUTION_COUNT !== 192 || window.BOON_KIDS_CENTER_COUNT !== 40) process.exit(1); console.log('verified', window.BOON_KIDS_SOLUTIONS.length, 'center', window.BOON_KIDS_CENTER_COUNT)"
           sha256sum boon-block-next/solutions.js | awk '{print $1}' > boon-block-next/solutions.sha256
 
       - name: Commit generated database
