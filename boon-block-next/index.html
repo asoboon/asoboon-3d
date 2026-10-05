@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="format-detection" content="telephone=no">
 <title>BOON BLOCK — CHRISTMAS QUEST</title>
-<!-- BOON BLOCK live build v29: MAX Christmas snowy relic festival -->
+<!-- BOON BLOCK live build v30: 192-route mystery gallery foundation -->
 <style>
 :root{
   --sky:#7a49c6;--sky2:#372052;--jungle:#294932;--jungle2:#182b21;
@@ -613,6 +613,79 @@ body::after{right:-55px;transform:scaleX(-1) rotate(-3deg)}
   .piece{height:58px;min-height:58px}.mcell{width:10px;height:10px}
   .hint-mini,.reset-mini{height:35px}.hint-mini{width:44px;font-size:7px}.reset-mini{width:35px}
 }
+
+/* 192 ROUTE GALLERY */
+.gallery-open{
+  flex:0 0 auto;border:0;border-radius:10px;padding:4px 8px;min-height:28px;
+  background:linear-gradient(180deg,#ffe98e,#efbd3f);color:#5b4312;
+  font-size:9px;font-weight:1000;letter-spacing:.02em;
+  box-shadow:inset 0 2px 0 rgba(255,255,255,.5),0 3px 0 rgba(91,65,19,.18)
+}
+.gallery-open span{font-size:8px}
+.gallery-overlay{
+  position:fixed;inset:0;z-index:60;display:none;align-items:stretch;justify-content:center;
+  padding:calc(10px + env(safe-area-inset-top)) 10px calc(10px + env(safe-area-inset-bottom));
+  background:rgba(7,31,43,.88);backdrop-filter:blur(5px)
+}
+.gallery-overlay.show{display:flex}
+.gallery-panel{
+  width:min(430px,100%);height:100%;display:flex;flex-direction:column;overflow:hidden;
+  border-radius:24px;background:linear-gradient(180deg,#f9fdff,#d9edf3);
+  border:4px solid #d84a48;
+  box-shadow:inset 0 4px 0 rgba(255,255,255,.82),0 18px 60px rgba(3,24,34,.36)
+}
+.gallery-head{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:13px 14px 9px;border-bottom:1px solid rgba(54,98,115,.12)
+}
+.gallery-title{min-width:0}
+.gallery-title h2{margin:0;color:#b83237;font-size:20px;line-height:1}
+.gallery-title p{margin:4px 0 0;color:#567886;font-size:9px;font-weight:900}
+.gallery-close{
+  width:38px;height:38px;border:0;border-radius:12px;background:#2d8d58;color:#fff;
+  font-size:18px;font-weight:1000;box-shadow:inset 0 2px 0 rgba(255,255,255,.25),0 3px 0 rgba(25,83,51,.22)
+}
+.gallery-progress-wrap{padding:8px 14px 7px}
+.gallery-progress-line{display:flex;align-items:center;justify-content:space-between;color:#315d6c;font-size:10px;font-weight:1000}
+.gallery-progress-line strong{color:#c0393d;font-size:14px}
+.gallery-progress{
+  height:8px;margin-top:5px;border-radius:999px;overflow:hidden;background:#c7dce4;
+  box-shadow:inset 0 1px 2px rgba(28,66,80,.15)
+}
+.gallery-progress > span{
+  display:block;height:100%;width:0;border-radius:inherit;
+  background:linear-gradient(90deg,#e5b63c,#ffe681,#e5b63c);
+  transition:width .25s ease
+}
+.gallery-note{
+  margin:0 14px 7px;padding:6px 8px;border-radius:10px;background:#eef8fb;
+  color:#557583;font-size:8px;font-weight:900;text-align:center
+}
+.gallery-scroll{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;padding:4px 10px 14px}
+.gallery-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px}
+.route-box{
+  aspect-ratio:1;border:2px solid #aabfc7;border-radius:10px;padding:0;
+  background:
+    radial-gradient(circle at 50% 38%,rgba(255,255,255,.58) 0 12%,transparent 13%),
+    linear-gradient(145deg,#d8e5e9,#b9cbd1);
+  color:#5f7781;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  box-shadow:inset 0 2px 0 rgba(255,255,255,.66),0 2px 0 rgba(35,70,82,.09)
+}
+.route-box .q{font-size:18px;line-height:1;font-weight:1000}
+.route-box .no{font-size:6px;line-height:1;margin-top:4px;font-weight:1000;letter-spacing:.05em}
+.route-box.found{
+  border-color:#c89b2b;color:#684b10;
+  background:linear-gradient(145deg,#fff7c7,#ffe477 42%,#dbae39 75%,#956618);
+  box-shadow:inset 0 2px 0 rgba(255,255,255,.62),0 0 8px rgba(241,197,75,.32)
+}
+.route-box.found .q{font-size:15px}
+.gallery-empty{color:#6a8490;text-align:center;font-size:8px;font-weight:900;padding:2px 8px 7px}
+@media(max-width:360px){
+  .gallery-grid{grid-template-columns:repeat(6,minmax(0,1fr));gap:5px}
+  .route-box{border-radius:8px}.route-box .q{font-size:16px}
+  .gallery-head{padding:11px 12px 8px}
+}
+
 </style>
 </head>
 <body>
@@ -642,9 +715,7 @@ body::after{right:-55px;transform:scaleX(-1) rotate(-3deg)}
 
   <div class="quest-bar">
     <span><strong>MISSION</strong> 聖夜の石板を完成させよう！</span>
-    <div class="quest-dots" aria-hidden="true">
-      <span class="quest-dot on"></span><span class="quest-dot"></span><span class="quest-dot"></span>
-    </div>
+    <button id="galleryOpen" class="gallery-open" type="button" aria-label="192ルートギャラリーを開く">📖 <span id="galleryMiniCount">0/192</span></button>
   </div>
 
   <section class="board-wrap">
@@ -673,6 +744,27 @@ body::after{right:-55px;transform:scaleX(-1) rotate(-3deg)}
   <div class="hold-label">WAIT</div>
 </div>
 
+<div id="galleryOverlay" class="gallery-overlay" role="dialog" aria-modal="true" aria-label="192ルートギャラリー">
+  <section class="gallery-panel">
+    <header class="gallery-head">
+      <div class="gallery-title">
+        <h2>GOLDEN GALLERY</h2>
+        <p>192の答えを見つけて、❓を黄金の石板に変えよう！</p>
+      </div>
+      <button id="galleryClose" class="gallery-close" type="button" aria-label="ギャラリーを閉じる">×</button>
+    </header>
+    <div class="gallery-progress-wrap">
+      <div class="gallery-progress-line"><span>DISCOVERED</span><strong id="galleryCount">0 / 192</strong></div>
+      <div class="gallery-progress"><span id="galleryProgressBar"></span></div>
+    </div>
+    <div class="gallery-note">未発見は ❓。クリアしたルートがここで順番に黄金化する予定。</div>
+    <div class="gallery-scroll">
+      <div id="galleryGrid" class="gallery-grid"></div>
+      <div id="galleryEmpty" class="gallery-empty">まずは最初の1ルートを見つけよう！</div>
+    </div>
+  </section>
+</div>
+
 <div id="overlay" class="overlay" role="dialog" aria-modal="true">
   <div class="clear-card">
     <div class="treasure" aria-hidden="true"></div>
@@ -682,7 +774,7 @@ body::after{right:-55px;transform:scaleX(-1) rotate(-3deg)}
   </div>
 </div>
 
-<script src="solutions.js?v=29"></script>
+<script src="solutions.js?v=30"></script>
 <script>
 (()=>{
 const defs={
@@ -703,6 +795,7 @@ const CENTER_TOTAL=Number(window.BOON_KIDS_CENTER_COUNT||0);
 
 const $=s=>document.querySelector(s);
 const board=$("#board"),tray=$("#tray"),msg=$("#msg");
+const galleryOverlay=$("#galleryOverlay"),galleryGrid=$("#galleryGrid"),galleryCount=$("#galleryCount"),galleryMiniCount=$("#galleryMiniCount"),galleryProgressBar=$("#galleryProgressBar"),galleryEmpty=$("#galleryEmpty");
 const timeEl=$("#time"),movesEl=$("#moves"),countEl=$("#count"),overlay=$("#overlay"),clearText=$("#clearText");
 const dragVisual=$("#dragVisual"),holdRing=$("#holdRing"),hintCountEl=$("#hintCount");
 
@@ -800,6 +893,35 @@ function pointerNearBoard(x,y){
  return x>=r.left-pad&&x<=r.right+pad&&y>=r.top-pad&&y<=r.bottom+pad
 }
 function placementAnchor(cells){return {r:Math.min(...cells.map(a=>a[0])),c:Math.min(...cells.map(a=>a[1]))}}
+
+// ---------- 192-ROUTE GALLERY ----------
+const GALLERY_TOTAL=192;
+const GALLERY_STORAGE_KEY="boonBlockClearedRoutesV1";
+function loadGalleryRoutes(){
+  try{
+    const raw=JSON.parse(localStorage.getItem(GALLERY_STORAGE_KEY)||"[]");
+    return Array.isArray(raw)?new Set(raw.filter(n=>Number.isInteger(n)&&n>=0&&n<GALLERY_TOTAL)):new Set()
+  }catch(_){return new Set()}
+}
+function renderGallery(){
+  const found=loadGalleryRoutes();
+  galleryGrid.innerHTML="";
+  for(let i=0;i<GALLERY_TOTAL;i++){
+    const b=document.createElement("button");
+    b.type="button";b.className="route-box"+(found.has(i)?" found":"");
+    b.setAttribute("aria-label","ROUTE "+String(i+1).padStart(3,"0")+(found.has(i)?" 発見済み":" 未発見"));
+    const q=document.createElement("span");q.className="q";q.textContent=found.has(i)?"✦":"?";
+    const no=document.createElement("span");no.className="no";no.textContent=String(i+1).padStart(3,"0");
+    b.append(q,no);galleryGrid.appendChild(b)
+  }
+  const n=found.size;
+  galleryCount.textContent=n+" / "+GALLERY_TOTAL;
+  galleryMiniCount.textContent=n+"/"+GALLERY_TOTAL;
+  galleryProgressBar.style.width=(n/GALLERY_TOTAL*100)+"%";
+  galleryEmpty.textContent=n?("あと "+(GALLERY_TOTAL-n)+" ルート！"):"まずは最初の1ルートを見つけよう！"
+}
+function openGallery(){renderGallery();galleryOverlay.classList.add("show")}
+function closeGallery(){galleryOverlay.classList.remove("show")}
 
 // ---------- 192-SOLUTION HINT ENGINE ----------
 
@@ -1157,8 +1279,11 @@ function reset(){
 $("#hint").addEventListener("click",useHint);
 $("#reset").addEventListener("click",reset);
 $("#again").addEventListener("click",reset);
+$("#galleryOpen").addEventListener("click",openGallery);
+$("#galleryClose").addEventListener("click",closeGallery);
+galleryOverlay.addEventListener("pointerdown",e=>{if(e.target===galleryOverlay)closeGallery()});
 
-renderAll();requestAnimationFrame(sizeBoard);
+renderGallery();renderAll();requestAnimationFrame(sizeBoard);
 setMsg(SOLUTIONS.length===192?"5×5でかんたん！ 真ん中スタート "+CENTER_TOTAL+"ルート":"ヒントを読み込めなかったよ",SOLUTIONS.length===192?"ok":"bad");
 })();
 </script>
