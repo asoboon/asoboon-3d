@@ -7,16 +7,16 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>BOON BLOCK DIAMOND — CHRISTMAS HARD</title>
-<!-- BOON BLOCK DIAMOND v2: 64 triangle cells / MAX Christmas extreme -->
+<!-- BOON BLOCK DIAMOND v3: reference-inspired readable physical puzzle / Christmas extreme -->
 <style>
 :root{
  --bg1:#164f7c;--bg2:#0b2747;--green:#1d6543;--red:#d94443;--gold:#f4c94f;
  --ice:#dff7ff;--ink:#173e4f;--muted:#668492;
- --c0:linear-gradient(145deg,#ff766d,#d83d3a);
- --c1:linear-gradient(145deg,#6bd48a,#2f975a);
- --c2:linear-gradient(145deg,#a6efff,#55bed9);
- --c3:linear-gradient(145deg,#ffe68e,#d6aa35);
- --c4:linear-gradient(145deg,#e6b3ff,#a66ad1);
+ --c0:linear-gradient(145deg,#f7a3a8,#e8777f);
+ --c1:linear-gradient(145deg,#89d8c9,#58b8aa);
+ --c2:linear-gradient(145deg,#9ec6f4,#6e9ed7);
+ --c3:linear-gradient(145deg,#f5df72,#dfc24d);
+ --c4:linear-gradient(145deg,#cdb7ea,#a58acb);
  --core:linear-gradient(145deg,#fff7c9,#ffe578 34%,#e2b63e 68%,#8f6117);
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -56,10 +56,14 @@ body{
 .diamond-stage{position:relative;height:315px;flex:0 0 auto;margin-top:2px}
 .frame{
  position:absolute;left:50%;top:50%;width:248px;height:248px;transform:translate(-50%,-50%) rotate(45deg);
- border-radius:22px;background:linear-gradient(145deg,#e8f2f5,#acbec5 62%,#81949c);
- border:5px solid #6d818a;box-shadow:inset 0 5px 0 rgba(255,255,255,.65),0 10px 0 rgba(17,46,57,.19),0 0 26px rgba(166,234,255,.18)
+ border-radius:22px;
+ background:
+   radial-gradient(circle at 20% 18%,rgba(255,255,255,.52) 0 2%,transparent 2.5%),
+   linear-gradient(145deg,#efe4c7,#d8c89f 62%,#b79f73);
+ border:5px solid #9f895e;
+ box-shadow:inset 0 5px 0 rgba(255,255,255,.55),inset 0 -6px 0 rgba(113,87,42,.10),0 10px 0 rgba(61,48,28,.20),0 0 26px rgba(166,234,255,.14)
 }
-.frame::before,.frame::after{content:"";position:absolute;width:78px;height:17px;background:linear-gradient(#fff,#dfeef2);border-radius:50%;box-shadow:0 3px 0 rgba(84,105,112,.10)}
+.frame::before,.frame::after{content:"";position:absolute;width:84px;height:18px;background:linear-gradient(#fff,#eaf5f7);border-radius:50%;box-shadow:0 3px 0 rgba(84,105,112,.09)}
 .frame::before{left:9px;top:-8px}.frame::after{right:9px;bottom:-8px}
 .garland{position:absolute;z-index:3;left:50%;top:20px;width:200px;height:26px;transform:translateX(-50%);border-bottom:7px solid #2e8d58;border-radius:0 0 60% 60%}
 .garland::before{content:"";position:absolute;left:12px;top:13px;width:11px;height:11px;border-radius:50%;background:#d84745;box-shadow:30px 2px #f2ca4e,60px -1px #d84745,90px 3px #6bd384,120px 0 #f2ca4e,150px 3px #d84745}
@@ -77,13 +81,21 @@ body{
  transform:translate(-50%,-50%) rotate(45deg);touch-action:none;z-index:2
 }
 .slot,.ghost{position:absolute;width:var(--cell);height:var(--cell);border:0;padding:0;touch-action:none}
-.slot{background:rgba(234,247,250,.22);filter:drop-shadow(0 0 1px rgba(62,87,96,.38));transition:filter .12s,transform .12s}
-.slot::after{content:"";position:absolute;inset:0;background:rgba(255,255,255,.15);clip-path:inherit}
+.slot{
+ background:linear-gradient(145deg,#edf3f5,#dce6e9);
+ filter:drop-shadow(0 0 1.2px rgba(94,109,113,.72));
+ transition:filter .12s,transform .12s
+}
+.slot::after{
+ content:"";position:absolute;inset:0;clip-path:inherit;
+ background:linear-gradient(145deg,rgba(255,255,255,.36),transparent 56%);
+ pointer-events:none
+}
 .slot[data-d="0"],.ghost[data-d="0"]{clip-path:polygon(0 0,100% 0,50% 50%)}
 .slot[data-d="1"],.ghost[data-d="1"]{clip-path:polygon(100% 0,100% 100%,50% 50%)}
 .slot[data-d="2"],.ghost[data-d="2"]{clip-path:polygon(0 100%,100% 100%,50% 50%)}
 .slot[data-d="3"],.ghost[data-d="3"]{clip-path:polygon(0 0,50% 50%,0 100%)}
-.slot.filled{filter:drop-shadow(0 2px 1px rgba(28,46,52,.15))}
+.slot.filled{filter:drop-shadow(0 1px 1px rgba(48,55,58,.24)) drop-shadow(0 0 1px rgba(255,255,255,.9))}
 .slot.good{filter:drop-shadow(0 0 5px #61e9ff) brightness(1.1)}
 .slot.bad{filter:drop-shadow(0 0 6px #ff6c61) brightness(1.12)}
 .slot.focus{filter:drop-shadow(0 0 7px #ffe16c) brightness(1.18)}
@@ -101,7 +113,7 @@ body{
 .guide b{display:block;font-size:8px;color:#b4393b;margin-bottom:1px}
 .tray-head{display:flex;justify-content:space-between;align-items:center;color:#fff;font-size:9px;font-weight:1000;margin:2px 3px 3px;flex:0 0 auto}
 .tray-head span{background:#c63b3f;color:#fff8dc;padding:2px 7px;border-radius:999px}
-.tray{display:grid;grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(3,52px);gap:5px;flex:0 0 auto}
+.tray{display:grid;grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(3,58px);gap:6px;flex:0 0 auto}
 .piece{position:relative;border:2px solid rgba(76,116,130,.14);border-radius:13px;background:
  linear-gradient(90deg,rgba(70,112,126,.08) 1px,transparent 1px),
  linear-gradient(rgba(70,112,126,.08) 1px,transparent 1px),
@@ -109,10 +121,17 @@ body{
  background-size:13px 13px,13px 13px,auto;
  box-shadow:inset 0 2px #fff,0 3px 0 rgba(30,64,76,.10);touch-action:none;overflow:hidden}
 .piece.selected{outline:3px solid #f2c84f;outline-offset:1px}.piece.placed{opacity:.36}
-.piece-name{position:absolute;left:7px;top:5px;font-size:8px;font-weight:1000;color:#315d6d;z-index:3}
-.piece::after{content:"↑";position:absolute;right:7px;top:3px;font-size:10px;font-weight:1000;color:#bf3a3d;opacity:.75}
+.piece-name{position:absolute;left:7px;top:5px;font-size:8px;font-weight:1000;color:#52645d;z-index:3}
+.piece::after{content:"TOP ↑";position:absolute;right:7px;top:4px;font-size:7px;font-weight:1000;color:#c74445;opacity:.9;letter-spacing:.03em}
 .piece.placed::after{content:"✓";color:#2b9e58}
-.mini{position:relative;margin:auto;filter:drop-shadow(0 2px 1px rgba(38,67,77,.18))}.mtri{position:absolute}
+.mini{
+ position:relative;margin:auto;
+ filter:drop-shadow(0 2px 1px rgba(60,61,54,.18)) drop-shadow(0 0 1px rgba(255,255,255,.95))
+}
+.mini::after{
+ content:"";position:absolute;inset:-4px;border:1px dashed rgba(93,114,105,.22);border-radius:7px;pointer-events:none
+}
+.mtri{position:absolute;filter:drop-shadow(0 0 .7px rgba(255,255,255,.95))}
 .mtri[data-d="0"]{clip-path:polygon(0 0,100% 0,50% 50%)}.mtri[data-d="1"]{clip-path:polygon(100% 0,100% 100%,50% 50%)}.mtri[data-d="2"]{clip-path:polygon(0 100%,100% 100%,50% 50%)}.mtri[data-d="3"]{clip-path:polygon(0 0,50% 50%,0 100%)}
 .dragvis{position:fixed;z-index:40;left:0;top:0;transform:translate(-50%,-120%);display:none;pointer-events:none;padding:6px 9px;border-radius:12px;background:rgba(247,252,254,.95);color:#244f60;font-size:10px;font-weight:1000;box-shadow:0 10px 22px rgba(8,30,40,.24)}
 .dragvis.show{display:block}
@@ -121,14 +140,14 @@ body{
 .card{width:min(350px,100%);text-align:center;border-radius:26px;padding:24px;background:linear-gradient(#fafdff,#d9edf4);border:4px solid #d94a48;box-shadow:inset 0 4px #fff,0 12px 0 rgba(15,45,57,.14),0 25px 70px rgba(5,28,39,.35)}
 .card .star{font-size:62px;color:#f0c64c;text-shadow:0 0 12px #fff2ad,0 0 28px rgba(240,198,76,.7)}
 .card h2{margin:0;color:#bd3034;font-size:27px}.card p{color:#315f70;font-weight:900}.card button{width:100%;height:49px;border:0;border-radius:15px;background:linear-gradient(#70d98f,#33a35f);color:#123f29;font-weight:1000;box-shadow:inset 0 3px rgba(255,255,255,.35),0 5px 0 rgba(33,100,61,.24)}
-@media(max-width:360px){.diamond-stage{height:292px}.frame{width:225px;height:225px}.board{--cell:47px}.garland{width:180px}.tray{grid-template-rows:repeat(3,48px)}.brand{font-size:15px}.stat{min-width:43px;padding:3px 4px}}
+@media(max-width:360px){.diamond-stage{height:278px}.frame{width:218px;height:218px}.board{--cell:45px}.garland{width:174px}.tray{grid-template-rows:repeat(3,53px);gap:4px}.brand{font-size:15px}.stat{min-width:43px;padding:3px 4px}.mini{transform:scale(.88)}}
 </style>
 </head>
 <body>
 <div class="snow" aria-hidden="true"><i class="flake"></i><i class="flake"></i><i class="flake"></i><i class="flake"></i><i class="flake"></i><i class="flake"></i><i class="flake"></i><i class="flake"></i></div>
 <main class="app">
  <header class="top">
-  <div class="brand">BOON BLOCK DIAMOND<small>CHRISTMAS HARD MODE</small></div>
+  <div class="brand">BOON BLOCK DIAMOND<small>CHRISTMAS EXTREME PUZZLE</small></div>
   <div class="stats">
    <div class="stat"><b id="time">00:00</b><span>TIME</span></div>
    <div class="stat"><b id="moves">0</b><span>MOVE</span></div>
@@ -144,12 +163,12 @@ body{
  </section>
  <div id="msg" class="msg">64三角マス・全16ルート。GOLD GEM中央スタートは2ルート。</div>
  <div class="guide"><div><b>↻ タップ</b>90°回転</div><div><b>↔ フリック</b>反転</div><div><b>☝ ドラッグ</b>移動</div><div><b>◉ 長押し</b>戻す</div></div>
- <div class="tray-head"><strong>BIG TRIANGLE BLOCKS</strong><span><b id="count">1</b> / 6</span></div>
+ <div class="tray-head"><strong>PIECE SHAPES</strong><span><b id="count">1</b> / 6</span></div>
  <section id="tray" class="tray"></section>
 </main>
 <div id="dragvis" class="dragvis"></div>
 <div id="overlay" class="overlay"><div class="card"><div class="star">✦</div><h2>MERRY DIAMOND CHRISTMAS!</h2><p id="clearText"></p><button id="again" type="button">もういちど挑戦！</button></div></div>
-<script src="solutions.js?v=2"></script>
+<script src="solutions.js?v=3"></script>
 <script>
 (()=> {
 const defs={
@@ -172,7 +191,7 @@ function norm(s){let mr=Math.min(...s.map(x=>x[0])),mc=Math.min(...s.map(x=>x[1]
 function rot(s){return norm(s.map(([r,c,d])=>[c,-r,(d+1)%4]))}
 function flip(s){return norm(s.map(([r,c,d])=>[r,-c,dmapFlip[d]]))}
 function bounds(s){return {h:Math.max(...s.map(x=>x[0]))+1,w:Math.max(...s.map(x=>x[1]))+1}}
-function key(cells){return cells.map(([r,c,d])=>((r*3+c)*4+d)).sort((a,b)=>a-b).join(",")}
+function key(cells){return cells.map(([r,c,d])=>((r*4+c)*4+d)).sort((a,b)=>a-b).join(",")}
 const pieces={};ids.forEach(id=>pieces[id]={shape:norm(defs[id]),placed:null});pieces.CORE.placed=defs.CORE.map(([r,c,d])=>[r+1,c+1,d]);
 let selected="A",moves=0,start=0,timer=null,target=null,gesture=null,drag=null,longTimer=null,hints=0,hintStage=0,hintPlan=null,clearing=false;
 function occupied(ignore){let m=new Map();for(const id of ids){if(id===ignore)continue;const p=pieces[id];if(p.placed)for(const x of p.placed)m.set(x.join(","),id)}return m}
@@ -200,7 +219,7 @@ function renderBoard(){
  for(let r=0;r<4;r++)for(let c=0;c<4;c++)for(let d=0;d<4;d++){
   const id=occ.get([r,c,d].join(",")),b=document.createElement("button");b.type="button";b.className="slot";triClip(b,d);
   b.style.left="calc(var(--cell) * "+c+")";b.style.top="calc(var(--cell) * "+r+")";
-  if(id){b.classList.add("filled");b.style.background=colors[ids.indexOf(id)];if(clearing)b.style.setProperty("--delay",(((r*3+c)*4+d)*22)+"ms");
+  if(id){b.classList.add("filled");b.style.background=colors[ids.indexOf(id)];if(clearing)b.style.setProperty("--delay",(((r*4+c)*4+d)*22)+"ms");
    if(hintPlan&&hintStage){if(hintPlan.good.includes(id))b.classList.add("good");if(hintPlan.bad.includes(id))b.classList.add("bad");if(hintPlan.focus===id)b.classList.add("focus")}
    b.addEventListener("pointerdown",e=>begin(id,e));
   }
@@ -220,13 +239,16 @@ function renderBoard(){
  if(clearing)board.classList.add("clearing");else board.classList.remove("clearing")
 }
 function mini(shape,color){
- const b=bounds(shape),scale=22,wrap=document.createElement("div");wrap.className="mini";wrap.style.width=(b.w*scale)+"px";wrap.style.height=(b.h*scale)+"px";
+ const b=bounds(shape),scale=24,wrap=document.createElement("div");wrap.className="mini";wrap.style.width=(b.w*scale)+"px";wrap.style.height=(b.h*scale)+"px";
  for(const [r,c,d] of shape){const x=document.createElement("span");x.className="mtri";x.dataset.d=d;x.style.width=scale+"px";x.style.height=scale+"px";x.style.left=(c*scale)+"px";x.style.top=(r*scale)+"px";x.style.background=color;wrap.appendChild(x)}return wrap
 }
 function renderTray(){
  tray.innerHTML="";
  ids.forEach((id,i)=>{const b=document.createElement("button");b.type="button";b.className="piece"+(id===selected?" selected":"")+(pieces[id].placed?" placed":"");
-  const n=document.createElement("span");n.className="piece-name";n.textContent=names[id];b.appendChild(n);b.appendChild(mini(pieces[id].shape,colors[i]));b.addEventListener("pointerdown",e=>begin(id,e));tray.appendChild(b)});
+  const n=document.createElement("span");n.className="piece-name";n.textContent=names[id];
+  const m=mini(pieces[id].shape,colors[i]);
+  b.appendChild(n);b.appendChild(m);
+  b.addEventListener("pointerdown",e=>begin(id,e));tray.appendChild(b)});
  countEl.textContent=ids.filter(id=>pieces[id].placed).length
 }
 function render(){renderBoard();renderTray()}
