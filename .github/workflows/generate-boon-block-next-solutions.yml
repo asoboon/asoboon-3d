@@ -1,0 +1,42 @@
+name: Generate BOON BLOCK NEXT solutions
+
+on:
+  push:
+    paths:
+      - '.github/workflows/generate-boon-block-next-solutions.yml'
+      - 'boon-block-next/generate_solutions.cpp'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build generator
+        run: g++ -O3 -std=c++17 boon-block-next/generate_solutions.cpp -o /tmp/boon_block_next_generator
+
+      - name: Generate complete solution database
+        run: /tmp/boon_block_next_generator
+
+      - name: Verify generated database
+        run: |
+          node --check boon-block-next/solutions.js
+          node -e "global.window=global; require('./boon-block-next/solutions.js'); if (!Array.isArray(window.BOON_NEXT_SOLUTIONS) || window.BOON_NEXT_SOLUTIONS.length !== 1832 || window.BOON_NEXT_SOLUTION_COUNT !== 1832 || window.BOON_NEXT_CENTER_COUNT !== 192) process.exit(1); console.log('verified', window.BOON_NEXT_SOLUTIONS.length, 'center', window.BOON_NEXT_CENTER_COUNT)"
+          sha256sum boon-block-next/solutions.js | awk '{print $1}' > boon-block-next/solutions.sha256
+
+      - name: Commit generated database
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add boon-block-next/solutions.js boon-block-next/solutions.sha256
+          if git diff --cached --quiet; then
+            echo "database already up to date"
+          else
+            git commit -m "Generate BOON BLOCK NEXT solution database"
+            git push
+          fi
