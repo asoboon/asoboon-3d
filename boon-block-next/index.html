@@ -3,17 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-<meta name="theme-color" content="#44c9da">
+<meta name="theme-color" content="#6b35a3">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="format-detection" content="telephone=no">
-<title>BOON BLOCK — JUNGLE QUEST</title>
-<!-- BOON BLOCK live build v27: full Halloween haunted-ruins theme -->
+<title>BOON BLOCK — HALLOWEEN QUEST</title>
+<!-- BOON BLOCK live build v28: MAX Halloween haunted carnival ruins -->
 <style>
 :root{
-  --sky:#5f3a9b;--sky2:#21153f;--jungle:#223b2b;--jungle2:#15241c;
-  --leaf:#47664d;--lime:#a6ef42;--sun:#ff9c32;--orange:#ff7a21;
-  --stone:#7d7282;--stone2:#4b4354;--ink:#f7edd9;--muted:#d7c5e7;
+  --sky:#7a49c6;--sky2:#372052;--jungle:#294932;--jungle2:#182b21;
+  --leaf:#5d795f;--lime:#baff45;--sun:#ffac35;--orange:#ff7419;
+  --stone:#8d7d93;--stone2:#55485e;--ink:#fff1d7;--muted:#e5ccf4;
   --cream:#fff2d2;--cyan:#62f3e2;--yellow:#ffd65c;--red:#ff6f5d;--ok:#a8ef49;
   --c0:linear-gradient(145deg,#ff9b35,#e76118);
   --c1:linear-gradient(145deg,#9d72ff,#6c43c8);
@@ -29,11 +29,14 @@ body{
   min-height:100%;overscroll-behavior:none;user-select:none;-webkit-user-select:none;
   color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
   background:
-    radial-gradient(circle at 79% 11%,rgba(255,151,40,.98) 0 7.5%,rgba(255,151,40,.20) 8.5%,transparent 14%),
-    radial-gradient(ellipse at 50% 68%,rgba(133,82,175,.24) 0 28%,transparent 52%),
-    radial-gradient(ellipse at 8% 112%,#304a35 0 35%,transparent 36%),
-    radial-gradient(ellipse at 92% 112%,#253a2b 0 34%,transparent 35%),
-    linear-gradient(180deg,#6d3aa3 0%,#3c245e 28%,#22173d 50%,#1c2d24 74%,#142018 100%);
+    radial-gradient(circle at 79% 10%,rgba(255,174,53,.98) 0 8.5%,rgba(255,128,24,.25) 9.5%,transparent 16%),
+    radial-gradient(circle at 22% 22%,rgba(190,255,71,.08) 0 2%,transparent 3%),
+    radial-gradient(circle at 44% 14%,rgba(255,255,255,.16) 0 1%,transparent 1.6%),
+    radial-gradient(circle at 61% 28%,rgba(255,255,255,.11) 0 .8%,transparent 1.4%),
+    radial-gradient(ellipse at 50% 64%,rgba(170,94,214,.30) 0 32%,transparent 56%),
+    radial-gradient(ellipse at 8% 112%,#36593e 0 35%,transparent 36%),
+    radial-gradient(ellipse at 92% 112%,#2a442f 0 34%,transparent 35%),
+    linear-gradient(180deg,#8b4bd4 0%,#563076 26%,#35204f 52%,#253629 76%,#17251c 100%);
 }
 body::before,body::after{
   content:"";position:fixed;pointer-events:none;z-index:0;width:180px;height:220px;bottom:-50px;
@@ -73,7 +76,7 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 }
 .brand-mark::before{left:7px}
 .brand-mark::after{right:7px}
-.brand{font-weight:1000;letter-spacing:.045em;font-size:17px;line-height:1;color:#fff3d6;text-shadow:0 2px 0 #3c2158,0 0 10px rgba(255,129,32,.28);white-space:nowrap}
+.brand{font-weight:1000;letter-spacing:.045em;font-size:17px;line-height:1;color:#fff1c9;text-shadow:0 2px 0 #3a1c54,0 0 10px rgba(255,129,32,.52),0 0 18px rgba(177,92,255,.28);white-space:nowrap}
 .sub{
   display:inline-block;margin-top:3px;padding:2px 7px;border-radius:999px;
   background:#2b183f;color:#ffd783;font-size:8px;font-weight:900;letter-spacing:.12em
@@ -103,7 +106,7 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 .quest-bar{
   display:flex;align-items:center;justify-content:space-between;gap:6px;
   margin-bottom:5px;padding:5px 8px;border-radius:12px;
-  background:linear-gradient(180deg,rgba(63,36,82,.96),rgba(40,24,58,.96));color:#fff2cf;border:2px solid rgba(255,133,31,.24);
+  background:linear-gradient(180deg,rgba(86,45,112,.97),rgba(47,27,66,.97));color:#fff4d5;border:2px solid rgba(255,140,31,.38);
   box-shadow:inset 0 2px 0 rgba(255,255,255,.08),0 3px 0 rgba(17,10,29,.24);font-size:9px;font-weight:900
 }
 .quest-bar strong{color:#ff9c32;letter-spacing:.04em}
@@ -114,17 +117,15 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 .board-wrap{
   position:relative;flex:0 0 auto;padding:12px 12px 10px;border-radius:18px;
   background:
-    radial-gradient(circle at 14% 20%,rgba(46,72,53,.18) 0 3%,transparent 3.6%),
-    radial-gradient(circle at 84% 72%,rgba(48,77,54,.16) 0 4%,transparent 4.6%),
-    radial-gradient(circle at 12% 18%,rgba(152,255,74,.10) 0 4%,transparent 4.6%),
-    radial-gradient(circle at 84% 76%,rgba(152,255,74,.08) 0 5%,transparent 5.6%),
-    linear-gradient(145deg,#766d7b,#574f60 55%,#433c4a);
-  border:4px solid #31293a;
-  box-shadow:inset 0 3px 0 rgba(255,255,255,.10),inset 0 -5px 0 rgba(15,12,20,.24),0 8px 0 rgba(16,10,23,.38),0 0 22px rgba(127,67,181,.16)
+    radial-gradient(circle at 12% 18%,rgba(193,255,82,.16) 0 4%,transparent 4.6%),
+    radial-gradient(circle at 84% 76%,rgba(255,121,35,.12) 0 5%,transparent 5.6%),
+    linear-gradient(145deg,#8b7a91,#65596d 55%,#4d4256);
+  border:4px solid #2d2438;
+  box-shadow:inset 0 3px 0 rgba(255,255,255,.13),inset 0 -5px 0 rgba(15,12,20,.24),0 8px 0 rgba(16,10,23,.42),0 0 28px rgba(169,81,229,.22),0 0 16px rgba(255,122,31,.10)
 }
 .board-wrap::before,.board-wrap::after{
   content:"";position:absolute;top:-8px;width:54px;height:18px;border-radius:80% 20% 80% 20%;
-  background:linear-gradient(145deg,#b5ed57,#567933);box-shadow:0 3px 0 rgba(19,34,19,.28)
+  background:linear-gradient(145deg,#ff9a32,#d95d13);box-shadow:0 3px 0 rgba(76,31,8,.32),0 0 10px rgba(255,122,31,.28)
 }
 .board-wrap::before{left:12px;transform:rotate(-12deg)}
 .board-wrap::after{right:12px;transform:scaleX(-1) rotate(-12deg)}
@@ -137,16 +138,19 @@ button{font:inherit;color:inherit;touch-action:manipulation}
   background:
     linear-gradient(90deg,rgba(20,17,25,.28) 2px,transparent 2px),
     linear-gradient(rgba(20,17,25,.28) 2px,transparent 2px),
-    radial-gradient(circle at 22% 18%,rgba(157,242,68,.10) 0 4%,transparent 4.5%),
-    radial-gradient(circle at 73% 67%,rgba(122,76,163,.14) 0 5%,transparent 5.5%),
-    linear-gradient(145deg,#6a626e,#4d4754);
+    radial-gradient(circle at 22% 18%,rgba(180,255,77,.15) 0 4%,transparent 4.5%),
+    radial-gradient(circle at 73% 67%,rgba(165,86,211,.18) 0 5%,transparent 5.5%),
+    repeating-radial-gradient(circle at 50% 50%,rgba(255,138,31,.025) 0 2px,transparent 3px 12px),
+    linear-gradient(145deg,#766b7e,#554c5d);
   background-size:var(--cell-size) var(--cell-size),var(--cell-size) var(--cell-size),130px 130px,170px 170px,auto;
   box-shadow:inset 0 0 0 2px rgba(255,255,255,.08),inset 0 8px 24px rgba(12,10,18,.24),0 0 18px rgba(119,73,162,.14)
 }
 .cell{
   position:relative;width:var(--cell-size);height:var(--cell-size);padding:0;
   border:0;border-right:1px solid rgba(32,26,38,.28);border-bottom:1px solid rgba(32,26,38,.28);
-  background:rgba(104,95,111,.18);touch-action:none;overflow:hidden;
+  background:
+    radial-gradient(circle at 50% 50%,rgba(174,255,72,.035) 0 10%,transparent 11%),
+    rgba(112,100,120,.18);touch-action:none;overflow:hidden;
   transition:filter .12s ease,opacity .12s ease,transform .12s ease
 }
 .cell:nth-child(5n){border-right:0}
@@ -272,10 +276,11 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 .piece{
   position:relative;height:65px;min-height:65px;border:2px solid rgba(255,129,31,.18);border-radius:14px;
   background:
-    radial-gradient(circle at 82% 20%,rgba(170,255,72,.08) 0 5%,transparent 5.8%),
-    linear-gradient(180deg,rgba(79,51,96,.98),rgba(47,31,62,.98));
+    radial-gradient(circle at 82% 20%,rgba(188,255,82,.13) 0 5%,transparent 5.8%),
+    radial-gradient(circle at 18% 78%,rgba(255,122,31,.10) 0 7%,transparent 7.8%),
+    linear-gradient(180deg,rgba(91,51,113,.99),rgba(49,29,67,.99));
   padding:4px 3px;display:flex;align-items:center;justify-content:center;touch-action:none;overflow:hidden;
-  box-shadow:inset 0 3px 0 rgba(255,255,255,.10),0 4px 0 rgba(18,11,28,.30)
+  box-shadow:inset 0 3px 0 rgba(255,255,255,.11),0 4px 0 rgba(18,11,28,.32),0 0 12px rgba(148,73,205,.08)
 }
 .piece.selected{outline:3px solid #2dcff3;outline-offset:1px}
 .piece.placed{opacity:.35;filter:saturate(.7)}
@@ -334,6 +339,72 @@ button{font:inherit;color:inherit;touch-action:manipulation}
   color:#24350f;font-weight:1000;box-shadow:inset 0 3px 0 rgba(255,255,255,.28),0 5px 0 rgba(47,80,20,.32)
 }
 
+/* MAX HALLOWEEN DECOR */
+.halloween-sky{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.halloween-sky .fog{
+  position:absolute;left:-25%;width:150%;height:90px;border-radius:50%;
+  background:radial-gradient(ellipse,rgba(225,201,255,.18) 0%,rgba(156,106,193,.10) 40%,transparent 72%);
+  filter:blur(10px);opacity:.8
+}
+.halloween-sky .fog.f1{top:29%;animation:fogDrift 11s ease-in-out infinite alternate}
+.halloween-sky .fog.f2{top:52%;animation:fogDrift 15s ease-in-out infinite alternate-reverse;opacity:.55}
+@keyframes fogDrift{from{transform:translateX(-7%)}to{transform:translateX(7%)}}
+
+.bat{
+  position:absolute;width:34px;height:18px;background:#17101f;
+  clip-path:polygon(0 35%,18% 16%,34% 35%,50% 6%,66% 35%,82% 16%,100% 35%,82% 55%,66% 45%,50% 76%,34% 45%,18% 55%);
+  filter:drop-shadow(0 2px 2px rgba(0,0,0,.3));opacity:.86
+}
+.bat.b1{left:9%;top:13%;transform:rotate(-8deg) scale(.75);animation:batFloat 4.5s ease-in-out infinite alternate}
+.bat.b2{left:23%;top:20%;transform:rotate(10deg) scale(.48);animation:batFloat 5.4s ease-in-out infinite alternate-reverse}
+.bat.b3{right:10%;top:25%;transform:rotate(-5deg) scale(.62);animation:batFloat 4.9s ease-in-out infinite alternate}
+.bat.b4{right:31%;top:8%;transform:rotate(8deg) scale(.38);animation:batFloat 6.3s ease-in-out infinite alternate-reverse}
+@keyframes batFloat{from{translate:0 0}to{translate:8px -8px}}
+
+.spooky-star{
+  position:absolute;width:5px;height:5px;border-radius:50%;
+  background:#c9ff65;box-shadow:0 0 8px #b7ff4c,0 0 14px rgba(183,255,76,.45);
+  animation:spookyTwinkle 1.8s ease-in-out infinite alternate
+}
+.spooky-star.s1{left:13%;top:8%}.spooky-star.s2{left:46%;top:11%;animation-delay:.5s}
+.spooky-star.s3{right:19%;top:19%;animation-delay:1s}.spooky-star.s4{right:37%;top:31%;animation-delay:.2s}
+@keyframes spookyTwinkle{from{opacity:.3;transform:scale(.7)}to{opacity:1;transform:scale(1.25)}}
+
+.board-wrap .web{
+  position:absolute;z-index:3;width:74px;height:74px;pointer-events:none;opacity:.46;
+  background:
+    repeating-conic-gradient(from 0deg,rgba(232,220,246,.76) 0 1deg,transparent 1.5deg 30deg),
+    repeating-radial-gradient(circle at 50% 50%,transparent 0 9px,rgba(232,220,246,.55) 10px 11px,transparent 12px 19px);
+  border-radius:50%
+}
+.board-wrap .web.w1{left:-21px;top:-20px;clip-path:polygon(0 0,100% 0,0 100%)}
+.board-wrap .web.w2{right:-21px;top:-20px;clip-path:polygon(100% 0,100% 100%,0 0)}
+
+.pumpkin-eye{
+  position:absolute;z-index:4;top:-19px;width:46px;height:35px;border-radius:50% 50% 45% 45%;
+  background:linear-gradient(145deg,#ffae39,#ff741a 60%,#c94b0d);
+  border:2px solid #7e330e;box-shadow:inset 0 3px 0 rgba(255,255,255,.18),0 4px 0 rgba(58,24,8,.25),0 0 12px rgba(255,122,31,.28)
+}
+.pumpkin-eye.p1{left:10px;transform:rotate(-8deg)}
+.pumpkin-eye.p2{right:10px;transform:rotate(8deg)}
+.pumpkin-eye::before,.pumpkin-eye::after{
+  content:"";position:absolute;top:10px;width:8px;height:7px;background:#25142f;
+  clip-path:polygon(50% 0,100% 100%,0 100%)
+}
+.pumpkin-eye::before{left:9px}.pumpkin-eye::after{right:9px}
+
+.tray::before{
+  content:"TRICK  OR  TREAT";position:absolute;left:50%;transform:translateX(-50%);
+  margin-top:-17px;font-size:7px;font-weight:1000;letter-spacing:.22em;color:#ffaf4f;
+  text-shadow:0 0 8px rgba(255,126,31,.35);white-space:nowrap
+}
+.tray{position:relative}
+
+.clear-card::before{
+  content:"🎃  HAPPY HALLOWEEN  🎃";display:block;margin-bottom:7px;
+  color:#ffad45;font-size:10px;font-weight:1000;letter-spacing:.08em
+}
+
 @media(max-width:360px){
   .app{padding-left:6px;padding-right:6px}.brand{font-size:15px}.brand-mark{width:34px;height:34px}
   .stat{min-width:41px;padding:3px 4px}.quest-bar{font-size:8px}
@@ -344,6 +415,11 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 </style>
 </head>
 <body>
+<div class="halloween-sky" aria-hidden="true">
+  <span class="fog f1"></span><span class="fog f2"></span>
+  <span class="bat b1"></span><span class="bat b2"></span><span class="bat b3"></span><span class="bat b4"></span>
+  <span class="spooky-star s1"></span><span class="spooky-star s2"></span><span class="spooky-star s3"></span><span class="spooky-star s4"></span>
+</div>
 <main class="app">
   <header class="top">
     <div class="brand-wrap">
@@ -364,13 +440,15 @@ button{font:inherit;color:inherit;touch-action:manipulation}
   </header>
 
   <div class="quest-bar">
-    <span><strong>MISSION</strong> ハロウィン遺跡の石板を完成させよう！</span>
+    <span><strong>MISSION</strong> 呪われたハロウィン遺跡を黄金に変えよう！</span>
     <div class="quest-dots" aria-hidden="true">
       <span class="quest-dot on"></span><span class="quest-dot"></span><span class="quest-dot"></span>
     </div>
   </div>
 
   <section class="board-wrap">
+    <span class="web w1" aria-hidden="true"></span><span class="web w2" aria-hidden="true"></span>
+    <span class="pumpkin-eye p1" aria-hidden="true"></span><span class="pumpkin-eye p2" aria-hidden="true"></span>
     <div id="board" class="board" aria-label="5×5パズル盤"></div>
     <div id="msg" class="msg">読み込み中…</div>
   </section>
@@ -395,13 +473,13 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 <div id="overlay" class="overlay" role="dialog" aria-modal="true">
   <div class="clear-card">
     <div class="treasure" aria-hidden="true"></div>
-    <h2>GOLDEN RELIC!</h2>
+    <h2>GOLDEN HALLOWEEN!</h2>
     <p id="clearText"></p>
-    <button id="again" type="button">もういちど冒険する！</button>
+    <button id="again" type="button">もういちど呪いをとく！</button>
   </div>
 </div>
 
-<script src="solutions.js?v=27"></script>
+<script src="solutions.js?v=28"></script>
 <script>
 (()=>{
 const defs={
