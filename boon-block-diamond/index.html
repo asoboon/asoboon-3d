@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#0f5f74">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>BOON BLOCK DIAMOND — CHRISTMAS HARD</title>
+<!-- BOON BLOCK DIAMOND v1: triangle-cell diamond hard mode / Christmas -->
+<style>
+:root{
+ --bg1:#164f7c;--bg2:#0b2747;--green:#1d6543;--red:#d94443;--gold:#f4c94f;
+ --ice:#dff7ff;--ink:#173e4f;--muted:#668492;
+ --c0:linear-gradient(145deg,#ff766d,#d83d3a);
+ --c1:linear-gradient(145deg,#6bd48a,#2f975a);
+ --c2:linear-gradient(145deg,#a6efff,#55bed9);
+ --c3:linear-gradient(145deg,#ffe68e,#d6aa35);
+ --c4:linear-gradient(145deg,#e6b3ff,#a66ad1);
+ --core:linear-gradient(145deg,#fff7c9,#ffe578 34%,#e2b63e 68%,#8f6117);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;overflow:hidden}
+body{
+ font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#f8fbff;user-select:none;-webkit-user-select:none;
+ background:
+  radial-gradient(circle at 78% 10%,rgba(255,248,215,.96) 0 5%,rgba(255,248,215,.18) 6%,transparent 11%),
+  radial-gradient(ellipse at 32% 21%,rgba(76,232,199,.15),transparent 34%),
+  radial-gradient(ellipse at 66% 27%,rgba(120,160,255,.18),transparent 37%),
+  linear-gradient(180deg,var(--bg1),#103c65 28%,var(--bg2) 58%,#12382f 80%,#0b251f);
+}
+.snow{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.flake{position:absolute;top:-8%;color:#fff;text-shadow:0 0 7px rgba(199,244,255,.85);animation:fall linear infinite;opacity:.9}
+.flake::before{content:"❄"}
+.flake:nth-child(1){left:4%;font-size:12px;animation-duration:8s}
+.flake:nth-child(2){left:15%;font-size:8px;animation-duration:11s;animation-delay:-4s}
+.flake:nth-child(3){left:28%;font-size:14px;animation-duration:9s;animation-delay:-6s}
+.flake:nth-child(4){left:41%;font-size:9px;animation-duration:10s;animation-delay:-2s}
+.flake:nth-child(5){left:55%;font-size:13px;animation-duration:8.5s;animation-delay:-5s}
+.flake:nth-child(6){left:68%;font-size:8px;animation-duration:12s;animation-delay:-8s}
+.flake:nth-child(7){left:81%;font-size:14px;animation-duration:9.6s;animation-delay:-3s}
+.flake:nth-child(8){left:93%;font-size:9px;animation-duration:10.8s;animation-delay:-7s}
+@keyframes fall{0%{transform:translate3d(0,-12vh,0) rotate(0);opacity:0}12%{opacity:.95}100%{transform:translate3d(24px,112vh,0) rotate(260deg);opacity:.2}}
+.app{position:relative;z-index:1;max-width:430px;height:100dvh;margin:auto;padding:calc(7px + env(safe-area-inset-top)) 8px calc(6px + env(safe-area-inset-bottom));display:flex;flex-direction:column;overflow:hidden}
+.top{display:flex;align-items:center;justify-content:space-between;gap:7px;flex:0 0 auto}
+.brand{font-size:17px;font-weight:1000;letter-spacing:.04em;line-height:.98;text-shadow:0 2px 0 #07344f}
+.brand small{display:block;font-size:8px;color:#ffe594;margin-top:4px;letter-spacing:.13em}
+.stats{display:flex;gap:4px;align-items:center}
+.stat{min-width:48px;padding:4px 6px;text-align:center;border-radius:11px;background:linear-gradient(#f8fdff,#d8eef5);color:var(--ink);box-shadow:inset 0 2px #fff,0 3px 0 rgba(20,56,69,.13)}
+.stat b{display:block;font-size:12px}.stat span{font-size:7px;font-weight:900;color:#63818e}
+.iconbtn{height:38px;border:0;border-radius:12px;font-weight:1000;box-shadow:inset 0 2px rgba(255,255,255,.35),0 4px 0 rgba(30,47,26,.18)}
+#hint{width:49px;background:linear-gradient(#ffe98c,#efb83c);color:#5a4210;font-size:9px}
+#reset{width:38px;background:linear-gradient(#7dde9a,#39a962);color:#123f29;font-size:17px}
+.quest{margin:6px 0 2px;padding:5px 8px;border-radius:12px;text-align:center;font-size:9px;font-weight:1000;background:rgba(239,250,255,.94);color:#174b5d;border:2px solid rgba(65,118,137,.16);flex:0 0 auto}
+.quest b{color:#c43d3d}
+.diamond-stage{position:relative;height:315px;flex:0 0 auto;margin-top:2px}
+.frame{
+ position:absolute;left:50%;top:50%;width:248px;height:248px;transform:translate(-50%,-50%) rotate(45deg);
+ border-radius:22px;background:linear-gradient(145deg,#e8f2f5,#acbec5 62%,#81949c);
+ border:5px solid #6d818a;box-shadow:inset 0 5px 0 rgba(255,255,255,.65),0 10px 0 rgba(17,46,57,.19),0 0 26px rgba(166,234,255,.18)
+}
+.frame::before,.frame::after{content:"";position:absolute;width:78px;height:17px;background:linear-gradient(#fff,#dfeef2);border-radius:50%;box-shadow:0 3px 0 rgba(84,105,112,.10)}
+.frame::before{left:9px;top:-8px}.frame::after{right:9px;bottom:-8px}
+.garland{position:absolute;z-index:3;left:50%;top:20px;width:200px;height:26px;transform:translateX(-50%);border-bottom:7px solid #2e8d58;border-radius:0 0 60% 60%}
+.garland::before{content:"";position:absolute;left:12px;top:13px;width:11px;height:11px;border-radius:50%;background:#d84745;box-shadow:30px 2px #f2ca4e,60px -1px #d84745,90px 3px #6bd384,120px 0 #f2ca4e,150px 3px #d84745}
+.bow{position:absolute;z-index:4;left:50%;top:17px;width:27px;height:20px;transform:translateX(-50%);background:#d4383c;clip-path:polygon(50% 35%,0 0,9% 88%,50% 62%,91% 88%,100% 0)}
+.board{
+ --cell:70px;position:absolute;left:50%;top:50%;width:calc(var(--cell)*3);height:calc(var(--cell)*3);
+ transform:translate(-50%,-50%) rotate(45deg);touch-action:none;z-index:2
+}
+.slot,.ghost{position:absolute;width:var(--cell);height:var(--cell);border:0;padding:0;touch-action:none}
+.slot{background:rgba(234,247,250,.22);filter:drop-shadow(0 0 1px rgba(62,87,96,.38));transition:filter .12s,transform .12s}
+.slot::after{content:"";position:absolute;inset:0;background:rgba(255,255,255,.15);clip-path:inherit}
+.slot[data-d="0"],.ghost[data-d="0"]{clip-path:polygon(0 0,100% 0,50% 50%)}
+.slot[data-d="1"],.ghost[data-d="1"]{clip-path:polygon(100% 0,100% 100%,50% 50%)}
+.slot[data-d="2"],.ghost[data-d="2"]{clip-path:polygon(0 100%,100% 100%,50% 50%)}
+.slot[data-d="3"],.ghost[data-d="3"]{clip-path:polygon(0 0,50% 50%,0 100%)}
+.slot.filled{filter:drop-shadow(0 2px 1px rgba(28,46,52,.15))}
+.slot.good{filter:drop-shadow(0 0 5px #61e9ff) brightness(1.1)}
+.slot.bad{filter:drop-shadow(0 0 6px #ff6c61) brightness(1.12)}
+.slot.focus{filter:drop-shadow(0 0 7px #ffe16c) brightness(1.18)}
+.ghost{z-index:8;opacity:.58;outline:0;filter:drop-shadow(0 0 6px rgba(255,227,109,.55))}
+.ghost.bad{filter:drop-shadow(0 0 7px rgba(255,91,78,.75));opacity:.48}
+.core-star{position:absolute;z-index:9;display:flex;align-items:center;justify-content:center;width:var(--cell);height:var(--cell);font-size:29px;color:#fff9cd;text-shadow:0 0 6px #ffe894,0 0 15px rgba(255,210,65,.95);transform:rotate(-45deg);pointer-events:auto;touch-action:none}
+.board.clearing .slot.filled{background:linear-gradient(145deg,#fff7c9,#ffe578 34%,#e2b63e 68%,#8f6117)!important;animation:gold .48s ease-out forwards;animation-delay:var(--delay)}
+.board.clearing .core-star{animation:starburst .8s ease-out forwards}
+@keyframes gold{0%{filter:brightness(1)}40%{filter:brightness(1.7)}100%{filter:brightness(1.08)}}
+@keyframes starburst{0%{transform:rotate(-45deg) scale(1)}45%{transform:rotate(-45deg) scale(1.6);filter:brightness(1.8)}100%{transform:rotate(-45deg) scale(1.1)}}
+.msg{margin-top:-1px;min-height:22px;line-height:18px;text-align:center;font-weight:900;font-size:10px;border-radius:999px;background:rgba(239,250,255,.92);color:#174b5d;padding:2px 8px;flex:0 0 auto;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.msg.ok{background:rgba(222,251,229,.94);color:#1d5a3c}.msg.bad{background:rgba(255,228,228,.94);color:#8d3030}
+.guide{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin:6px 0 4px;flex:0 0 auto}
+.guide div{font-size:7px;text-align:center;padding:4px 1px;border-radius:10px;background:rgba(240,250,253,.91);color:#65818d;box-shadow:0 2px 0 rgba(20,58,70,.08)}
+.guide b{display:block;font-size:8px;color:#b4393b;margin-bottom:1px}
+.tray-head{display:flex;justify-content:space-between;align-items:center;color:#fff;font-size:9px;font-weight:1000;margin:2px 3px 3px;flex:0 0 auto}
+.tray-head span{background:#c63b3f;color:#fff8dc;padding:2px 7px;border-radius:999px}
+.tray{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(2,57px);gap:5px;flex:0 0 auto}
+.piece{position:relative;border:2px solid rgba(76,116,130,.14);border-radius:13px;background:linear-gradient(#f5fbfd,#d5e9ef);box-shadow:inset 0 2px #fff,0 3px 0 rgba(30,64,76,.10);touch-action:none;overflow:hidden}
+.piece.selected{outline:3px solid #f2c84f;outline-offset:1px}.piece.placed{opacity:.36}
+.piece-name{position:absolute;left:6px;top:5px;font-size:7px;font-weight:1000;color:#315d6d}
+.mini{position:relative;margin:auto}.mtri{position:absolute}
+.mtri[data-d="0"]{clip-path:polygon(0 0,100% 0,50% 50%)}.mtri[data-d="1"]{clip-path:polygon(100% 0,100% 100%,50% 50%)}.mtri[data-d="2"]{clip-path:polygon(0 100%,100% 100%,50% 50%)}.mtri[data-d="3"]{clip-path:polygon(0 0,50% 50%,0 100%)}
+.dragvis{position:fixed;z-index:40;left:0;top:0;transform:translate(-50%,-120%);display:none;pointer-events:none;padding:6px 9px;border-radius:12px;background:rgba(247,252,254,.95);color:#244f60;font-size:10px;font-weight:1000;box-shadow:0 10px 22px rgba(8,30,40,.24)}
+.dragvis.show{display:block}
+.overlay{position:fixed;z-index:50;inset:0;display:none;align-items:center;justify-content:center;padding:24px;background:rgba(8,34,48,.82);backdrop-filter:blur(4px)}
+.overlay.show{display:flex}
+.card{width:min(350px,100%);text-align:center;border-radius:26px;padding:24px;background:linear-gradient(#fafdff,#d9edf4);border:4px solid #d94a48;box-shadow:inset 0 4px #fff,0 12px 0 rgba(15,45,57,.14),0 25px 70px rgba(5,28,39,.35)}
+.card .star{font-size:62px;color:#f0c64c;text-shadow:0 0 12px #fff2ad,0 0 28px rgba(240,198,76,.7)}
+.card h2{margin:0;color:#bd3034;font-size:27px}.card p{color:#315f70;font-weight:900}.card button{width:100%;height:49px;border:0;border-radius:15px;background:linear-gradient(#70d98f,#33a35f);color:#123f29;font-weight:1000;box-shadow:inset 0 3px rgba(255,255,255,.35),0 5px 0 rgba(33,100,61,.24)}
+@media(max-width:360px){.diamond-stage{height:292px}.frame{width:225px;height:225px}.board{--cell:64px}.garland{width:180px}.tray{grid-template-rows:repeat(2,53px)}.brand{font-size:15px}.stat{min-width:43px;padding:3px 4px}}
+</style>
+</head>
+<body>
+<div class="snow" aria-hidden="true"><i class="flake"></i><i class="flake"></i><i class="flake"></i><i class="flake"></i><i class="flake"></i><i class="flake"></i><i class="flake"></i><i class="flake"></i></div>
+<main class="app">
+ <header class="top">
+  <div class="brand">BOON BLOCK DIAMOND<small>CHRISTMAS HARD MODE</small></div>
+  <div class="stats">
+   <div class="stat"><b id="time">00:00</b><span>TIME</span></div>
+   <div class="stat"><b id="moves">0</b><span>MOVE</span></div>
+   <button id="hint" class="iconbtn" type="button">💡<span id="hintCount">0</span></button>
+   <button id="reset" class="iconbtn" type="button">↺</button>
+  </div>
+ </header>
+ <div class="quest"><b>EXTREME</b> 三角ピースでダイヤの聖石板を埋めろ！</div>
+ <section class="diamond-stage">
+  <div class="frame"></div><div class="garland"></div><div class="bow"></div>
+  <div id="board" class="board" aria-label="三角セルのダイヤモンドパズル盤"></div>
+ </section>
+ <div id="msg" class="msg">全16ルート。GOLD GEM中央スタートは8ルート。</div>
+ <div class="guide"><div><b>↻ タップ</b>90°回転</div><div><b>↔ フリック</b>反転</div><div><b>☝ ドラッグ</b>移動</div><div><b>◉ 長押し</b>戻す</div></div>
+ <div class="tray-head"><strong>TRIANGLE BLOCKS</strong><span><b id="count">1</b> / 6</span></div>
+ <section id="tray" class="tray"></section>
+</main>
+<div id="dragvis" class="dragvis"></div>
+<div id="overlay" class="overlay"><div class="card"><div class="star">✦</div><h2>DIAMOND CLEAR!</h2><p id="clearText"></p><button id="again" type="button">もういちど挑戦！</button></div></div>
+<script src="solutions.js?v=1"></script>
+<script>
+(()=> {
+const defs={
+ A:[[0,0,2],[1,0,0],[1,0,1],[1,0,2],[1,0,3],[2,0,0]],
+ B:[[0,0,2],[0,0,3],[1,0,0],[1,0,1],[1,0,2],[1,0,3]],
+ C:[[0,0,0],[0,0,1],[0,0,3],[0,1,0],[0,1,2],[0,1,3]],
+ D:[[0,0,1],[0,1,0],[0,1,1],[0,1,2],[0,1,3],[1,1,0],[1,1,1]],
+ E:[[0,0,1],[0,0,2],[0,0,3],[0,1,0],[0,1,1],[0,1,2],[0,1,3]],
+ CORE:[[0,0,0],[0,0,1],[0,0,2],[0,0,3]]
+};
+const ids=["A","B","C","D","E","CORE"], names={A:"SLEIGH",B:"BELL",C:"TREE",D:"GIFT",E:"SNOW",CORE:"GOLD GEM"};
+const symbols={A:"A",B:"B",C:"C",D:"D",E:"E",CORE:"O"};
+const colors=["var(--c0)","var(--c1)","var(--c2)","var(--c3)","var(--c4)","var(--core)"];
+const SOL=window.BOON_DIAMOND_SOLUTIONS||[];
+const $=s=>document.querySelector(s),board=$("#board"),tray=$("#tray"),msg=$("#msg"),dragvis=$("#dragvis");
+const timeEl=$("#time"),movesEl=$("#moves"),countEl=$("#count"),hintCountEl=$("#hintCount"),overlay=$("#overlay"),clearText=$("#clearText");
+const TAP=10,DRAG=13,FLICK=44,FLICK_T=290,LONG=520,LONG_MOVE=9;
+const dmapFlip={0:0,1:3,2:2,3:1};
+function norm(s){let mr=Math.min(...s.map(x=>x[0])),mc=Math.min(...s.map(x=>x[1]));return s.map(([r,c,d])=>[r-mr,c-mc,d]).sort((a,b)=>a[0]-b[0]||a[1]-b[1]||a[2]-b[2])}
+function rot(s){return norm(s.map(([r,c,d])=>[c,-r,(d+1)%4]))}
+function flip(s){return norm(s.map(([r,c,d])=>[r,-c,dmapFlip[d]]))}
+function bounds(s){return {h:Math.max(...s.map(x=>x[0]))+1,w:Math.max(...s.map(x=>x[1]))+1}}
+function key(cells){return cells.map(([r,c,d])=>((r*3+c)*4+d)).sort((a,b)=>a-b).join(",")}
+const pieces={};ids.forEach(id=>pieces[id]={shape:norm(defs[id]),placed:null});pieces.CORE.placed=defs.CORE.map(([r,c,d])=>[r+1,c+1,d]);
+let selected="A",moves=0,start=0,timer=null,target=null,gesture=null,drag=null,longTimer=null,hints=0,hintStage=0,hintPlan=null,clearing=false;
+function occupied(ignore){let m=new Map();for(const id of ids){if(id===ignore)continue;const p=pieces[id];if(p.placed)for(const x of p.placed)m.set(x.join(","),id)}return m}
+function validFor(id,cells){const occ=occupied(id);return cells.length===defs[id].length&&cells.every(([r,c,d])=>r>=0&&r<3&&c>=0&&c<3&&!occ.has([r,c,d].join(",")))}
+function absCells(id,anchor,shape=pieces[id].shape){return shape.map(([r,c,d])=>[anchor.r+r,anchor.c+c,d])}
+function placementAnchor(cells){return {r:Math.min(...cells.map(x=>x[0])),c:Math.min(...cells.map(x=>x[1]))}}
+function setMsg(t,k=""){msg.textContent=t;msg.className="msg"+(k?" "+k:"")}
+function fmt(ms){const s=Math.floor(ms/1000),m=Math.floor(s/60);return String(m).padStart(2,"0")+":"+String(s%60).padStart(2,"0")}
+function clock(){if(start)return;start=Date.now();timer=setInterval(()=>timeEl.textContent=fmt(Date.now()-start),500)}
+function haptic(ms=12){if(navigator.vibrate)navigator.vibrate(ms)}
+function boardLocal(x,y){
+ const rect=board.getBoundingClientRect(),cx=rect.left+rect.width/2,cy=rect.top+rect.height/2,dx=x-cx,dy=y-cy,s=Math.SQRT1_2;
+ const ux=s*dx+s*dy,uy=-s*dx+s*dy,size=board.offsetWidth;
+ return {x:ux+size/2,y:uy+size/2,size,cell:size/3}
+}
+function targetFromPointer(x,y){
+ const p=boardLocal(x,y),rr=Math.floor(p.y/p.cell),cc=Math.floor(p.x/p.cell),b=bounds(pieces[selected].shape);
+ return {r:rr-Math.floor((b.h-1)/2),c:cc-Math.floor((b.w-1)/2)}
+}
+function nearBoard(x,y){const r=document.querySelector(".diamond-stage").getBoundingClientRect();return x>=r.left&&x<=r.right&&y>=r.top&&y<=r.bottom}
+function triClip(el,d){el.dataset.d=d}
+function renderBoard(){
+ board.innerHTML="";
+ const occ=occupied();
+ for(let r=0;r<3;r++)for(let c=0;c<3;c++)for(let d=0;d<4;d++){
+  const id=occ.get([r,c,d].join(",")),b=document.createElement("button");b.type="button";b.className="slot";triClip(b,d);
+  b.style.left="calc(var(--cell) * "+c+")";b.style.top="calc(var(--cell) * "+r+")";
+  if(id){b.classList.add("filled");b.style.background=colors[ids.indexOf(id)];if(clearing)b.style.setProperty("--delay",(((r*3+c)*4+d)*22)+"ms");
+   if(hintPlan&&hintStage){if(hintPlan.good.includes(id))b.classList.add("good");if(hintPlan.bad.includes(id))b.classList.add("bad");if(hintPlan.focus===id)b.classList.add("focus")}
+   b.addEventListener("pointerdown",e=>begin(id,e));
+  }
+  board.appendChild(b);
+ }
+ if(pieces.CORE.placed){
+  const a=placementAnchor(pieces.CORE.placed),s=document.createElement("div");s.className="core-star";s.textContent="✦";
+  s.style.left="calc(var(--cell) * "+a.c+")";s.style.top="calc(var(--cell) * "+a.r+")";s.addEventListener("pointerdown",e=>begin("CORE",e));board.appendChild(s)
+ }
+ if(drag&&target){
+  const cells=absCells(selected,target),ok=validFor(selected,cells);
+  for(const [r,c,d] of cells){if(r<0||r>2||c<0||c>2)continue;const g=document.createElement("div");g.className="ghost"+(ok?"":" bad");triClip(g,d);g.style.left="calc(var(--cell) * "+c+")";g.style.top="calc(var(--cell) * "+r+")";g.style.background=colors[ids.indexOf(selected)];board.appendChild(g)}
+ }
+ if(hintPlan&&hintStage>=2&&hintPlan.cells){
+  for(const [r,c,d] of hintPlan.cells){const g=document.createElement("div");g.className="ghost";triClip(g,d);g.style.left="calc(var(--cell) * "+c+")";g.style.top="calc(var(--cell) * "+r+")";g.style.background=colors[ids.indexOf(hintPlan.focus)];board.appendChild(g)}
+ }
+ if(clearing)board.classList.add("clearing");else board.classList.remove("clearing")
+}
+function mini(shape,color){
+ const b=bounds(shape),scale=15,wrap=document.createElement("div");wrap.className="mini";wrap.style.width=(b.w*scale)+"px";wrap.style.height=(b.h*scale)+"px";
+ for(const [r,c,d] of shape){const x=document.createElement("span");x.className="mtri";x.dataset.d=d;x.style.width=scale+"px";x.style.height=scale+"px";x.style.left=(c*scale)+"px";x.style.top=(r*scale)+"px";x.style.background=color;wrap.appendChild(x)}return wrap
+}
+function renderTray(){
+ tray.innerHTML="";
+ ids.forEach((id,i)=>{const b=document.createElement("button");b.type="button";b.className="piece"+(id===selected?" selected":"")+(pieces[id].placed?" placed":"");
+  const n=document.createElement("span");n.className="piece-name";n.textContent=names[id];b.appendChild(n);b.appendChild(mini(pieces[id].shape,colors[i]));b.addEventListener("pointerdown",e=>begin(id,e));tray.appendChild(b)});
+ countEl.textContent=ids.filter(id=>pieces[id].placed).length
+}
+function render(){renderBoard();renderTray()}
+function solutionCells(sol,id){const ch=symbols[id],out=[];for(let i=0;i<36;i++)if(sol[i]===ch){const q=Math.floor(i/4),d=i%4;out.push([Math.floor(q/3),q%3,d])}return out}
+function pieceMatches(sol,id){const p=pieces[id];if(!p.placed)return true;const s=new Set(solutionCells(sol,id).map(x=>x.join(",")));return p.placed.every(x=>s.has(x.join(",")))}
+function matching(fixed){return SOL.filter(s=>fixed.every(id=>pieceMatches(s,id)))}
+function choose(cands,choices){let best=null;for(const id of choices){const map=new Map();for(const s of cands){const cells=solutionCells(s,id),k=key(cells);if(!map.has(k))map.set(k,{cells,count:0});map.get(k).count++}let top=null;for(const g of map.values())if(!top||g.count>top.count)top=g;if(!best||map.size<best.n||(map.size===best.n&&top.count>best.top.count))best={id,n:map.size,top}}return best}
+function makeHint(){
+ const fixed=ids.filter(id=>pieces[id].placed),m=matching(fixed);
+ if(m.length){const choices=ids.filter(id=>!pieces[id].placed);const pick=choices.length?choose(m,choices):null;return {good:fixed,bad:[],focus:pick?pick.id:null,cells:pick?pick.top.cells:null,count:m.length}}
+ let best=null;
+ for(const s of SOL){const good=[],bad=[];for(const id of fixed)(pieceMatches(s,id)?good:bad).push(id);if(!best||good.length>best.good.length)best={s,good,bad}}
+ if(!best)return null;const choices=best.bad.length?best.bad:ids.filter(id=>!pieces[id].placed),focus=choices[0];return {good:best.good,bad:best.bad,focus,cells:solutionCells(best.s,focus),count:1}
+}
+function useHint(){
+ if(!SOL.length)return setMsg("ヒントDBを読み込めない","bad");
+ if(!hintPlan||hintStage>=2){hintPlan=makeHint();hintStage=0}hintStage++;hints++;hintCountEl.textContent=hints;render();
+ if(hintPlan.bad.length)setMsg(hintStage===1?"赤いピースを動かして道を戻そう":"黄色の場所に "+names[hintPlan.focus]+" を置こう","bad");
+ else setMsg(hintStage===1?"水色はOK。次は "+names[hintPlan.focus]:"ここ！ "+names[hintPlan.focus]+" の正解候補","ok")
+}
+function clearHint(){hintPlan=null;hintStage=0}
+function transform(id,kind){
+ clearHint();selected=id;if(id==="CORE"){setMsg("GOLD GEMは回転不要。ドラッグで動かせるよ","ok");render();return}
+ const p=pieces[id],next=kind==="rot"?rot(p.shape):flip(p.shape);
+ if(p.placed){const a=placementAnchor(p.placed),cells=absCells(id,a,next);if(!validFor(id,cells)){setMsg("そこでは回せないよ","bad");haptic(18);return}p.shape=next;p.placed=cells}else p.shape=next;
+ render();setMsg(kind==="rot"?"くるっ！ 90°回転":"ひっくり返した！","ok");haptic()
+}
+function begin(id,e){
+ if(e.pointerType==="mouse"&&e.button!==0)return;e.preventDefault();selected=id;target=null;
+ gesture={id,pid:e.pointerId,x:e.clientX,y:e.clientY,lx:e.clientX,ly:e.clientY,t:performance.now(),dragging:false,orig:pieces[id].placed?pieces[id].placed.map(x=>[...x]):null};
+ if(pieces[id].placed){longTimer=setTimeout(()=>{if(gesture&&!gesture.dragging){pieces[id].placed=null;gesture=null;clearHint();render();setMsg(names[id]+" をトレイへ戻した","ok");haptic(18)}},LONG)}
+ renderTray()
+}
+function startDrag(){
+ if(!gesture||gesture.dragging)return;clearTimeout(longTimer);longTimer=null;clearHint();gesture.dragging=true;selected=gesture.id;if(pieces[selected].placed)pieces[selected].placed=null;drag={id:selected};dragvis.textContent=names[selected];dragvis.classList.add("show");render()
+}
+function move(e){
+ if(!gesture||e.pointerId!==gesture.pid)return;e.preventDefault();gesture.lx=e.clientX;gesture.ly=e.clientY;
+ const dx=e.clientX-gesture.x,dy=e.clientY-gesture.y,dist=Math.hypot(dx,dy);if(dist>LONG_MOVE){clearTimeout(longTimer);longTimer=null}
+ if(!gesture.dragging&&dist>=DRAG)startDrag();
+ if(gesture&&gesture.dragging){dragvis.style.left=e.clientX+"px";dragvis.style.top=e.clientY+"px";target=nearBoard(e.clientX,e.clientY)?targetFromPointer(e.clientX,e.clientY):null;renderBoard()}
+}
+function finish(e){
+ if(!gesture||e.pointerId!==gesture.pid)return;clearTimeout(longTimer);longTimer=null;
+ const g=gesture,dx=e.clientX-g.x,dy=e.clientY-g.y,dist=Math.hypot(dx,dy),dt=performance.now()-g.t,isFlick=Math.abs(dx)>=FLICK&&dt<=FLICK_T&&Math.abs(dx)>Math.abs(dy)*1.4;
+ if(isFlick){if(g.orig)pieces[g.id].placed=g.orig;gesture=null;drag=null;dragvis.classList.remove("show");target=null;transform(g.id,"flip");return}
+ if(g.dragging){
+  const cells=target?absCells(g.id,target):null;
+  if(cells&&validFor(g.id,cells)){clock();pieces[g.id].placed=cells;moves++;movesEl.textContent=moves;haptic(18);setMsg("カチャッ！","ok")}
+  else{if(g.orig)pieces[g.id].placed=g.orig;setMsg(cells?"そこには入らない":"元の場所に戻した",cells?"bad":"")}
+  gesture=null;drag=null;target=null;dragvis.classList.remove("show");render();
+  checkClear();return
+ }
+ gesture=null;if(dist<=TAP)transform(g.id,"rot")
+}
+function checkClear(){
+ if(ids.every(id=>pieces[id].placed)&&occupied().size===36){
+  clearInterval(timer);if(start)timeEl.textContent=fmt(Date.now()-start);clearing=true;render();setMsg("カチャッ！ ダイヤの聖石板が黄金化！","ok");haptic(40);
+  clearText.textContent="TIME "+timeEl.textContent+" / MOVE "+moves+" / HINT "+hints;
+  setTimeout(()=>overlay.classList.add("show"),1100)
+ }
+}
+function reset(){
+ clearInterval(timer);clearTimeout(longTimer);timer=null;start=0;moves=0;hints=0;clearing=false;gesture=null;drag=null;target=null;clearHint();
+ timeEl.textContent="00:00";movesEl.textContent="0";hintCountEl.textContent="0";overlay.classList.remove("show");dragvis.classList.remove("show");
+ ids.forEach(id=>{pieces[id].shape=norm(defs[id]);pieces[id].placed=null});pieces.CORE.placed=defs.CORE.map(([r,c,d])=>[r+1,c+1,d]);selected="A";render();setMsg("激ムズ：全16ルート / GOLD GEM中央なら8ルート")
+}
+window.addEventListener("pointermove",move,{passive:false});window.addEventListener("pointerup",finish);window.addEventListener("pointercancel",e=>{if(gesture&&e.pointerId===gesture.pid){if(gesture.orig)pieces[gesture.id].placed=gesture.orig;gesture=null;drag=null;target=null;dragvis.classList.remove("show");render()}});
+$("#hint").onclick=useHint;$("#reset").onclick=reset;$("#again").onclick=reset;
+render();
+})();
+</script>
+</body>
+</html>
