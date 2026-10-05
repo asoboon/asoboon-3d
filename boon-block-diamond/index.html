@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>BOON BLOCK DIAMOND — CHRISTMAS HARD</title>
-<!-- BOON BLOCK DIAMOND v4: 11 pieces + tray angle matches board -->
+<!-- BOON BLOCK DIAMOND v5: clearer 3-step hints + clean puzzle frame -->
 <style>
 :root{
  --bg1:#164f7c;--bg2:#0b2747;--green:#1d6543;--red:#d94443;--gold:#f4c94f;
@@ -68,19 +68,7 @@ body{
  border:5px solid #9f895e;
  box-shadow:inset 0 5px 0 rgba(255,255,255,.55),inset 0 -6px 0 rgba(113,87,42,.10),0 10px 0 rgba(61,48,28,.20),0 0 26px rgba(166,234,255,.14)
 }
-.frame::before,.frame::after{content:"";position:absolute;width:84px;height:18px;background:linear-gradient(#fff,#eaf5f7);border-radius:50%;box-shadow:0 3px 0 rgba(84,105,112,.09)}
-.frame::before{left:9px;top:-8px}.frame::after{right:9px;bottom:-8px}
-.garland{position:absolute;z-index:3;left:50%;top:20px;width:200px;height:26px;transform:translateX(-50%);border-bottom:7px solid #2e8d58;border-radius:0 0 60% 60%}
-.garland::before{content:"";position:absolute;left:12px;top:13px;width:11px;height:11px;border-radius:50%;background:#d84745;box-shadow:30px 2px #f2ca4e,60px -1px #d84745,90px 3px #6bd384,120px 0 #f2ca4e,150px 3px #d84745}
-.diamond-stage::before,.diamond-stage::after{content:"";position:absolute;z-index:1;top:58px;width:18px;height:76px;border-radius:16px;background:repeating-linear-gradient(45deg,#fff 0 10px,#d94243 10px 20px);border:2px solid rgba(255,255,255,.55);box-shadow:0 4px 0 rgba(30,57,66,.12)}
-.diamond-stage::before{left:20px;transform:rotate(-18deg)}
-.diamond-stage::after{right:20px;transform:rotate(18deg)}
-.xmas-star-top{position:absolute;z-index:6;left:50%;top:0;transform:translateX(-50%);font-size:25px;color:#ffe88a;text-shadow:0 0 8px #fff3b2,0 0 18px rgba(255,215,72,.75)}
-.xmas-gifts{position:absolute;z-index:3;bottom:8px;left:50%;transform:translateX(-50%);display:flex;gap:5px;align-items:end}
-.xmas-gifts i{display:block;width:23px;height:19px;border-radius:3px;background:linear-gradient(90deg,transparent 42%,#f5d45b 43% 57%,transparent 58%),linear-gradient(#d84a49,#b92f34);box-shadow:0 3px 0 rgba(23,54,64,.12)}
-.xmas-gifts i:nth-child(2){width:28px;height:23px;background:linear-gradient(90deg,transparent 42%,#f5d45b 43% 57%,transparent 58%),linear-gradient(#4dbd76,#258b50)}
-.xmas-gifts i:nth-child(3){width:20px;height:16px;background:linear-gradient(90deg,transparent 42%,#ef4c4a 43% 57%,transparent 58%),linear-gradient(#f3d35e,#d6ad36)}
-.bow{position:absolute;z-index:4;left:50%;top:17px;width:27px;height:20px;transform:translateX(-50%);background:#d4383c;clip-path:polygon(50% 35%,0 0,9% 88%,50% 62%,91% 88%,100% 0)}
+/* Keep the play frame clean: Christmas decoration lives outside the puzzle area. */
 .board{
  --cell:52px;position:absolute;left:50%;top:50%;width:calc(var(--cell)*4);height:calc(var(--cell)*4);
  transform:translate(-50%,-50%) rotate(45deg);touch-action:none;z-index:2
@@ -101,11 +89,19 @@ body{
 .slot[data-d="2"],.ghost[data-d="2"]{clip-path:polygon(0 100%,100% 100%,50% 50%)}
 .slot[data-d="3"],.ghost[data-d="3"]{clip-path:polygon(0 0,50% 50%,0 100%)}
 .slot.filled{filter:drop-shadow(0 1px 1px rgba(48,55,58,.24)) drop-shadow(0 0 1px rgba(255,255,255,.9))}
-.slot.good{filter:drop-shadow(0 0 5px #61e9ff) brightness(1.1)}
-.slot.bad{filter:drop-shadow(0 0 6px #ff6c61) brightness(1.12)}
-.slot.focus{filter:drop-shadow(0 0 7px #ffe16c) brightness(1.18)}
-.ghost{z-index:8;opacity:.58;outline:0;filter:drop-shadow(0 0 6px rgba(255,227,109,.55))}
-.ghost.bad{filter:drop-shadow(0 0 7px rgba(255,91,78,.75));opacity:.48}
+.slot.good{filter:drop-shadow(0 0 5px #53dfff) brightness(1.12)}
+.slot.bad{filter:drop-shadow(0 0 7px #ff665b) brightness(1.15)}
+.slot.focus{filter:drop-shadow(0 0 9px #ffe15b) brightness(1.24)}
+.ghost{z-index:8;opacity:.72;outline:0;filter:drop-shadow(0 0 7px rgba(255,224,82,.78)) brightness(1.12)}
+.ghost.bad{filter:drop-shadow(0 0 8px rgba(255,91,78,.82));opacity:.52}
+.ghost.hint-exact{opacity:.84;filter:drop-shadow(0 0 4px #fff) drop-shadow(0 0 10px #ffd947);animation:hintExact .72s ease-in-out infinite alternate}
+@keyframes hintExact{from{filter:drop-shadow(0 0 3px #fff) drop-shadow(0 0 8px #ffd947);opacity:.68}to{filter:drop-shadow(0 0 7px #fff) drop-shadow(0 0 15px #ffd947);opacity:.96}}
+.hint-tag{
+ position:absolute;z-index:15;pointer-events:none;transform:translate(-50%,-50%) rotate(-45deg);
+ background:#fff5a8;color:#6e4b00;border:2px solid #e8b92f;border-radius:999px;
+ padding:4px 8px;font-size:9px;font-weight:1000;white-space:nowrap;
+ box-shadow:0 3px 0 rgba(98,67,9,.14),0 0 12px rgba(255,218,66,.42)
+}
 .core-star{position:absolute;z-index:9;display:flex;align-items:center;justify-content:center;width:var(--cell);height:var(--cell);font-size:29px;color:#fff9cd;text-shadow:0 0 6px #ffe894,0 0 15px rgba(255,210,65,.95);transform:rotate(-45deg);pointer-events:auto;touch-action:none}
 .board.clearing .slot.filled{background:linear-gradient(145deg,#fff7c9,#ffe578 34%,#e2b63e 68%,#8f6117)!important;animation:gold .48s ease-out forwards;animation-delay:var(--delay)}
 .board.clearing .core-star{animation:starburst .8s ease-out forwards}
@@ -126,6 +122,10 @@ body{
  background-size:13px 13px,13px 13px,auto;
  box-shadow:inset 0 2px #fff,0 3px 0 rgba(30,64,76,.10);touch-action:none;overflow:hidden}
 .piece.selected{outline:3px solid #f2c84f;outline-offset:1px}.piece.placed{opacity:.36}
+.piece.hint-good{outline:3px solid #55dfff;outline-offset:1px}
+.piece.hint-bad{outline:3px solid #ff665b;outline-offset:1px;box-shadow:0 0 11px rgba(255,102,91,.34)}
+.piece.hint-focus{outline:4px solid #ffd942;outline-offset:1px;box-shadow:0 0 15px rgba(255,217,66,.55);animation:hintCard .72s ease-in-out infinite alternate}
+@keyframes hintCard{from{transform:scale(1)}to{transform:scale(1.045)}}
 .piece-name{position:absolute;left:5px;top:4px;font-size:6.5px;font-weight:1000;color:#52645d;z-index:3}
 .piece::after{content:"BOARD ↗";position:absolute;right:5px;top:4px;font-size:5.5px;font-weight:1000;color:#c74445;opacity:.88;letter-spacing:.02em}
 .piece.placed::after{content:"✓";color:#2b9e58}
@@ -148,7 +148,7 @@ body{
 .card{width:min(350px,100%);text-align:center;border-radius:26px;padding:24px;background:linear-gradient(#fafdff,#d9edf4);border:4px solid #d94a48;box-shadow:inset 0 4px #fff,0 12px 0 rgba(15,45,57,.14),0 25px 70px rgba(5,28,39,.35)}
 .card .star{font-size:62px;color:#f0c64c;text-shadow:0 0 12px #fff2ad,0 0 28px rgba(240,198,76,.7)}
 .card h2{margin:0;color:#bd3034;font-size:27px}.card p{color:#315f70;font-weight:900}.card button{width:100%;height:49px;border:0;border-radius:15px;background:linear-gradient(#70d98f,#33a35f);color:#123f29;font-weight:1000;box-shadow:inset 0 3px rgba(255,255,255,.35),0 5px 0 rgba(33,100,61,.24)}
-@media(max-width:360px){.diamond-stage{height:278px}.frame{width:218px;height:218px}.board{--cell:45px}.garland{width:174px}.tray{grid-template-rows:repeat(3,51px);gap:4px}.brand{font-size:15px}.stat{min-width:43px;padding:3px 4px}.mini-shell{transform:scale(.88)}}
+@media(max-width:360px){.diamond-stage{height:278px}.frame{width:218px;height:218px}.board{--cell:45px}.tray{grid-template-rows:repeat(3,51px);gap:4px}.brand{font-size:15px}.stat{min-width:43px;padding:3px 4px}.mini-shell{transform:scale(.88)}}
 </style>
 </head>
 <body>
@@ -165,8 +165,7 @@ body{
  </header>
  <div class="quest"><b>CHRISTMAS EXTREME</b> 11ピースで64個の三角マスを埋めろ！</div>
  <section class="diamond-stage">
-  <div class="frame"></div><div class="garland"></div><div class="bow"></div><div class="xmas-star-top">★</div>
-  <div class="xmas-gifts" aria-hidden="true"><i></i><i></i><i></i></div>
+  <div class="frame"></div>
   <div id="board" class="board" aria-label="三角セルのダイヤモンドパズル盤"></div>
  </section>
  <div id="msg" class="msg">11ピース・64三角マス。待機中と盤面の角度は同じ。</div>
@@ -176,7 +175,7 @@ body{
 </main>
 <div id="dragvis" class="dragvis"></div>
 <div id="overlay" class="overlay"><div class="card"><div class="star">✦</div><h2>MERRY DIAMOND CHRISTMAS!</h2><p id="clearText"></p><button id="again" type="button">もういちど挑戦！</button></div></div>
-<script src="solutions.js?v=4"></script>
+<script src="solutions.js?v=5"></script>
 <script>
 (()=> {
 const defs={
@@ -247,7 +246,14 @@ function renderBoard(){
   for(const [r,c,d] of cells){if(r<0||r>3||c<0||c>3)continue;const g=document.createElement("div");g.className="ghost"+(ok?"":" bad");triClip(g,d);g.style.left="calc(var(--cell) * "+c+")";g.style.top="calc(var(--cell) * "+r+")";g.style.background=colors[ids.indexOf(selected)];board.appendChild(g)}
  }
  if(hintPlan&&hintStage>=2&&hintPlan.cells){
-  for(const [r,c,d] of hintPlan.cells){const g=document.createElement("div");g.className="ghost";triClip(g,d);g.style.left="calc(var(--cell) * "+c+")";g.style.top="calc(var(--cell) * "+r+")";g.style.background=colors[ids.indexOf(hintPlan.focus)];board.appendChild(g)}
+  for(const [r,c,d] of hintPlan.cells){const g=document.createElement("div");g.className="ghost hint-exact";triClip(g,d);g.style.left="calc(var(--cell) * "+c+")";g.style.top="calc(var(--cell) * "+r+")";g.style.background=colors[ids.indexOf(hintPlan.focus)];board.appendChild(g)}
+  if(hintStage>=3){
+   const rs=hintPlan.cells.map(x=>x[0]),cs=hintPlan.cells.map(x=>x[1]),tag=document.createElement("div");
+   tag.className="hint-tag";tag.textContent="ここに！";
+   tag.style.left="calc(var(--cell) * "+((Math.min(...cs)+Math.max(...cs)+1)/2)+")";
+   tag.style.top="calc(var(--cell) * "+((Math.min(...rs)+Math.max(...rs)+1)/2)+")";
+   board.appendChild(tag)
+  }
  }
  if(clearing)board.classList.add("clearing");else board.classList.remove("clearing")
 }
@@ -260,6 +266,11 @@ function mini(shape,color){
 function renderTray(){
  tray.innerHTML="";
  ids.forEach((id,i)=>{const b=document.createElement("button");b.type="button";b.className="piece"+(id===selected?" selected":"")+(pieces[id].placed?" placed":"");
+  if(hintPlan&&hintStage>=1){
+   if(hintPlan.good.includes(id))b.classList.add("hint-good");
+   if(hintPlan.bad.includes(id))b.classList.add("hint-bad");
+   if(hintPlan.focus===id)b.classList.add("hint-focus")
+  }
   const n=document.createElement("span");n.className="piece-name";n.textContent=names[id];
   const m=mini(pieces[id].shape,colors[i]);
   b.appendChild(n);b.appendChild(m);
@@ -280,9 +291,18 @@ function makeHint(){
 }
 function useHint(){
  if(!SOL.length)return setMsg("ヒントDBを読み込めない","bad");
- if(!hintPlan||hintStage>=2){hintPlan=makeHint();hintStage=0}hintStage++;hints++;hintCountEl.textContent=hints;render();
- if(hintPlan.bad.length)setMsg(hintStage===1?"赤いピースを動かして道を戻そう":"黄色の場所に "+names[hintPlan.focus]+" を置こう","bad");
- else setMsg(hintStage===1?"水色はOK。次は "+names[hintPlan.focus]:"ここ！ "+names[hintPlan.focus]+" の正解候補","ok")
+ if(!hintPlan||hintStage>=3){hintPlan=makeHint();hintStage=0}
+ hintStage++;hints++;hintCountEl.textContent=hints;render();
+ const focus=hintPlan.focus?names[hintPlan.focus]:"次のピース";
+ if(hintPlan.bad.length){
+  if(hintStage===1)setMsg("① 赤いピースは今の場所が違うよ。まず動かそう","bad");
+  else if(hintStage===2)setMsg("② 黄色く光る "+focus+" を見て。盤面に置き場所を出したよ","bad");
+  else setMsg("③ "+focus+" を黄色い形と同じ向きにして「ここに！」へ重ねよう","bad")
+ }else{
+  if(hintStage===1)setMsg("① 次は "+focus+"。下の黄色いカードを選ぼう","ok");
+  else if(hintStage===2)setMsg("② 盤面の黄色い半透明が置き場所。形と向きもそのまま！","ok");
+  else setMsg("③ "+focus+" を黄色い形にピッタリ重ねればOK！","ok")
+ }
 }
 function clearHint(){hintPlan=null;hintStage=0}
 function transform(id,kind){
