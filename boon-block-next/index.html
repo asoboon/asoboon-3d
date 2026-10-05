@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-<meta name="theme-color" content="#6b35a3">
+<meta name="theme-color" content="#0f5f74">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="format-detection" content="telephone=no">
-<title>BOON BLOCK — HALLOWEEN QUEST</title>
-<!-- BOON BLOCK live build v28: MAX Halloween haunted carnival ruins -->
+<title>BOON BLOCK — CHRISTMAS QUEST</title>
+<!-- BOON BLOCK live build v29: MAX Christmas snowy relic festival -->
 <style>
 :root{
   --sky:#7a49c6;--sky2:#372052;--jungle:#294932;--jungle2:#182b21;
@@ -405,6 +405,207 @@ button{font:inherit;color:inherit;touch-action:manipulation}
   color:#ffad45;font-size:10px;font-weight:1000;letter-spacing:.08em
 }
 
+/* =========================================================
+   MAX CHRISTMAS THEME — v29
+   ========================================================= */
+:root{
+  --sky:#184f7a;--sky2:#0d2947;--jungle:#173f35;--jungle2:#0d2b24;
+  --leaf:#2f7b52;--lime:#8ee58b;--sun:#ffe690;--orange:#d9443f;
+  --stone:#c7d3d9;--stone2:#7f929d;--ink:#f8fbff;--muted:#d7e7ee;
+  --cream:#fff8df;--cyan:#79e9ff;--yellow:#ffe889;--red:#ef5b55;--ok:#76d98b;
+  --c0:linear-gradient(145deg,#ff6b63,#d93e3a);
+  --c1:linear-gradient(145deg,#66c980,#2e8e56);
+  --c2:linear-gradient(145deg,#a9efff,#56bcd7);
+  --c3:linear-gradient(145deg,#ffe58a,#d8aa35);
+  --c4:linear-gradient(145deg,#ffb4cf,#ef709f);
+}
+body{
+  background:
+    radial-gradient(circle at 78% 10%,rgba(255,248,215,.96) 0 6%,rgba(255,248,215,.17) 7%,transparent 12%),
+    radial-gradient(ellipse at 25% 25%,rgba(102,230,207,.18) 0 16%,transparent 35%),
+    radial-gradient(ellipse at 69% 32%,rgba(110,165,255,.17) 0 18%,transparent 38%),
+    linear-gradient(180deg,#1c5b86 0%,#15446a 25%,#102f51 50%,#143b38 75%,#0d2924 100%);
+}
+body::before,body::after{
+  width:210px;height:250px;bottom:-65px;opacity:.92;
+  background:
+    linear-gradient(145deg,transparent 0 36%,#24553f 37% 44%,transparent 45%),
+    linear-gradient(35deg,transparent 0 36%,#24553f 37% 44%,transparent 45%),
+    radial-gradient(ellipse at 50% 74%,#1d4736 0 28%,transparent 29%),
+    radial-gradient(ellipse at 50% 52%,#2b6448 0 25%,transparent 26%),
+    radial-gradient(ellipse at 50% 31%,#347456 0 20%,transparent 21%);
+  filter:drop-shadow(0 10px 12px rgba(3,25,32,.26))
+}
+body::before{left:-55px;transform:rotate(-3deg)}
+body::after{right:-55px;transform:scaleX(-1) rotate(-3deg)}
+
+.brand-mark{
+  border-radius:50%;
+  background:
+    radial-gradient(circle at 34% 28%,rgba(255,255,255,.92) 0 9%,transparent 10%),
+    linear-gradient(145deg,#ff6b65,#cf302e 62%,#8f2324);
+  border:3px solid #f2c552;
+  box-shadow:inset 0 3px 0 rgba(255,255,255,.42),0 5px 0 rgba(44,24,21,.25),0 0 14px rgba(255,224,115,.32)
+}
+.brand-mark::before,.brand-mark::after{
+  content:"";position:absolute;top:auto;background:#fff2be;border-radius:99px;clip-path:none
+}
+.brand-mark::before{width:5px;height:18px;left:14px;bottom:8px;transform:rotate(45deg)}
+.brand-mark::after{width:18px;height:5px;left:8px;bottom:14px;transform:rotate(45deg)}
+.brand{color:#fffbe8;text-shadow:0 2px 0 #0b334f,0 0 11px rgba(143,232,255,.34)}
+.sub{background:#b12c31;color:#fff4ce;border:1px solid rgba(255,225,128,.32)}
+
+.stat{
+  background:linear-gradient(180deg,#f9fdff,#d7edf4);
+  border:2px solid rgba(73,119,137,.20);
+  box-shadow:inset 0 2px 0 #fff,0 3px 0 rgba(31,58,70,.13)
+}
+.stat b{color:#17475a}.stat span{color:#568094}
+.hint-mini{background:linear-gradient(180deg,#ffe988,#efb737);color:#5a4210}
+.reset-mini{background:linear-gradient(180deg,#7ce09a,#38a963);color:#123f28}
+
+.quest-bar{
+  background:linear-gradient(180deg,rgba(239,250,255,.97),rgba(205,231,239,.97));
+  color:#16495d;border:2px solid rgba(43,103,125,.17);
+  box-shadow:inset 0 2px 0 rgba(255,255,255,.82),0 3px 0 rgba(18,61,75,.11)
+}
+.quest-bar strong{color:#c43d3d}
+.quest-dot{background:#9fd1df;border:1px solid rgba(38,94,112,.13)}
+.quest-dot.on{background:#f4c84e;box-shadow:0 0 9px rgba(244,200,78,.56)}
+
+.board-wrap{
+  background:
+    radial-gradient(circle at 12% 16%,rgba(255,255,255,.62) 0 4%,transparent 4.6%),
+    radial-gradient(circle at 85% 78%,rgba(255,255,255,.48) 0 5%,transparent 5.6%),
+    linear-gradient(145deg,#e2edf0,#bacbd1 55%,#93a7b0);
+  border:4px solid #6a7d85;
+  box-shadow:inset 0 4px 0 rgba(255,255,255,.66),inset 0 -5px 0 rgba(50,74,83,.12),0 8px 0 rgba(18,46,55,.22),0 0 26px rgba(122,224,255,.14)
+}
+.board-wrap::before,.board-wrap::after{
+  top:-9px;width:64px;height:19px;border-radius:70% 70% 40% 40%;
+  background:linear-gradient(180deg,#ffffff,#dcecf0);
+  box-shadow:0 3px 0 rgba(89,111,118,.12)
+}
+.board{
+  border:4px solid #6b7f88;
+  background:
+    linear-gradient(90deg,rgba(83,104,112,.15) 2px,transparent 2px),
+    linear-gradient(rgba(83,104,112,.15) 2px,transparent 2px),
+    radial-gradient(circle at 22% 18%,rgba(255,255,255,.36) 0 4%,transparent 4.5%),
+    radial-gradient(circle at 73% 67%,rgba(117,212,234,.10) 0 5%,transparent 5.5%),
+    linear-gradient(145deg,#dce8eb,#bccbd0);
+  box-shadow:inset 0 0 0 2px rgba(255,255,255,.40),inset 0 8px 24px rgba(49,83,94,.08),0 0 18px rgba(138,228,248,.10)
+}
+.cell{
+  border-right:1px solid rgba(84,104,112,.14);border-bottom:1px solid rgba(84,104,112,.14);
+  background:rgba(239,249,252,.16)
+}
+.cell.filled{
+  box-shadow:inset 0 3px 0 rgba(255,255,255,.35),inset 0 -4px 0 rgba(42,60,65,.10)
+}
+
+.msg{
+  color:#16495b;background:rgba(240,251,255,.90)
+}
+.msg.ok{color:#19583a;background:rgba(223,251,229,.92)}
+.msg.bad{color:#8f3131;background:rgba(255,229,229,.92)}
+
+.gesture-chip{
+  border:2px solid rgba(58,113,132,.14);background:rgba(240,250,253,.92);
+  color:#5c7c88;box-shadow:0 3px 0 rgba(27,61,73,.09)
+}
+.gesture-chip b{color:#b53839}
+.tray-head{color:#f7fbff}
+.tray-head span{background:#c53b3f;border:2px solid rgba(255,232,151,.24);color:#fff8df}
+.piece{
+  border:2px solid rgba(74,117,130,.17);
+  background:
+    radial-gradient(circle at 82% 20%,rgba(255,255,255,.40) 0 5%,transparent 5.8%),
+    linear-gradient(180deg,rgba(244,251,253,.99),rgba(211,231,237,.99));
+  box-shadow:inset 0 3px 0 rgba(255,255,255,.75),0 4px 0 rgba(27,61,72,.12)
+}
+.piece-name{color:#315d6d}
+.piece.placed .piece-name::after{color:#2c9f58}
+.piece.selected{outline-color:#f3c84a}
+
+.overlay{background:rgba(8,34,48,.82)}
+.clear-card{
+  background:linear-gradient(180deg,#f9fdff,#d8ecf3);
+  border:4px solid #d94a48;
+  box-shadow:inset 0 4px 0 rgba(255,255,255,.8),0 12px 0 rgba(16,45,56,.16),0 24px 70px rgba(5,31,42,.35),0 0 28px rgba(255,220,106,.18)
+}
+.clear-card h2{color:#b82e33;text-shadow:0 2px 0 #fff8d5,0 0 12px rgba(232,192,70,.30)}
+.clear-card p{color:#315f70}
+.clear-card button{
+  background:linear-gradient(180deg,#68d48b,#309a5b);color:#123f29;
+  box-shadow:inset 0 3px 0 rgba(255,255,255,.38),0 5px 0 rgba(31,105,61,.25)
+}
+.clear-card::before{content:"🎄  MERRY CHRISTMAS  🎄";color:#c63d3f}
+
+.christmas-sky{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.aurora{
+  position:absolute;left:-15%;top:14%;width:130%;height:155px;opacity:.42;filter:blur(12px);
+  background:linear-gradient(90deg,transparent 0%,rgba(79,237,190,.42) 22%,rgba(106,173,255,.35) 45%,rgba(176,111,255,.28) 68%,transparent 100%);
+  transform:rotate(-7deg);animation:auroraDrift 9s ease-in-out infinite alternate
+}
+@keyframes auroraDrift{from{translate:-3% 0;opacity:.32}to{translate:3% 8px;opacity:.52}}
+.snowflake{
+  position:absolute;top:-7%;color:#fff;font-weight:900;text-shadow:0 0 6px rgba(193,239,255,.72);
+  animation:snowFall linear infinite;opacity:.9
+}
+.snowflake::before{content:"❄"}
+.snowflake.s1{left:5%;font-size:12px;animation-duration:8s;animation-delay:-1s}
+.snowflake.s2{left:14%;font-size:8px;animation-duration:10s;animation-delay:-5s}
+.snowflake.s3{left:24%;font-size:14px;animation-duration:9s;animation-delay:-3s}
+.snowflake.s4{left:34%;font-size:9px;animation-duration:11s;animation-delay:-8s}
+.snowflake.s5{left:44%;font-size:13px;animation-duration:8.5s;animation-delay:-6s}
+.snowflake.s6{left:54%;font-size:8px;animation-duration:12s;animation-delay:-2s}
+.snowflake.s7{left:65%;font-size:15px;animation-duration:9.5s;animation-delay:-7s}
+.snowflake.s8{left:75%;font-size:9px;animation-duration:10.5s;animation-delay:-4s}
+.snowflake.s9{left:84%;font-size:12px;animation-duration:8.8s;animation-delay:-5.5s}
+.snowflake.s10{left:93%;font-size:8px;animation-duration:11.5s;animation-delay:-1.5s}
+@keyframes snowFall{0%{transform:translate3d(0,-12vh,0) rotate(0);opacity:0}12%{opacity:.9}100%{transform:translate3d(26px,112vh,0) rotate(260deg);opacity:.25}}
+
+.board-wrap .web,.board-wrap .pumpkin-eye{display:none}
+.xmas-garland{
+  position:absolute;z-index:4;left:50%;top:-17px;transform:translateX(-50%);
+  width:76%;height:24px;border-radius:0 0 60% 60%;
+  border-bottom:7px solid #2b8a53;
+  box-shadow:0 4px 0 rgba(32,94,58,.18)
+}
+.xmas-garland::before,.xmas-garland::after{
+  content:"";position:absolute;top:10px;width:11px;height:11px;border-radius:50%;
+  box-shadow:28px 3px 0 #f1c84b,56px -1px 0 #d94744,84px 4px 0 #67c77d,112px 0 0 #f1c84b,140px 3px 0 #d94744
+}
+.xmas-garland::before{left:5px;background:#d94744}
+.xmas-garland::after{right:5px;background:#67c77d;transform:scaleX(-1)}
+.xmas-bow{
+  position:absolute;z-index:5;top:-23px;left:50%;width:24px;height:18px;transform:translateX(-50%);
+  background:#cf3539;clip-path:polygon(50% 35%,0 0,9% 88%,50% 62%,91% 88%,100% 0);
+  filter:drop-shadow(0 3px 1px rgba(50,20,20,.18))
+}
+.xmas-bell{
+  position:absolute;z-index:5;top:2px;width:24px;height:27px;border-radius:50% 50% 38% 38%;
+  background:linear-gradient(145deg,#fff2a6,#e4b73c 62%,#9a6e13);
+  box-shadow:inset 0 3px 0 rgba(255,255,255,.45),0 3px 0 rgba(61,47,18,.15)
+}
+.xmas-bell::after{content:"";position:absolute;left:8px;bottom:-4px;width:8px;height:8px;border-radius:50%;background:#c18e1d}
+.xmas-bell.b1{left:-6px;transform:rotate(-13deg)}
+.xmas-bell.b2{right:-6px;transform:rotate(13deg)}
+
+.tray::before{
+  content:"MERRY  &  BRIGHT";color:#ffe891;text-shadow:0 0 8px rgba(255,224,115,.36)
+}
+
+.board.clearing{
+  animation:xmasBoardGlow .85s ease-out forwards
+}
+@keyframes xmasBoardGlow{
+  0%{box-shadow:inset 0 0 0 2px rgba(255,255,255,.4)}
+  55%{box-shadow:inset 0 0 0 2px rgba(255,255,255,.6),0 0 28px rgba(255,228,116,.65),0 0 42px rgba(93,211,128,.28)}
+  100%{box-shadow:inset 0 0 0 2px rgba(255,255,255,.5),0 0 18px rgba(255,226,111,.44)}
+}
+
 @media(max-width:360px){
   .app{padding-left:6px;padding-right:6px}.brand{font-size:15px}.brand-mark{width:34px;height:34px}
   .stat{min-width:41px;padding:3px 4px}.quest-bar{font-size:8px}
@@ -415,10 +616,10 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 </style>
 </head>
 <body>
-<div class="halloween-sky" aria-hidden="true">
-  <span class="fog f1"></span><span class="fog f2"></span>
-  <span class="bat b1"></span><span class="bat b2"></span><span class="bat b3"></span><span class="bat b4"></span>
-  <span class="spooky-star s1"></span><span class="spooky-star s2"></span><span class="spooky-star s3"></span><span class="spooky-star s4"></span>
+<div class="christmas-sky" aria-hidden="true">
+  <span class="aurora"></span>
+  <span class="snowflake s1"></span><span class="snowflake s2"></span><span class="snowflake s3"></span><span class="snowflake s4"></span><span class="snowflake s5"></span>
+  <span class="snowflake s6"></span><span class="snowflake s7"></span><span class="snowflake s8"></span><span class="snowflake s9"></span><span class="snowflake s10"></span>
 </div>
 <main class="app">
   <header class="top">
@@ -426,7 +627,7 @@ button{font:inherit;color:inherit;touch-action:manipulation}
       <div class="brand-mark" aria-hidden="true"></div>
       <div>
         <div class="brand">BOON BLOCK</div>
-        <div class="sub">HALLOWEEN QUEST</div>
+        <div class="sub">CHRISTMAS QUEST</div>
       </div>
     </div>
     <div class="top-right">
@@ -440,7 +641,7 @@ button{font:inherit;color:inherit;touch-action:manipulation}
   </header>
 
   <div class="quest-bar">
-    <span><strong>MISSION</strong> 呪われたハロウィン遺跡を黄金に変えよう！</span>
+    <span><strong>MISSION</strong> 聖夜の石板を完成させよう！</span>
     <div class="quest-dots" aria-hidden="true">
       <span class="quest-dot on"></span><span class="quest-dot"></span><span class="quest-dot"></span>
     </div>
@@ -449,6 +650,8 @@ button{font:inherit;color:inherit;touch-action:manipulation}
   <section class="board-wrap">
     <span class="web w1" aria-hidden="true"></span><span class="web w2" aria-hidden="true"></span>
     <span class="pumpkin-eye p1" aria-hidden="true"></span><span class="pumpkin-eye p2" aria-hidden="true"></span>
+    <span class="xmas-garland" aria-hidden="true"></span><span class="xmas-bow" aria-hidden="true"></span>
+    <span class="xmas-bell b1" aria-hidden="true"></span><span class="xmas-bell b2" aria-hidden="true"></span>
     <div id="board" class="board" aria-label="5×5パズル盤"></div>
     <div id="msg" class="msg">読み込み中…</div>
   </section>
@@ -460,7 +663,7 @@ button{font:inherit;color:inherit;touch-action:manipulation}
     <div class="gesture-chip"><b>◉ 長押し</b>もどす</div>
   </section>
 
-  <div class="tray-head"><strong>SPOOKY BLOCKS</strong><span><b id="count">1</b> / 6</span></div>
+  <div class="tray-head"><strong>CHRISTMAS BLOCKS</strong><span><b id="count">1</b> / 6</span></div>
   <section id="tray" class="tray" aria-label="ブロック一覧"></section>
 </main>
 
@@ -473,13 +676,13 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 <div id="overlay" class="overlay" role="dialog" aria-modal="true">
   <div class="clear-card">
     <div class="treasure" aria-hidden="true"></div>
-    <h2>GOLDEN HALLOWEEN!</h2>
+    <h2>MERRY CHRISTMAS!</h2>
     <p id="clearText"></p>
-    <button id="again" type="button">もういちど呪いをとく！</button>
+    <button id="again" type="button">もういちど飾る！</button>
   </div>
 </div>
 
-<script src="solutions.js?v=28"></script>
+<script src="solutions.js?v=29"></script>
 <script>
 (()=>{
 const defs={
@@ -491,7 +694,7 @@ const defs={
  CORE:[[0,0]]
 };
 const ids=Object.keys(defs);
-const names={A:"PUMPKIN",B:"BAT",C:"SLIME",D:"GHOST",E:"WITCH",CORE:"GOLD GEM"};
+const names={A:"SANTA",B:"BELL",C:"TREE",D:"SNOW",E:"GIFT",CORE:"GOLD GEM"};
 const symbols={A:"A",B:"B",C:"C",D:"D",E:"E",CORE:"O"};
 const colors=["var(--c0)","var(--c1)","var(--c2)","var(--c3)","var(--c4)","var(--core)"];
 const SOLUTIONS=Array.isArray(window.BOON_KIDS_SOLUTIONS)?window.BOON_KIDS_SOLUTIONS:[];
@@ -716,7 +919,7 @@ function useHint(){
 function transformPiece(id,kind){
  resetHintPlan();selected=id;
  if(id==="CORE"){
-   renderAll();setMsg("GEMはそのまま好きな場所へ動かせるよ","ok");haptic();return
+   renderAll();setMsg("GOLD GEMは好きな場所へ動かせるよ","ok");haptic();return
  }
  const p=pieces[id],nextShape=kind==="rotate"?rot(p.shape):flip(p.shape);
  if(p.placed){
@@ -801,7 +1004,7 @@ function lockSelected(){
    clearAnimating=true;
    board.classList.add("clearing");
    renderAll();
-   setMsg("カチャッ！ 黄金の石板が完成した！","ok");
+   setMsg("カチャッ！ 聖夜の黄金石板が完成した！","ok");
    clearText.textContent="TIME "+timeEl.textContent+" / MOVE "+moves+" / HINT "+hintCount;
    haptic(35);
    setTimeout(()=>overlay.classList.add("show"),980)
@@ -948,7 +1151,7 @@ function reset(){
  hintCount=0;hintCountEl.textContent="0";resetHintPlan();
  holdRing.classList.remove("show");dragVisual.classList.remove("show");overlay.classList.remove("show");board.classList.remove("clearing");
  renderAll();
- setMsg(SOLUTIONS.length===192?"宝石は真ん中のままでも "+CENTER_TOTAL+"通りクリアできるよ！":"ヒントを読み込めなかったよ",SOLUTIONS.length===192?"ok":"bad")
+ setMsg(SOLUTIONS.length===192?"GOLD GEMは真ん中のままでも "+CENTER_TOTAL+"通りクリアできるよ！":"ヒントを読み込めなかったよ",SOLUTIONS.length===192?"ok":"bad")
 }
 
 $("#hint").addEventListener("click",useHint);
