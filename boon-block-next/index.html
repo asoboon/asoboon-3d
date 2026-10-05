@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="format-detection" content="telephone=no">
 <title>BOON BLOCK — JUNGLE QUEST</title>
-<!-- BOON BLOCK live build v25: bright daytime ruins + vivid jewel -->
+<!-- BOON BLOCK live build v26: golden relic clear transformation -->
 <style>
 :root{
   --sky:#8fe4f4;--sky2:#d8f4ec;--jungle:#4f9a66;--jungle2:#2e6f50;
@@ -20,7 +20,8 @@
   --c2:linear-gradient(145deg,#b7a0cf,#89769f);
   --c3:linear-gradient(145deg,#a5bd73,#718b55);
   --c4:linear-gradient(145deg,#d5ab6e,#a77d4f);
-  --core:linear-gradient(145deg,#e6ffff 0%,#75f4f5 28%,#23c7d1 53%,#0b8d9d 76%,#066170 100%);
+  --core:linear-gradient(145deg,#fff7c7 0%,#ffe77e 26%,#e6bd43 52%,#b88524 76%,#7a5415 100%);
+  --gold1:#fff7c7;--gold2:#ffe77e;--gold3:#e6bd43;--gold4:#8f631a;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;margin:0;overflow:hidden}
@@ -174,22 +175,22 @@ button{font:inherit;color:inherit;touch-action:manipulation}
   clip-path:polygon(50% 0%,84% 18%,100% 49%,76% 88%,50% 100%,24% 88%,0% 49%,16% 18%);
   border:0;
   background:
-    linear-gradient(135deg,rgba(255,255,255,.95) 0 10%,transparent 11% 100%),
-    linear-gradient(60deg,transparent 0 45%,rgba(217,255,255,.52) 46% 57%,transparent 58% 100%),
-    linear-gradient(145deg,#eaffff 0%,#79f5f7 24%,#2bd1dc 48%,#0ca0b2 72%,#087086 100%);
-  box-shadow:0 0 0 3px rgba(20,109,119,.28),0 7px 0 rgba(62,72,65,.13),0 0 22px rgba(72,232,238,.48)
+    linear-gradient(135deg,rgba(255,255,255,.98) 0 10%,transparent 11% 100%),
+    linear-gradient(60deg,transparent 0 45%,rgba(255,250,209,.52) 46% 57%,transparent 58% 100%),
+    linear-gradient(145deg,#fffbd9 0%,#ffe982 24%,#e9bd43 48%,#ba8525 72%,#7a5314 100%);
+  box-shadow:0 0 0 3px rgba(143,99,26,.30),0 7px 0 rgba(62,72,65,.13),0 0 24px rgba(255,221,102,.56)
 }
 .core-device::before{
   content:"";position:absolute;inset:14% 16% 20%;
   clip-path:polygon(50% 0%,100% 40%,76% 100%,24% 100%,0% 40%);
   background:
-    linear-gradient(145deg,rgba(255,255,255,.76),rgba(149,251,252,.24) 42%,rgba(0,121,136,.24) 43% 100%);
-  opacity:.85
+    linear-gradient(145deg,rgba(255,255,255,.82),rgba(255,235,150,.30) 42%,rgba(175,119,25,.23) 43% 100%);
+  opacity:.9
 }
 .core-device::after{
   content:"";position:absolute;left:50%;top:46%;width:16%;height:16%;border-radius:50%;
-  transform:translate(-50%,-50%);background:#d9ffff;
-  box-shadow:0 0 10px #b9ffff,0 0 18px rgba(69,231,236,.78)
+  transform:translate(-50%,-50%);background:#fff8c9;
+  box-shadow:0 0 10px #fff0a8,0 0 20px rgba(255,220,93,.82)
 }
 
 .cell.hint-good{outline:3px solid #31d9ff;outline-offset:-3px;filter:brightness(1.12);box-shadow:inset 0 0 15px rgba(49,217,255,.28)}
@@ -201,6 +202,31 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 .core-device.hint-good{box-shadow:0 0 0 4px #31d9ff,0 0 18px rgba(49,217,255,.5)}
 .core-device.hint-focus{box-shadow:0 0 0 4px #ffe765,0 0 20px rgba(255,231,101,.55)}
 .core-device.hint-bad{box-shadow:0 0 0 4px #ff6f59,0 0 20px rgba(255,111,89,.52)}
+
+.board.clearing .cell.filled{
+  background:linear-gradient(145deg,var(--gold1) 0%,var(--gold2) 34%,var(--gold3) 68%,var(--gold4) 100%) !important;
+  animation:goldLock .44s ease-out forwards;
+  animation-delay:var(--gold-delay,0ms);
+  box-shadow:inset 0 3px 0 rgba(255,255,255,.45),inset 0 -4px 0 rgba(109,80,22,.14),0 0 16px rgba(255,223,102,.20)
+}
+.board.clearing .cell.filled::before{background:rgba(255,255,255,.34)}
+.board.clearing .core-device{
+  background:
+    linear-gradient(135deg,rgba(255,255,255,.98) 0 10%,transparent 11% 100%),
+    linear-gradient(60deg,transparent 0 45%,rgba(255,250,209,.56) 46% 57%,transparent 58% 100%),
+    linear-gradient(145deg,#fffbd9 0%,#ffe982 24%,#e9bd43 48%,#ba8525 72%,#7a5314 100%) !important;
+  animation:goldGemPulse .68s ease-out forwards
+}
+@keyframes goldLock{
+  0%{transform:scale(1);filter:brightness(1)}
+  36%{transform:scale(1.08);filter:brightness(1.58)}
+  100%{transform:scale(1);filter:brightness(1.08)}
+}
+@keyframes goldGemPulse{
+  0%{transform:translate(18%,10%) scale(1);filter:brightness(1)}
+  42%{transform:translate(18%,10%) scale(1.16);filter:brightness(1.7)}
+  100%{transform:translate(18%,10%) scale(1);filter:brightness(1.12)}
+}
 .hint-area-cell{
   position:absolute;z-index:8;width:var(--cell-size);height:var(--cell-size);pointer-events:none;border-radius:8px;
   background:rgba(49,217,255,.3);outline:2px solid rgba(49,217,255,.62);outline-offset:-3px
@@ -290,10 +316,10 @@ button{font:inherit;color:inherit;touch-action:manipulation}
   width:66px;height:76px;margin:0 auto 10px;
   clip-path:polygon(50% 0%,84% 18%,100% 49%,76% 88%,50% 100%,24% 88%,0% 49%,16% 18%);
   background:
-    linear-gradient(135deg,rgba(255,255,255,.88) 0 9%,transparent 10% 100%),
-    linear-gradient(60deg,transparent 0 46%,rgba(182,255,255,.38) 47% 55%,transparent 56% 100%),
-    linear-gradient(145deg,#c8ffff 0%,#5ee7eb 24%,#1caab6 48%,#087989 72%,#064d61 100%);
-  box-shadow:0 0 22px rgba(69,231,236,.52),0 8px 0 rgba(72,61,40,.14)
+    linear-gradient(135deg,rgba(255,255,255,.98) 0 10%,transparent 11% 100%),
+    linear-gradient(60deg,transparent 0 45%,rgba(255,250,209,.56) 46% 57%,transparent 58% 100%),
+    linear-gradient(145deg,#fffbd9 0%,#ffe982 24%,#e9bd43 48%,#ba8525 72%,#7a5314 100%);
+  box-shadow:0 0 24px rgba(255,221,102,.58),0 8px 0 rgba(72,61,40,.14)
 }
 .clear-card h2{margin:0;color:#174b36;font-size:30px;letter-spacing:.04em;text-shadow:0 2px 0 rgba(255,255,255,.55)}
 .clear-card p{color:#72592e;line-height:1.55;font-weight:900}
@@ -363,13 +389,13 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 <div id="overlay" class="overlay" role="dialog" aria-modal="true">
   <div class="clear-card">
     <div class="treasure" aria-hidden="true"></div>
-    <h2>TREASURE CLEAR!</h2>
+    <h2>GOLDEN RELIC!</h2>
     <p id="clearText"></p>
     <button id="again" type="button">もういちど冒険する！</button>
   </div>
 </div>
 
-<script src="solutions.js?v=25"></script>
+<script src="solutions.js?v=26"></script>
 <script>
 (()=>{
 const defs={
@@ -410,6 +436,7 @@ pieces.CORE.placed=[[2,2]];
 let selected="A",target=null,moves=0,start=0,timer=0;
 let gesture=null,drag=null,justPlaced=null,longPressTimer=null;
 let hintCount=0,hintStage=0,hintPlan=null;
+let clearAnimating=false;
 
 function occupied(ignore){
  const m=new Map();
@@ -687,8 +714,13 @@ function lockSelected(){
 
  if(ids.every(id=>pieces[id].placed&&!pieces[id].floating)){
    clearInterval(timer);timeEl.textContent=fmt(Date.now()-start);
+   clearAnimating=true;
+   board.classList.add("clearing");
+   renderAll();
+   setMsg("カチャッ！ 黄金の石板が完成した！","ok");
    clearText.textContent="TIME "+timeEl.textContent+" / MOVE "+moves+" / HINT "+hintCount;
-   haptic(35);setTimeout(()=>overlay.classList.add("show"),430)
+   haptic(35);
+   setTimeout(()=>overlay.classList.add("show"),980)
  }
  return true
 }
@@ -736,6 +768,7 @@ function renderBoard(){
 
    if(v){
      b.classList.add("filled");b.dataset.piece=v;b.style.background=colors[ids.indexOf(v)];
+     if(clearAnimating)b.style.setProperty("--gold-delay",(r*5+c)*34+"ms");
      if(v==="CORE")b.classList.add("core");
      if(v===justPlaced)b.classList.add("confirm-pop");
      if(hintPlan&&hintStage>=1){
@@ -757,6 +790,7 @@ function renderBoard(){
      if(hintPlan.wrongIds&&hintPlan.wrongIds.includes("CORE")&&!(hintStage>=2&&hintPlan.piece==="CORE"))core.classList.add("hint-bad");
      if(hintStage>=2&&hintPlan.piece==="CORE")core.classList.add("hint-focus")
    }
+   if(clearAnimating)core.style.setProperty("--gold-delay","120ms");
    core.style.left="calc(var(--cell-size) * "+a.c+")";core.style.top="calc(var(--cell-size) * "+a.r+")";
    core.addEventListener("pointerdown",e=>beginGesture("CORE",e));board.appendChild(core)
  }
@@ -822,13 +856,13 @@ window.addEventListener("pointercancel",e=>{
 });
 
 function reset(){
- clearInterval(timer);clearLongPress();start=0;timer=0;moves=0;
+ clearInterval(timer);clearLongPress();start=0;timer=0;moves=0;clearAnimating=false;
  movesEl.textContent="0";timeEl.textContent="00:00";
  ids.forEach(id=>{pieces[id].shape=norm(defs[id]);pieces[id].placed=null;pieces[id].floating=false});
  pieces.CORE.placed=[[2,2]];
  selected="A";target=null;gesture=null;drag=null;justPlaced=null;
  hintCount=0;hintCountEl.textContent="0";resetHintPlan();
- holdRing.classList.remove("show");dragVisual.classList.remove("show");overlay.classList.remove("show");
+ holdRing.classList.remove("show");dragVisual.classList.remove("show");overlay.classList.remove("show");board.classList.remove("clearing");
  renderAll();
  setMsg(SOLUTIONS.length===192?"宝石は真ん中のままでも "+CENTER_TOTAL+"通りクリアできるよ！":"ヒントを読み込めなかったよ",SOLUTIONS.length===192?"ok":"bad")
 }
