@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="format-detection" content="telephone=no">
 <title>BOON BLOCK — CHRISTMAS QUEST</title>
-<!-- BOON BLOCK live build v31: gallery records cleared routes -->
+<!-- BOON BLOCK live build v32: persistent gallery backup and restore -->
 <style>
 :root{
   --sky:#7a49c6;--sky2:#372052;--jungle:#294932;--jungle2:#182b21;
@@ -661,6 +661,17 @@ body::after{right:-55px;transform:scaleX(-1) rotate(-3deg)}
   margin:0 14px 7px;padding:6px 8px;border-radius:10px;background:#eef8fb;
   color:#557583;font-size:8px;font-weight:900;text-align:center
 }
+.gallery-tools{
+  display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:0 14px 8px
+}
+.gallery-tool{
+  min-height:34px;border:0;border-radius:11px;font-size:9px;font-weight:1000;
+  box-shadow:inset 0 2px 0 rgba(255,255,255,.38),0 3px 0 rgba(35,72,83,.12)
+}
+.gallery-tool.backup{background:linear-gradient(180deg,#ffe88d,#efb93b);color:#5a4210}
+.gallery-tool.restore{background:linear-gradient(180deg,#74d995,#36a662);color:#123f29}
+.gallery-tool:active{transform:translateY(1px);box-shadow:inset 0 2px 0 rgba(255,255,255,.30),0 2px 0 rgba(35,72,83,.10)}
+.gallery-file{display:none}
 .gallery-scroll{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;padding:4px 10px 14px}
 .gallery-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px}
 .route-box{
@@ -764,7 +775,12 @@ body::after{right:-55px;transform:scaleX(-1) rotate(-3deg)}
       <div class="gallery-progress-line"><span>DISCOVERED</span><strong id="galleryCount">0 / 192</strong></div>
       <div class="gallery-progress"><span id="galleryProgressBar"></span></div>
     </div>
-    <div class="gallery-note">未発見は ❓。クリアしたルートがここで順番に黄金化する予定。</div>
+    <div class="gallery-note">未発見は ❓。クリアしたルートはこの端末に保存されるよ。</div>
+    <div class="gallery-tools">
+      <button id="galleryBackup" class="gallery-tool backup" type="button">💾 バックアップ</button>
+      <button id="galleryRestore" class="gallery-tool restore" type="button">📥 復元</button>
+      <input id="galleryRestoreFile" class="gallery-file" type="file" accept="application/json,.json">
+    </div>
     <div class="gallery-scroll">
       <div id="galleryGrid" class="gallery-grid"></div>
       <div id="galleryEmpty" class="gallery-empty">まずは最初の1ルートを見つけよう！</div>
@@ -781,7 +797,7 @@ body::after{right:-55px;transform:scaleX(-1) rotate(-3deg)}
   </div>
 </div>
 
-<script src="solutions.js?v=31"></script>
+<script src="solutions.js?v=32"></script>
 <script>
 (()=>{
 const defs={
@@ -912,6 +928,46 @@ function loadGalleryRoutes(){
 }
 function saveGalleryRoutes(found){
   try{localStorage.setItem(GALLERY_STORAGE_KEY,JSON.stringify([...found].sort((a,b)=>a-b)))}catch(_){}
+}
+function exportGalleryBackup(){
+  const routes=[...loadGalleryRoutes()].sort((a,b)=>a-b);
+  const data={
+    app:"BOON BLOCK",
+    mode:"square-5x5",
+    version:1,
+    routeCount:GALLERY_TOTAL,
+    storageKey:GALLERY_STORAGE_KEY,
+    routes,
+    discovered:routes.length,
+    exportedAt:new Date().toISOString()
+  };
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+  const url=URL.createObjectURL(blob),a=document.createElement("a");
+  a.href=url;
+  a.download="boon-block-gallery-backup-v1.json";
+  document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+  setMsg("ギャラリーをバックアップしたよ！","ok");haptic(12)
+}
+function normalizeBackupRoutes(data){
+  const raw=Array.isArray(data)?data:(data&&Array.isArray(data.routes)?data.routes:null);
+  if(!raw)throw new Error("routes missing");
+  const routes=[...new Set(raw.map(Number).filter(n=>Number.isInteger(n)&&n>=0&&n<GALLERY_TOTAL))];
+  if(raw.length&&routes.length===0)throw new Error("no valid routes");
+  return routes
+}
+async function importGalleryBackup(file){
+  try{
+    const text=await file.text(),data=JSON.parse(text),incoming=normalizeBackupRoutes(data);
+    const current=loadGalleryRoutes(),before=current.size;
+    incoming.forEach(n=>current.add(n));
+    saveGalleryRoutes(current);renderGallery();
+    const added=current.size-before;
+    setMsg(added?("復元完了！ "+added+"ルート追加したよ"):"復元完了！ 進捗は最新だよ","ok");
+    haptic(18)
+  }catch(_){
+    setMsg("このバックアップファイルは読み込めなかったよ","bad");haptic(24)
+  }
 }
 function currentSolutionSignature(){
   const occ=occupied(),out=[];
@@ -1319,6 +1375,13 @@ $("#reset").addEventListener("click",reset);
 $("#again").addEventListener("click",reset);
 $("#galleryOpen").addEventListener("click",openGallery);
 $("#galleryClose").addEventListener("click",closeGallery);
+$("#galleryBackup").addEventListener("click",exportGalleryBackup);
+$("#galleryRestore").addEventListener("click",()=>$("#galleryRestoreFile").click());
+$("#galleryRestoreFile").addEventListener("change",async e=>{
+  const file=e.target.files&&e.target.files[0];
+  if(file)await importGalleryBackup(file);
+  e.target.value="";
+});
 galleryOverlay.addEventListener("pointerdown",e=>{if(e.target===galleryOverlay)closeGallery()});
 
 renderGallery();renderAll();requestAnimationFrame(sizeBoard);
