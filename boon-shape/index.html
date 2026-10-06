@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="format-detection" content="telephone=no">
 <title>BOON SHAPE — HAUNTED SHAPE COLLECTION</title>
-<!-- BOON SHAPE v3: MAX Halloween overload theme / 18-stage collection -->
+<!-- BOON SHAPE v4: MAX Halloween + peak gust burst events / 18-stage collection -->
 <style>
 :root{
   --sky:#4f9bab;--sky2:#24576d;--deep:#163b4f;--ink:#183f4d;--muted:#67838d;
@@ -418,6 +418,127 @@ body::before,body::after{
   content:"🎃  HAPPY HALLOWEEN  🎃";display:block;margin:-6px 0 7px;color:#baff57;font-size:9px;font-weight:1000;letter-spacing:.08em
 }
 
+
+/* =========================================================
+   PEAK GUST HALLOWEEN — sudden overload moments
+   ========================================================= */
+.halloween-burst{
+  position:fixed;inset:0;z-index:44;pointer-events:none;overflow:hidden;
+  opacity:1;contain:layout paint
+}
+.burst-flash{
+  position:absolute;inset:0;opacity:0;
+  background:
+    radial-gradient(circle at 50% 42%,rgba(213,255,95,.50),transparent 34%),
+    linear-gradient(180deg,rgba(255,136,29,.42),rgba(142,69,215,.26));
+  mix-blend-mode:screen;animation:burstFlash .72s ease-out forwards
+}
+@keyframes burstFlash{
+  0%{opacity:0}12%{opacity:1}28%{opacity:.18}42%{opacity:.78}100%{opacity:0}
+}
+.burst-ring{
+  position:absolute;left:50%;top:45%;width:70px;height:70px;border-radius:50%;
+  border:8px solid rgba(190,255,82,.72);transform:translate(-50%,-50%) scale(.2);opacity:0;
+  box-shadow:0 0 28px rgba(190,255,82,.55),inset 0 0 22px rgba(255,134,29,.28);
+  animation:burstRing .85s cubic-bezier(.17,.82,.28,1) forwards
+}
+@keyframes burstRing{
+  0%{opacity:0;transform:translate(-50%,-50%) scale(.18)}
+  18%{opacity:1}
+  100%{opacity:0;transform:translate(-50%,-50%) scale(7)}
+}
+.burst-text{
+  position:absolute;left:50%;top:36%;transform:translate(-50%,-50%) scale(.35) rotate(-5deg);
+  width:94%;text-align:center;color:#fff1b0;font-weight:1000;font-size:clamp(25px,8vw,48px);
+  letter-spacing:.025em;line-height:.92;text-shadow:
+    0 4px 0 #4b205f,0 0 8px #ff7a20,0 0 22px #ff7a20,0 0 38px rgba(190,255,83,.55);
+  opacity:0;animation:burstText 1.15s cubic-bezier(.18,.85,.25,1) forwards
+}
+@keyframes burstText{
+  0%{opacity:0;transform:translate(-50%,-50%) scale(.28) rotate(-7deg)}
+  18%{opacity:1;transform:translate(-50%,-50%) scale(1.13) rotate(3deg)}
+  38%{transform:translate(-50%,-50%) scale(.96) rotate(-2deg)}
+  72%{opacity:1}
+  100%{opacity:0;transform:translate(-50%,-62%) scale(1.08) rotate(2deg)}
+}
+.burst-bat{
+  position:absolute;top:var(--top);left:-14vw;width:44px;height:23px;background:#130d1a;opacity:.94;
+  clip-path:polygon(0 34%,18% 15%,35% 36%,50% 6%,65% 36%,82% 15%,100% 34%,82% 58%,65% 47%,50% 68%,35% 47%,18% 58%);
+  filter:drop-shadow(0 0 5px rgba(174,88,255,.35));
+  transform:scale(var(--scale)) rotate(var(--rot));
+  animation:burstBat var(--dur) cubic-bezier(.15,.6,.25,1) var(--delay) forwards
+}
+.burst-bat.reverse{left:auto;right:-14vw;animation-name:burstBatReverse}
+@keyframes burstBat{
+  0%{translate:0 0;rotate:-5deg}
+  35%{translate:42vw -12px;rotate:8deg}
+  68%{translate:84vw 12px;rotate:-7deg}
+  100%{translate:128vw -4px;rotate:4deg}
+}
+@keyframes burstBatReverse{
+  0%{translate:0 0;rotate:5deg}
+  35%{translate:-42vw 12px;rotate:-8deg}
+  68%{translate:-84vw -10px;rotate:7deg}
+  100%{translate:-128vw 4px;rotate:-4deg}
+}
+.burst-candy{
+  position:absolute;top:-50px;left:var(--left);width:17px;height:38px;border-radius:6px;
+  background:repeating-linear-gradient(135deg,#fff6df 0 7px,#ff6c4d 7px 14px,#baff57 14px 20px);
+  box-shadow:0 0 9px rgba(255,128,34,.32);
+  transform:rotate(var(--rot)) scale(var(--scale));
+  animation:burstCandy var(--dur) cubic-bezier(.24,.72,.35,1) var(--delay) forwards
+}
+@keyframes burstCandy{
+  0%{translate:0 -10vh;rotate:0deg}
+  30%{translate:18px 35vh;rotate:150deg}
+  70%{translate:-13px 78vh;rotate:330deg}
+  100%{translate:8px 118vh;rotate:520deg}
+}
+.burst-pumpkin{
+  position:absolute;left:var(--left);bottom:-80px;width:52px;height:42px;border-radius:48% 48% 44% 44%;
+  background:linear-gradient(90deg,#d55411 0 20%,#ff8f27 21% 46%,#d85b12 47% 72%,#ff942b 73%);
+  border:3px solid rgba(83,31,8,.25);box-shadow:0 0 18px rgba(255,121,29,.35);
+  transform:scale(var(--scale)) rotate(var(--rot));
+  animation:burstPumpkin var(--dur) cubic-bezier(.18,.9,.32,1) var(--delay) forwards
+}
+.burst-pumpkin::before,.burst-pumpkin::after{
+  content:"";position:absolute;top:14px;width:10px;height:9px;background:#271530;
+  clip-path:polygon(50% 0,100% 100%,0 100%)
+}
+.burst-pumpkin::before{left:10px}.burst-pumpkin::after{right:10px}
+.burst-pumpkin i{
+  position:absolute;left:15px;top:27px;width:17px;height:7px;background:#271530;
+  clip-path:polygon(0 0,20% 45%,38% 0,58% 45%,78% 0,100% 0,90% 100%,10% 100%)
+}
+@keyframes burstPumpkin{
+  0%{translate:0 0;rotate:-8deg}
+  44%{translate:0 -52vh;rotate:9deg}
+  68%{translate:7px -46vh;rotate:-5deg}
+  100%{translate:-6px 20vh;rotate:7deg}
+}
+.burst-ghost{
+  position:absolute;left:var(--left);bottom:-72px;width:38px;height:48px;border-radius:48% 48% 36% 36%;
+  background:rgba(226,255,241,.84);box-shadow:0 0 18px rgba(173,255,220,.55);
+  transform:scale(var(--scale));animation:burstGhost var(--dur) ease-out var(--delay) forwards
+}
+.burst-ghost::before,.burst-ghost::after{content:"";position:absolute;top:16px;width:6px;height:7px;border-radius:50%;background:#5e3c70}
+.burst-ghost::before{left:10px}.burst-ghost::after{right:10px}
+@keyframes burstGhost{
+  0%{opacity:0;translate:0 0}
+  18%{opacity:1}
+  65%{opacity:.88;translate:var(--drift) -58vh}
+  100%{opacity:0;translate:calc(var(--drift) * -1) -112vh}
+}
+body.halloween-hit .app{animation:hauntShake .46s cubic-bezier(.36,.07,.19,.97)}
+@keyframes hauntShake{
+  0%,100%{transform:translate3d(0,0,0)}
+  16%{transform:translate3d(-3px,2px,0) rotate(-.25deg)}
+  32%{transform:translate3d(4px,-2px,0) rotate(.3deg)}
+  48%{transform:translate3d(-4px,1px,0) rotate(-.2deg)}
+  64%{transform:translate3d(3px,1px,0) rotate(.2deg)}
+  80%{transform:translate3d(-1px,-1px,0)}
+}
+
 </style>
 </head>
 <body>
@@ -429,6 +550,7 @@ body::before,body::after{
   <span class="grave v1"></span><span class="grave v2"></span><span class="grave v3"></span><span class="grave v4"></span>
   <span class="haunted-castle"></span>
 </div>
+<div id="halloweenBurst" class="halloween-burst" aria-hidden="true"></div>
 <main class="app">
   <header class="top">
     <div class="brand-wrap"><div class="brand-mark" aria-hidden="true"></div><div><div class="brand">BOON SHAPE</div><div class="sub">HAUNTED SHAPE COLLECTION</div></div></div>
@@ -501,12 +623,69 @@ const $=s=>document.querySelector(s);
 const board=$("#board"),tray=$("#tray"),msg=$("#msg"),timeEl=$("#time"),movesEl=$("#moves"),countEl=$("#count"),pieceTotalEl=$("#pieceTotal"),hintCountEl=$("#hintCount");
 const overlay=$("#overlay"),clearText=$("#clearText"),clearIcon=$("#clearIcon"),stageOverlay=$("#stageOverlay"),stageScroll=$("#stageScroll");
 const progressMini=$("#progressMini"),collectionCount=$("#collectionCount"),collectionBar=$("#collectionBar"),boardTitle=$("#boardTitle"),questCopy=$("#questCopy"),trayTitle=$("#trayTitle"),flipGuide=$("#flipGuide");
-const dragVisual=$("#dragVisual"),holdRing=$("#holdRing");
+const dragVisual=$("#dragVisual"),holdRing=$("#holdRing"),halloweenBurst=$("#halloweenBurst");
 
 const TAP_MOVE=10,DRAG_START=13,FLICK_DISTANCE=46,FLICK_TIME=280,FLICK_RATIO=1.45,LONG_PRESS_MS=520,LONG_PRESS_MOVE=9;
 
 let stageIndex=0,stage=null,runtime=null,pieces={},ids=[],selected=null,target=null,moves=0,start=0,timer=0;
 let gesture=null,drag=null,longPressTimer=null,hintCount=0,hintStage=0,hintPlan=null,justPlaced=null,clearAnimating=false;
+
+
+function halloweenBlast(level=1,label="TRICK OR SHAPE!"){
+  if(!halloweenBurst)return;
+  halloweenBurst.innerHTML="";
+  const flash=document.createElement("span");flash.className="burst-flash";halloweenBurst.appendChild(flash);
+  const ring=document.createElement("span");ring.className="burst-ring";halloweenBurst.appendChild(ring);
+  const text=document.createElement("strong");text.className="burst-text";text.textContent=label;halloweenBurst.appendChild(text);
+
+  const batCount=level===3?18:level===2?12:8;
+  const candyCount=level===3?24:level===2?16:10;
+  const pumpkinCount=level===3?8:level===2?5:3;
+  const ghostCount=level===3?7:level===2?4:2;
+
+  for(let i=0;i<batCount;i++){
+    const b=document.createElement("span");b.className="burst-bat"+(i%2?" reverse":"");
+    b.style.setProperty("--top",(8+Math.random()*62)+"%");
+    b.style.setProperty("--scale",(0.45+Math.random()*0.85).toFixed(2));
+    b.style.setProperty("--rot",(-18+Math.random()*36)+"deg");
+    b.style.setProperty("--delay",(Math.random()*.32)+"s");
+    b.style.setProperty("--dur",(0.82+Math.random()*.55)+"s");
+    halloweenBurst.appendChild(b)
+  }
+  for(let i=0;i<candyCount;i++){
+    const x=document.createElement("span");x.className="burst-candy";
+    x.style.setProperty("--left",(2+Math.random()*94)+"%");
+    x.style.setProperty("--scale",(0.55+Math.random()*.75).toFixed(2));
+    x.style.setProperty("--rot",(-40+Math.random()*80)+"deg");
+    x.style.setProperty("--delay",(Math.random()*.42)+"s");
+    x.style.setProperty("--dur",(0.95+Math.random()*.75)+"s");
+    halloweenBurst.appendChild(x)
+  }
+  for(let i=0;i<pumpkinCount;i++){
+    const p=document.createElement("span");p.className="burst-pumpkin";p.innerHTML="<i></i>";
+    p.style.setProperty("--left",(4+Math.random()*88)+"%");
+    p.style.setProperty("--scale",(0.58+Math.random()*.70).toFixed(2));
+    p.style.setProperty("--rot",(-15+Math.random()*30)+"deg");
+    p.style.setProperty("--delay",(Math.random()*.26)+"s");
+    p.style.setProperty("--dur",(1.05+Math.random()*.48)+"s");
+    halloweenBurst.appendChild(p)
+  }
+  for(let i=0;i<ghostCount;i++){
+    const g=document.createElement("span");g.className="burst-ghost";
+    g.style.setProperty("--left",(3+Math.random()*90)+"%");
+    g.style.setProperty("--scale",(0.55+Math.random()*.75).toFixed(2));
+    g.style.setProperty("--drift",(-26+Math.random()*52)+"px");
+    g.style.setProperty("--delay",(Math.random()*.30)+"s");
+    g.style.setProperty("--dur",(1.2+Math.random()*.62)+"s");
+    halloweenBurst.appendChild(g)
+  }
+  document.body.classList.remove("halloween-hit");
+  void document.body.offsetWidth;
+  document.body.classList.add("halloween-hit");
+  haptic(level===3?55:level===2?32:18);
+  setTimeout(()=>document.body.classList.remove("halloween-hit"),520);
+  setTimeout(()=>{if(halloweenBurst)halloweenBurst.innerHTML=""},2200)
+}
 
 function loadProgress(){
   try{
@@ -846,11 +1025,14 @@ function lockSelected(){
   startClock();const id=selected;pieces[id].placed=cells.map(a=>[...a]);justPlaced=id;moves++;movesEl.textContent=moves;
   const next=ids.find(x=>!pieces[x].placed);target=null;if(next)selected=next;
   drag=null;dragVisual.classList.remove("show");renderAll();setMsg("カチッ！ ぴったり！","ok");haptic(18);
+  const placedNow=ids.filter(x=>pieces[x].placed).length;
+  if(placedNow===2)halloweenBlast(1,"TRICK OR SHAPE!");
+  else if(placedNow===Math.ceil(ids.length*.72)&&placedNow<ids.length)halloweenBlast(2,"HAUNTED COMBO!");
   if(ids.every(x=>pieces[x].placed)){
     clearInterval(timer);if(start)timeEl.textContent=fmt(Date.now()-start);const rec=registerClear();
     clearAnimating=true;renderAll();setMsg("カチャッ！ "+stage.jp+" が黄金化した！","ok");
     clearIcon.textContent=stage.icon;clearText.textContent=stage.difficulty+" / "+runtime.maskCells.length+" BLOCKS / "+ids.length+" PIECES\\nTIME "+timeEl.textContent+" / MOVE "+moves+" / HINT "+hintCount;
-    haptic(35);setTimeout(()=>overlay.classList.add("show"),1050)
+    halloweenBlast(3,"HALLOWEEN FEVER!");haptic(35);setTimeout(()=>overlay.classList.add("show"),1350)
   }
   return true
 }
@@ -893,7 +1075,7 @@ function resetRound(){
 function loadStage(index){
   if(!STAGES.length)return setMsg("ステージデータを読み込めなかったよ","bad");
   stageIndex=(index+STAGES.length)%STAGES.length;stage=STAGES[stageIndex];runtime=makeRuntime(stage);
-  const p=loadProgress();p.lastStage=stage.key;saveProgress(p);resetRound();renderStageBook()
+  const p=loadProgress();p.lastStage=stage.key;saveProgress(p);resetRound();renderStageBook();setTimeout(()=>halloweenBlast(1,"HAUNTED STAGE!"),260)
 }
 
 function stageMini(card,s){
