@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="format-detection" content="telephone=no">
 <title>BOON BLOCK — CHRISTMAS FEVER QUEST</title>
-<!-- BOON BLOCK live build v33: MAX Christmas + peak gust festive burst events -->
+<!-- BOON BLOCK live build v34: semantic Christmas bursts for correct routes and achievements -->
 <style>
 :root{
   --sky:#7a49c6;--sky2:#372052;--jungle:#294932;--jungle2:#182b21;
@@ -891,6 +891,31 @@ body.xmas-hit .app{animation:xmasShake .48s cubic-bezier(.36,.07,.19,.97)}
   80%{transform:translate3d(-1px,-1px,0)}
 }
 
+
+.xmas-piece-symbol{
+  position:absolute;left:50%;top:49%;z-index:3;transform:translate(-50%,-50%) scale(.25) rotate(-8deg);
+  font-size:clamp(52px,18vw,94px);line-height:1;opacity:0;
+  filter:drop-shadow(0 6px 2px rgba(12,42,53,.20)) drop-shadow(0 0 15px rgba(255,229,116,.62));
+  animation:xPieceSymbol 1.1s cubic-bezier(.18,.86,.24,1) forwards
+}
+@keyframes xPieceSymbol{
+  0%{opacity:0;transform:translate(-50%,-50%) scale(.22) rotate(-10deg)}
+  20%{opacity:1;transform:translate(-50%,-50%) scale(1.28) rotate(5deg)}
+  43%{transform:translate(-50%,-50%) scale(.94) rotate(-3deg)}
+  72%{opacity:1;transform:translate(-50%,-54%) scale(1.03) rotate(2deg)}
+  100%{opacity:0;transform:translate(-50%,-70%) scale(.74) rotate(-2deg)}
+}
+.xmas-correct-spark{
+  position:absolute;left:var(--left);top:var(--top);width:9px;height:9px;border-radius:50%;
+  background:var(--spark);box-shadow:0 0 9px var(--spark),0 0 18px color-mix(in srgb,var(--spark) 55%,transparent);
+  opacity:0;animation:xCorrectSpark .92s ease-out var(--delay) forwards
+}
+@keyframes xCorrectSpark{
+  0%{opacity:0;scale:.2}
+  20%{opacity:1;scale:1.35}
+  100%{opacity:0;translate:var(--dx) var(--dy);scale:.35}
+}
+
 </style>
 </head>
 <body>
@@ -1038,7 +1063,7 @@ pieces.CORE.placed=[[2,2]];
 let selected="A",target=null,moves=0,start=0,timer=0;
 let gesture=null,drag=null,justPlaced=null,longPressTimer=null;
 let hintCount=0,hintStage=0,hintPlan=null;
-let clearAnimating=false;
+let clearAnimating=false,correctStreak=0;
 
 
 function christmasBlast(level=1,label="JINGLE BLAST!"){
@@ -1098,6 +1123,39 @@ function christmasBlast(level=1,label="JINGLE BLAST!"){
   haptic(level===3?55:level===2?32:18);
   setTimeout(()=>document.body.classList.remove("xmas-hit"),520);
   setTimeout(()=>{if(xmasBurst)xmasBurst.innerHTML=""},2300)
+}
+
+
+function christmasPieceBlast(id,level=1,label=null){
+  const meta={
+    A:{emoji:"🎅🛷",label:"SANTA EXPRESS!",spark:"#ff5b55"},
+    B:{emoji:"🔔",label:"JINGLE BELL!",spark:"#ffe16b"},
+    C:{emoji:"🎄",label:"TREE LIGHT UP!",spark:"#72e3a0"},
+    D:{emoji:"❄️",label:"SNOW BURST!",spark:"#bfeaff"},
+    E:{emoji:"🎁",label:"GIFT SHOWER!",spark:"#ff78aa"},
+    CORE:{emoji:"💎✨",label:"GOLD GEM SHINE!",spark:"#fff0a1"}
+  }[id]||{emoji:"✨",label:"CHRISTMAS MAGIC!",spark:"#fff0a1"};
+  christmasBlast(level,label||meta.label);
+  if(!xmasBurst)return;
+  const icon=document.createElement("span");icon.className="xmas-piece-symbol";icon.textContent=meta.emoji;xmasBurst.appendChild(icon);
+  for(let i=0;i<(level===2?18:11);i++){
+    const s=document.createElement("span");s.className="xmas-correct-spark";
+    s.style.setProperty("--left",(20+Math.random()*60)+"%");
+    s.style.setProperty("--top",(25+Math.random()*48)+"%");
+    s.style.setProperty("--spark",meta.spark);
+    s.style.setProperty("--dx",(-65+Math.random()*130)+"px");
+    s.style.setProperty("--dy",(-75+Math.random()*85)+"px");
+    s.style.setProperty("--delay",(Math.random()*.16)+"s");
+    xmasBurst.appendChild(s)
+  }
+  if(id==="A"&&level<3){
+    const santa=document.createElement("span");santa.className="xmas-santa-fly";santa.textContent="🎅  🛷  ✨  🦌  🦌  🦌";xmasBurst.appendChild(santa)
+  }
+}
+function currentRouteCandidates(){
+  if(!SOLUTIONS.length)return [];
+  const fixedIds=ids.filter(id=>pieces[id].placed&&!pieces[id].floating);
+  return matchingSolutions(fixedIds)
 }
 
 function occupied(ignore){
@@ -1456,7 +1514,7 @@ function restoreOriginal(){
  target=null;drag=null;dragVisual.classList.remove("show")
 }
 function returnToWait(id){
- resetHintPlan();pieces[id].placed=null;pieces[id].floating=false;
+ resetHintPlan();correctStreak=0;pieces[id].placed=null;pieces[id].floating=false;
  selected=id;target=null;drag=null;dragVisual.classList.remove("show");
  renderAll();setMsg(names[id]+" を下にもどしたよ","ok");haptic(16)
 }
@@ -1472,19 +1530,41 @@ function lockSelected(){
  drag=null;dragVisual.classList.remove("show");
  renderAll();setMsg("カチッ！ ぴったり！","ok");haptic(18);
  const festivePlaced=ids.filter(id=>pieces[id].placed&&!pieces[id].floating).length;
- if(festivePlaced===2)christmasBlast(1,"JINGLE BLAST!");
- else if(festivePlaced===4)christmasBlast(2,"SNOWSTORM COMBO!");
+ const completedNow=ids.every(id=>pieces[id].placed&&!pieces[id].floating);
+ const routeCandidates=currentRouteCandidates();
+ const isCorrectRoute=routeCandidates.length>0;
+ if(!completedNow){
+   if(isCorrectRoute){
+     correctStreak++;
+     if(festivePlaced===ids.length-1){
+       christmasPieceBlast(lockedId,2,"CHRISTMAS MIRACLE!");
+     }else if(correctStreak>=3){
+       christmasPieceBlast(lockedId,2,"CHRISTMAS COMBO ×"+correctStreak+"!");
+     }else{
+       christmasPieceBlast(lockedId,1);
+     }
+   }else{
+     correctStreak=0;
+   }
+ }
 
- if(ids.every(id=>pieces[id].placed&&!pieces[id].floating)){
+ if(completedNow){
    clearInterval(timer);timeEl.textContent=fmt(Date.now()-start);
    const discovered=registerClearRoute();
+   const discoveredTotal=loadGalleryRoutes().size;
    clearAnimating=true;
    board.classList.add("clearing");
    renderAll();
    const routeText=discovered.index>=0?" ROUTE "+String(discovered.index+1).padStart(3,"0"):"";
    setMsg(discovered.isNew?"NEW"+routeText+"！ ギャラリーに登録！":"カチャッ！"+routeText+" 聖夜の黄金石板が完成！","ok");
    clearText.textContent=(discovered.isNew?"NEW ROUTE "+String(discovered.index+1).padStart(3,"0")+"! / ":"")+"TIME "+timeEl.textContent+" / MOVE "+moves+" / HINT "+hintCount;
-   christmasBlast(3,discovered.isNew?"NEW GOLDEN ROUTE!":"MERRY CHRISTMAS!");
+   let finale="MERRY CHRISTMAS!";
+   if(discovered.isNew&&discoveredTotal===GALLERY_TOTAL)finale="GOLDEN CHRISTMAS LEGEND!";
+   else if(discovered.isNew&&discoveredTotal===1)finale="FIRST CHRISTMAS MIRACLE!";
+   else if(discovered.isNew)finale="NEW GOLDEN ROUTE!";
+   else if(hintCount===0)finale="PERFECT CHRISTMAS!";
+   christmasBlast(3,finale);
+   correctStreak=0;
    haptic(35);
    setTimeout(()=>overlay.classList.add("show"),1350)
  }
@@ -1622,7 +1702,7 @@ window.addEventListener("pointercancel",e=>{
 });
 
 function reset(){
- clearInterval(timer);clearLongPress();start=0;timer=0;moves=0;clearAnimating=false;
+ clearInterval(timer);clearLongPress();start=0;timer=0;moves=0;clearAnimating=false;correctStreak=0;
  movesEl.textContent="0";timeEl.textContent="00:00";
  ids.forEach(id=>{pieces[id].shape=norm(defs[id]);pieces[id].placed=null;pieces[id].floating=false});
  pieces.CORE.placed=[[2,2]];
