@@ -3,25 +3,28 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-<meta name="theme-color" content="#a93655">
+<meta name="theme-color" content="#246878">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="format-detection" content="telephone=no">
-<title>BOON SHAPE — HEART QUEST</title>
-<!-- BOON SHAPE v1: 60-cell HEART / 8-piece polyomino puzzle -->
+<title>BOON SHAPE — SHAPE COLLECTION</title>
+<!-- BOON SHAPE v2: complete 18-stage EASY/NORMAL/HARD shape collection -->
 <style>
 :root{
-  --sky:#ef7a95;--sky2:#9c355b;--deep:#542a53;--cream:#fff4e2;--ink:#562b42;
-  --stone:#e8c9b2;--stone2:#b8877b;--line:#7d515c;
-  --c0:linear-gradient(145deg,#ff7c73,#d8484c);
-  --c1:linear-gradient(145deg,#ffb052,#dc6c35);
-  --c2:linear-gradient(145deg,#f4d35e,#c89b2c);
-  --c3:linear-gradient(145deg,#77d4a5,#3d9f72);
-  --c4:linear-gradient(145deg,#6ec8ef,#3a90bd);
-  --c5:linear-gradient(145deg,#987fe1,#654eb3);
-  --c6:linear-gradient(145deg,#e583d0,#b04c9f);
-  --c7:linear-gradient(145deg,#ff9fc0,#df5b8d);
-  --gold1:#fff8c9;--gold2:#ffe47a;--gold3:#dfb33c;--gold4:#8f611a;
+  --sky:#4f9bab;--sky2:#24576d;--deep:#163b4f;--ink:#183f4d;--muted:#67838d;
+  --stone:#d9c9aa;--stone2:#9d8b67;--gold1:#fff7c6;--gold2:#ffe279;--gold3:#dcae39;--gold4:#8b5e18;
+  --c0:linear-gradient(145deg,#ff756c,#d64545);
+  --c1:linear-gradient(145deg,#ffad4e,#da6a2f);
+  --c2:linear-gradient(145deg,#f2d45e,#c79b2c);
+  --c3:linear-gradient(145deg,#70d49f,#38986c);
+  --c4:linear-gradient(145deg,#66caee,#348eaf);
+  --c5:linear-gradient(145deg,#907be0,#604bb0);
+  --c6:linear-gradient(145deg,#e681cf,#ad4b9a);
+  --c7:linear-gradient(145deg,#ff9fbd,#db5e8c);
+  --c8:linear-gradient(145deg,#8ddc65,#4e9d3c);
+  --c9:linear-gradient(145deg,#74b6ff,#397bc1);
+  --c10:linear-gradient(145deg,#d39a69,#9b5b38);
+  --c11:linear-gradient(145deg,#8edbd8,#4b9c9b);
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;margin:0;overflow:hidden}
@@ -29,18 +32,18 @@ body{
   min-height:100%;overscroll-behavior:none;user-select:none;-webkit-user-select:none;
   color:#fff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
   background:
-    radial-gradient(circle at 82% 9%,rgba(255,242,184,.94) 0 6%,rgba(255,242,184,.18) 7%,transparent 13%),
-    radial-gradient(ellipse at 27% 20%,rgba(255,213,222,.28),transparent 35%),
-    radial-gradient(ellipse at 68% 35%,rgba(150,119,220,.22),transparent 38%),
-    linear-gradient(180deg,#f58ba1 0%,#d75a78 30%,#9d3b62 58%,#663052 78%,#42263f 100%);
+    radial-gradient(circle at 80% 9%,rgba(255,236,165,.92) 0 5.5%,rgba(255,236,165,.16) 6.5%,transparent 12%),
+    radial-gradient(ellipse at 25% 20%,rgba(118,235,214,.18),transparent 35%),
+    radial-gradient(ellipse at 72% 32%,rgba(132,174,255,.16),transparent 39%),
+    linear-gradient(180deg,#62acb8 0%,#438c9f 28%,#2c6c82 55%,#245367 75%,#183c4c 100%);
 }
 body::before,body::after{
   content:"";position:fixed;z-index:0;pointer-events:none;bottom:-75px;width:210px;height:250px;
   background:
-    radial-gradient(ellipse at 47% 66%,rgba(79,58,80,.72) 0 28%,transparent 29%),
-    radial-gradient(ellipse at 37% 43%,rgba(101,74,105,.58) 0 22%,transparent 23%),
-    radial-gradient(ellipse at 55% 24%,rgba(122,91,119,.46) 0 17%,transparent 18%);
-  filter:drop-shadow(0 10px 10px rgba(46,20,44,.20))
+    radial-gradient(ellipse at 48% 66%,rgba(39,75,66,.74) 0 29%,transparent 30%),
+    radial-gradient(ellipse at 37% 43%,rgba(51,96,77,.60) 0 23%,transparent 24%),
+    radial-gradient(ellipse at 55% 24%,rgba(72,117,91,.50) 0 17%,transparent 18%);
+  filter:drop-shadow(0 10px 10px rgba(10,33,37,.22))
 }
 body::before{left:-65px;transform:rotate(-8deg)}
 body::after{right:-65px;transform:scaleX(-1) rotate(-8deg)}
@@ -53,151 +56,164 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 .top{display:flex;align-items:center;justify-content:space-between;gap:5px;margin-bottom:5px;flex:0 0 auto}
 .brand-wrap{display:flex;align-items:center;gap:7px;min-width:0}
 .brand-mark{
-  width:38px;height:38px;flex:0 0 auto;position:relative;transform:rotate(-45deg);
-  background:linear-gradient(145deg,#ff8aa8,#c93869);border-radius:9px 50% 9px 50%;
-  border:3px solid rgba(255,244,223,.72);box-shadow:inset 0 3px 0 rgba(255,255,255,.28),0 5px 0 rgba(84,31,61,.22)
+  width:38px;height:38px;flex:0 0 auto;border-radius:12px;position:relative;transform:rotate(45deg);
+  background:conic-gradient(#ff776d,#f2d45e,#70d49f,#66caee,#907be0,#e681cf,#ff776d);
+  border:3px solid rgba(255,255,255,.72);box-shadow:inset 0 0 0 5px rgba(37,94,104,.14),0 5px 0 rgba(14,55,65,.20)
 }
-.brand-mark::before,.brand-mark::after{
-  content:"";position:absolute;width:23px;height:23px;border-radius:50%;background:inherit
+.brand-mark::after{
+  content:"";position:absolute;inset:9px;border-radius:5px;background:linear-gradient(145deg,#fff5b2,#d7aa3c);
+  box-shadow:0 0 8px rgba(255,222,107,.45)
 }
-.brand-mark::before{left:-7px;top:0}.brand-mark::after{right:0;top:-7px}
-.brand{font-weight:1000;letter-spacing:.045em;font-size:17px;line-height:1;text-shadow:0 2px 0 #7b3151;white-space:nowrap}
-.sub{display:inline-block;margin-top:3px;padding:2px 7px;border-radius:999px;background:#6f2c51;color:#ffdca1;font-size:8px;font-weight:1000;letter-spacing:.12em}
+.brand{font-weight:1000;letter-spacing:.045em;font-size:17px;line-height:1;text-shadow:0 2px 0 #275c6b;white-space:nowrap}
+.sub{display:inline-block;margin-top:3px;padding:2px 7px;border-radius:999px;background:#18495b;color:#ffe28c;font-size:8px;font-weight:1000;letter-spacing:.11em}
 .top-right{display:flex;align-items:center;gap:4px}
 .stats{display:grid;grid-template-columns:repeat(2,auto);gap:4px}
 .stat{
-  min-width:45px;padding:4px 6px;text-align:center;border-radius:11px;background:linear-gradient(#fffafd,#f2dae4);
-  color:var(--ink);box-shadow:inset 0 2px 0 #fff,0 3px 0 rgba(95,47,66,.13)
+  min-width:45px;padding:4px 6px;text-align:center;border-radius:11px;background:linear-gradient(#f8fdff,#d8edf2);
+  color:var(--ink);box-shadow:inset 0 2px 0 #fff,0 3px 0 rgba(20,62,73,.13)
 }
-.stat b{display:block;font-size:12px}.stat span{display:block;font-size:7px;color:#9a6879;font-weight:1000}
+.stat b{display:block;font-size:12px}.stat span{display:block;font-size:7px;color:#698690;font-weight:1000}
 .hint-mini,.reset-mini{
   height:39px;border:0;border-radius:12px;font-weight:1000;line-height:1;padding:0;
-  box-shadow:inset 0 2px 0 rgba(255,255,255,.48),0 4px 0 rgba(87,49,54,.18)
+  box-shadow:inset 0 2px 0 rgba(255,255,255,.48),0 4px 0 rgba(47,69,40,.18)
 }
-.hint-mini{width:51px;background:linear-gradient(#ffe690,#eeb83e);color:#5a4210;font-size:8px}
+.hint-mini{width:51px;background:linear-gradient(#ffe78f,#eeb83d);color:#5a4210;font-size:8px}
 .hint-mini span{display:block;font-size:9px;margin-top:2px}
-.reset-mini{width:39px;background:linear-gradient(#9ce8b8,#51b97c);color:#174d34;font-size:17px}
+.reset-mini{width:39px;background:linear-gradient(#91e5af,#48b476);color:#154832;font-size:17px}
 .quest{
-  flex:0 0 auto;margin-bottom:5px;padding:5px 8px;border-radius:12px;text-align:center;
-  background:linear-gradient(180deg,rgba(255,249,251,.97),rgba(244,221,229,.97));
-  color:#69364b;border:2px solid rgba(132,68,91,.14);font-size:9px;font-weight:1000;
-  box-shadow:inset 0 2px 0 #fff,0 3px 0 rgba(91,43,62,.10)
+  display:flex;align-items:center;justify-content:space-between;gap:7px;flex:0 0 auto;margin-bottom:5px;padding:5px 6px 5px 9px;border-radius:12px;
+  background:linear-gradient(180deg,rgba(247,252,253,.98),rgba(216,237,241,.98));color:#214f5e;border:2px solid rgba(55,110,124,.14);
+  box-shadow:inset 0 2px 0 #fff,0 3px 0 rgba(21,61,70,.10)
 }
-.quest strong{color:#c23e62}
+.quest-copy{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:9px;font-weight:1000}
+.diff{display:inline-block;margin-right:5px;padding:2px 6px;border-radius:999px;font-size:7px;letter-spacing:.06em}
+.diff.EASY{background:#dff6e5;color:#277048}.diff.NORMAL{background:#fff1bd;color:#7a5a0e}.diff.HARD{background:#f8d6dc;color:#923748}
+.stage-open{
+  flex:0 0 auto;min-width:74px;height:29px;border:0;border-radius:9px;background:linear-gradient(#397c91,#22586c);color:#fff6d8;
+  font-size:8px;font-weight:1000;box-shadow:inset 0 2px 0 rgba(255,255,255,.18),0 3px 0 rgba(20,59,68,.18)
+}
+.stage-open span{color:#ffe074}
 .board-wrap{
-  position:relative;flex:0 0 auto;margin:0 auto;padding:10px 10px 9px;border-radius:20px;
+  position:relative;flex:0 0 auto;margin:0 auto;padding:10px 10px 9px;border-radius:19px;width:fit-content;
   background:
-    radial-gradient(circle at 14% 17%,rgba(255,255,255,.27) 0 4%,transparent 4.7%),
-    radial-gradient(circle at 86% 78%,rgba(255,236,174,.18) 0 5%,transparent 5.7%),
-    linear-gradient(145deg,#e8d2c2,#b98f84 58%,#946a68);
-  border:4px solid #744d59;box-shadow:inset 0 4px 0 rgba(255,255,255,.38),inset 0 -5px 0 rgba(93,54,61,.12),0 8px 0 rgba(74,31,54,.24),0 0 26px rgba(255,198,215,.18)
+    radial-gradient(circle at 14% 17%,rgba(255,255,255,.24) 0 4%,transparent 4.7%),
+    radial-gradient(circle at 86% 78%,rgba(255,231,153,.16) 0 5%,transparent 5.7%),
+    linear-gradient(145deg,#d9caad,#ae9a75 58%,#877555);
+  border:4px solid #6f6045;box-shadow:inset 0 4px 0 rgba(255,255,255,.34),inset 0 -5px 0 rgba(70,55,31,.12),0 8px 0 rgba(16,50,56,.22),0 0 24px rgba(132,224,232,.12)
 }
 .board-title{
   position:absolute;z-index:4;left:50%;top:-12px;transform:translateX(-50%);
-  padding:3px 10px;border-radius:999px;background:linear-gradient(#fff2b1,#e5b84a);color:#6a4713;
-  font-size:8px;font-weight:1000;letter-spacing:.11em;box-shadow:0 3px 0 rgba(108,73,23,.14);white-space:nowrap
+  padding:3px 10px;border-radius:999px;background:linear-gradient(#fff3b0,#e2b748);color:#684611;
+  font-size:8px;font-weight:1000;letter-spacing:.08em;box-shadow:0 3px 0 rgba(100,70,22,.14);white-space:nowrap
 }
-.board{
-  --cell-size:27px;position:relative;width:calc(var(--cell-size)*11);height:calc(var(--cell-size)*8);
-  touch-action:none;margin:2px auto 0
+.board{position:relative;touch-action:none;margin:2px auto 0}
+.cell,.preview-cell,.hint-area,.hint-exact{
+  position:absolute;width:var(--cell-size);height:var(--cell-size);border-radius:5px
 }
-.cell{
-  position:absolute;width:var(--cell-size);height:var(--cell-size);border:0;padding:0;
-  border-radius:5px;background:rgba(255,245,237,.19);
-  outline:1px solid rgba(115,76,82,.15);outline-offset:-1px;
-  box-shadow:inset 0 2px 0 rgba(255,255,255,.18)
-}
+.cell{border:0;padding:0;background:rgba(242,235,213,.17);outline:1px solid rgba(92,76,53,.14);outline-offset:-1px;box-shadow:inset 0 2px 0 rgba(255,255,255,.15)}
 .cell.slot{
   background:
-    radial-gradient(circle at 50% 50%,rgba(255,235,190,.08) 0 13%,transparent 14%),
-    rgba(114,76,82,.19)
+    radial-gradient(circle at 50% 50%,rgba(255,231,152,.07) 0 13%,transparent 14%),
+    rgba(93,78,55,.18)
 }
-.cell.filled{
-  outline-color:rgba(92,51,62,.11);
-  box-shadow:inset 0 3px 0 rgba(255,255,255,.28),inset 0 -3px 0 rgba(62,34,42,.08)
-}
+.cell.filled{outline-color:rgba(71,58,40,.10);box-shadow:inset 0 3px 0 rgba(255,255,255,.27),inset 0 -3px 0 rgba(56,43,28,.08)}
 .cell.filled::after{
-  content:"";position:absolute;left:15%;top:11%;width:48%;height:18%;border-radius:99px;background:rgba(255,255,255,.25);transform:rotate(-8deg)
+  content:"";position:absolute;left:15%;top:11%;width:48%;height:18%;border-radius:99px;background:rgba(255,255,255,.23);transform:rotate(-8deg)
 }
-.cell.hint-good{outline:3px solid #57d9f0;outline-offset:-3px;filter:brightness(1.1)}
-.cell.hint-bad{outline:3px solid #ff6d62;outline-offset:-3px;animation:pulseBad .7s ease-in-out infinite alternate}
-.cell.hint-focus{outline:3px solid #ffe96d;outline-offset:-3px;animation:pulse .7s ease-in-out infinite alternate}
-@keyframes pulse{from{filter:brightness(1)}to{filter:brightness(1.45)}}
-@keyframes pulseBad{from{filter:brightness(1)}to{filter:brightness(1.3)}}
-.preview-cell{
-  position:absolute;z-index:8;width:var(--cell-size);height:var(--cell-size);border-radius:5px;
-  opacity:.55;pointer-events:none;outline:3px solid #50d9f1;outline-offset:-3px;
-  box-shadow:0 0 10px rgba(80,217,241,.24)
-}
-.preview-cell.bad{outline-color:#ff6d62;box-shadow:0 0 10px rgba(255,109,98,.27)}
-.hint-area,.hint-exact{
-  position:absolute;z-index:9;width:var(--cell-size);height:var(--cell-size);border-radius:5px;pointer-events:none
-}
-.hint-area{background:rgba(83,217,241,.28);outline:2px solid rgba(83,217,241,.54);outline-offset:-2px}
-.hint-exact{opacity:.65;outline:3px solid #fff2a0;outline-offset:-3px;box-shadow:0 0 11px rgba(255,233,109,.42)}
+.cell.just{animation:lockPop .23s ease-out}
+@keyframes lockPop{0%{transform:scale(.82);filter:brightness(1.55)}70%{transform:scale(1.07)}100%{transform:scale(1)}}
+.cell.hint-good{outline:3px solid #55d9f1;outline-offset:-3px;filter:brightness(1.1)}
+.cell.hint-bad{outline:3px solid #ff6c61;outline-offset:-3px;animation:hintBad .7s ease-in-out infinite alternate}
+.cell.hint-focus{outline:3px solid #ffe76a;outline-offset:-3px;animation:hintPulse .75s ease-in-out infinite alternate}
+@keyframes hintPulse{from{filter:brightness(1)}to{filter:brightness(1.43)}}
+@keyframes hintBad{from{filter:brightness(1)}to{filter:brightness(1.30)}}
+.preview-cell{z-index:8;opacity:.54;pointer-events:none;outline:3px solid #4fd9f1;outline-offset:-3px;box-shadow:0 0 10px rgba(79,217,241,.24)}
+.preview-cell.bad{outline-color:#ff6c61;box-shadow:0 0 10px rgba(255,108,97,.27)}
+.hint-area,.hint-exact{z-index:9;pointer-events:none}
+.hint-area{background:rgba(79,217,241,.25);outline:2px solid rgba(79,217,241,.52);outline-offset:-2px}
+.hint-exact{opacity:.66;outline:3px solid #fff0a0;outline-offset:-3px;box-shadow:0 0 11px rgba(255,231,106,.42)}
 .board.clearing .cell.filled{
   background:linear-gradient(145deg,var(--gold1),var(--gold2) 36%,var(--gold3) 70%,var(--gold4))!important;
   animation:goldLock .48s ease-out forwards;animation-delay:var(--delay,0ms);
   box-shadow:inset 0 3px 0 rgba(255,255,255,.43),inset 0 -3px 0 rgba(106,75,20,.13),0 0 12px rgba(255,222,101,.18)
 }
-@keyframes goldLock{0%{transform:scale(.86);filter:brightness(1.7)}65%{transform:scale(1.06)}100%{transform:scale(1);filter:brightness(1.08)}}
+@keyframes goldLock{0%{transform:scale(.84);filter:brightness(1.75)}65%{transform:scale(1.06)}100%{transform:scale(1);filter:brightness(1.08)}}
 .msg{
   min-height:20px;margin:6px 1px 0;padding:2px 6px;border-radius:999px;flex:0 0 auto;
-  color:#62364a;background:rgba(255,244,248,.91);font-size:10px;text-align:center;line-height:16px;font-weight:1000;white-space:nowrap;overflow:hidden;text-overflow:ellipsis
+  color:#245060;background:rgba(241,250,252,.92);font-size:10px;text-align:center;line-height:16px;font-weight:1000;white-space:nowrap;overflow:hidden;text-overflow:ellipsis
 }
-.msg.ok{color:#245f43;background:rgba(226,250,233,.94)}.msg.bad{color:#90323a;background:rgba(255,229,230,.94)}
+.msg.ok{color:#245f43;background:rgba(222,249,230,.94)}.msg.bad{color:#8e3236;background:rgba(255,227,228,.94)}
 .guide{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-top:6px;flex:0 0 auto}
-.guide div{
-  border:2px solid rgba(131,68,90,.10);background:rgba(255,244,248,.90);border-radius:11px;padding:4px 1px;text-align:center;font-size:7px;color:#9a7180;line-height:1.08;box-shadow:0 2px 0 rgba(89,44,62,.08)
-}
-.guide b{display:block;color:#c34665;font-size:8px;margin-bottom:1px}
+.guide div{border:2px solid rgba(50,105,119,.10);background:rgba(241,250,252,.91);border-radius:11px;padding:4px 1px;text-align:center;font-size:7px;color:#708893;line-height:1.08;box-shadow:0 2px 0 rgba(20,59,69,.08)}
+.guide b{display:block;color:#bd5544;font-size:8px;margin-bottom:1px}
 .tray-head{display:flex;justify-content:space-between;align-items:center;margin:6px 3px 3px;font-size:10px;flex:0 0 auto}
-.tray-head span{background:#6a3151;border-radius:999px;padding:2px 8px;color:#ffe1a2;font-weight:1000}
-.tray{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:repeat(2,61px);gap:5px;flex:0 0 auto}
+.tray-head span{background:#194b5b;border-radius:999px;padding:2px 8px;color:#ffe18b;font-weight:1000}
+.tray{display:grid;gap:5px;flex:0 0 auto}
 .piece{
-  position:relative;border:2px solid rgba(133,75,94,.12);border-radius:13px;background:linear-gradient(#fff9fb,#edd9e1);
-  box-shadow:inset 0 3px 0 #fff,0 4px 0 rgba(94,48,65,.11);padding:2px;display:flex;align-items:center;justify-content:center;touch-action:none;overflow:hidden
+  position:relative;min-width:0;border:2px solid rgba(53,105,119,.12);border-radius:12px;background:linear-gradient(#f7fcfd,#dcecf0);
+  box-shadow:inset 0 3px 0 #fff,0 4px 0 rgba(26,67,78,.10);padding:2px;display:flex;align-items:center;justify-content:center;touch-action:none;overflow:hidden
 }
-.piece.selected{outline:3px solid #ffe168;outline-offset:1px}.piece.placed{opacity:.33}
-.piece-name{position:absolute;left:5px;top:5px;font-size:7px;font-weight:1000;color:#8a5b6e}
-.piece.placed .piece-name::after{content:" ✓";color:#43a66e}
+.piece.selected{outline:3px solid #ffe06b;outline-offset:1px}.piece.placed{opacity:.32}
+.piece-name{position:absolute;left:5px;top:4px;font-size:7px;font-weight:1000;color:#50707b}
+.piece.placed .piece-name::after{content:" ✓";color:#3da06a}
 .mini{position:relative}
-.mcell{position:absolute;width:9px;height:9px;border-radius:2px;box-shadow:inset 0 2px 0 rgba(255,255,255,.3)}
-.drag-visual{
-  position:fixed;z-index:35;left:0;top:0;display:none;pointer-events:none;transform:translate(-50%,-118%);
-  filter:drop-shadow(0 10px 8px rgba(69,37,48,.24))
-}
+.mcell{position:absolute;border-radius:2px;box-shadow:inset 0 2px 0 rgba(255,255,255,.30)}
+.drag-visual{position:fixed;z-index:35;left:0;top:0;display:none;pointer-events:none;transform:translate(-50%,-118%);filter:drop-shadow(0 10px 8px rgba(32,54,57,.25))}
 .drag-visual.show{display:block}
-.drag-cell{position:absolute;width:25px;height:25px;border-radius:5px;box-shadow:inset 0 3px 0 rgba(255,255,255,.26),0 2px 0 rgba(82,41,52,.10)}
+.drag-cell{position:absolute;border-radius:5px;box-shadow:inset 0 3px 0 rgba(255,255,255,.25),0 2px 0 rgba(45,52,41,.10)}
 .hold-ring{position:fixed;z-index:36;width:56px;height:56px;left:0;top:0;transform:translate(-50%,-50%);pointer-events:none;opacity:0}
 .hold-ring.show{opacity:1}
 .hold-ring svg{width:100%;height:100%;transform:rotate(-90deg)}
-.hold-ring circle{fill:none;stroke-width:5}.hold-ring .track{stroke:rgba(98,47,67,.28)}.hold-ring .prog{stroke:#ffe66d;stroke-dasharray:138.2;stroke-dashoffset:138.2;stroke-linecap:round}
+.hold-ring circle{fill:none;stroke-width:5}.hold-ring .track{stroke:rgba(18,71,82,.28)}.hold-ring .prog{stroke:#ffe56b;stroke-dasharray:138.2;stroke-dashoffset:138.2;stroke-linecap:round}
 .hold-ring.show .prog{animation:hold .52s linear forwards}@keyframes hold{to{stroke-dashoffset:0}}
-.overlay{position:fixed;inset:0;z-index:50;display:none;align-items:center;justify-content:center;padding:24px;background:rgba(73,28,55,.82);backdrop-filter:blur(5px)}
-.overlay.show{display:flex}
-.card{
-  width:min(355px,100%);padding:24px;text-align:center;border-radius:28px;background:linear-gradient(#fffafd,#f1dce4);border:4px solid #d8a943;
-  box-shadow:inset 0 4px 0 #fff,0 12px 0 rgba(84,43,57,.13),0 25px 70px rgba(57,20,43,.34)
+.overlay,.stage-overlay{position:fixed;inset:0;z-index:50;display:none;align-items:center;justify-content:center;padding:calc(12px + env(safe-area-inset-top)) 10px calc(12px + env(safe-area-inset-bottom));background:rgba(8,38,48,.84);backdrop-filter:blur(5px)}
+.overlay.show,.stage-overlay.show{display:flex}
+.clear-card{
+  width:min(355px,100%);padding:23px;text-align:center;border-radius:28px;background:linear-gradient(#f9fdff,#dceef2);border:4px solid #d4a53b;
+  box-shadow:inset 0 4px 0 #fff,0 12px 0 rgba(24,61,70,.13),0 25px 70px rgba(5,31,40,.34)
 }
-.gold-heart{
-  width:74px;height:66px;margin:7px auto 14px;position:relative;transform:rotate(-45deg);
-  background:linear-gradient(145deg,#fff6bb,#e6b947 62%,#9a6919);border-radius:10px 50% 10px 50%;box-shadow:0 0 22px rgba(255,213,75,.58)
+.clear-icon{font-size:62px;line-height:1;color:#d9aa35;text-shadow:0 0 10px #fff0a6,0 0 24px rgba(255,213,77,.52)}
+.clear-card h2{margin:5px 0 0;color:#ae7a20;font-size:28px}.clear-card p{color:#315f70;font-weight:1000;line-height:1.55;margin:9px 0 14px}
+.clear-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.clear-card button{height:48px;border:0;border-radius:14px;font-weight:1000}
+#nextStage{background:linear-gradient(#94e2ae,#48af73);color:#164a32;box-shadow:inset 0 3px rgba(255,255,255,.34),0 5px 0 rgba(39,103,68,.21)}
+#again{background:linear-gradient(#ffe78e,#eab53b);color:#5b4210;box-shadow:inset 0 3px rgba(255,255,255,.35),0 5px 0 rgba(116,84,22,.18)}
+.stage-panel{
+  width:min(440px,100%);height:100%;overflow:hidden;display:flex;flex-direction:column;border-radius:24px;background:linear-gradient(#f9fdff,#dceef2);
+  border:4px solid #4b8ba0;box-shadow:inset 0 4px 0 #fff,0 20px 70px rgba(3,27,35,.38)
 }
-.gold-heart::before,.gold-heart::after{content:"";position:absolute;width:44px;height:44px;border-radius:50%;background:inherit}
-.gold-heart::before{left:-13px;top:0}.gold-heart::after{right:0;top:-13px}
-.card h2{margin:0;color:#b74462;font-size:29px}.card p{color:#72485a;font-weight:1000;line-height:1.5}
-.card button{width:100%;height:49px;border:0;border-radius:15px;background:linear-gradient(#99e6b6,#4eb77a);color:#164b33;font-weight:1000;box-shadow:inset 0 3px rgba(255,255,255,.35),0 5px 0 rgba(43,113,74,.22)}
+.stage-head{display:flex;align-items:center;justify-content:space-between;padding:12px 13px 8px;border-bottom:1px solid rgba(47,98,115,.12)}
+.stage-head h2{margin:0;color:#24586a;font-size:20px}.stage-head p{margin:3px 0 0;color:#6a8791;font-size:8px;font-weight:1000}
+.stage-close{width:38px;height:38px;border:0;border-radius:12px;background:#2e8c5a;color:#fff;font-size:18px;font-weight:1000;box-shadow:inset 0 2px rgba(255,255,255,.24),0 3px 0 rgba(28,82,54,.20)}
+.collection-progress{padding:7px 13px 5px}
+.collection-line{display:flex;justify-content:space-between;color:#4e707d;font-size:9px;font-weight:1000}.collection-line strong{color:#bd8326;font-size:13px}
+.collection-bar{height:8px;margin-top:5px;border-radius:999px;background:#c5dbe1;overflow:hidden}.collection-bar span{display:block;width:0;height:100%;background:linear-gradient(90deg,#d9aa37,#ffe47c,#d9aa37);transition:width .2s}
+.stage-scroll{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;padding:3px 10px 14px}
+.level-title{display:flex;align-items:center;gap:6px;margin:8px 2px 6px;color:#345f6e;font-size:11px;font-weight:1000}
+.level-title span{padding:2px 7px;border-radius:999px;font-size:7px}
+.level-title .EASY{background:#daf3e1;color:#2b704a}.level-title .NORMAL{background:#ffefb9;color:#75580e}.level-title .HARD{background:#f7d4db;color:#8e3747}
+.stage-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.stage-card{
+  min-width:0;min-height:118px;border:2px solid rgba(63,106,119,.14);border-radius:14px;padding:7px 5px;background:linear-gradient(#f8fcfd,#deedf1);color:#315e6c;
+  box-shadow:inset 0 2px #fff,0 3px 0 rgba(29,67,78,.10);display:flex;flex-direction:column;align-items:center;justify-content:space-between
+}
+.stage-card.current{outline:3px solid #52cce3;outline-offset:1px}
+.stage-card.done{border-color:#c99a2d;background:linear-gradient(145deg,#fff7c5,#ffe37a 46%,#d8aa39);color:#664a12;box-shadow:inset 0 2px rgba(255,255,255,.62),0 0 10px rgba(229,185,58,.24)}
+.stage-card strong{font-size:8px;white-space:nowrap}.stage-card small{font-size:6px;font-weight:1000;opacity:.8}
+.stage-mini{position:relative;margin:2px auto}
+.stage-pixel{position:absolute;border-radius:1px;background:#79929a}
+.stage-card.done .stage-pixel{background:#9d6b18;box-shadow:inset 0 1px rgba(255,255,255,.32)}
+.stage-card .medal{font-size:9px;color:#ba8121;font-weight:1000}
 @media(max-width:370px){
-  .board{--cell-size:24px}.tray{grid-template-rows:repeat(2,56px)}.mcell{width:8px;height:8px}
-  .brand{font-size:15px}.stat{min-width:42px;padding:3px 4px}
+  .brand{font-size:15px}.stat{min-width:42px;padding:3px 4px}.stage-open{min-width:66px}
+  .stage-card{min-height:108px}.stage-grid{gap:5px}.clear-card{padding:20px}
 }
 </style>
 </head>
 <body>
 <main class="app">
   <header class="top">
-    <div class="brand-wrap"><div class="brand-mark" aria-hidden="true"></div><div><div class="brand">BOON SHAPE</div><div class="sub">HEART QUEST</div></div></div>
+    <div class="brand-wrap"><div class="brand-mark" aria-hidden="true"></div><div><div class="brand">BOON SHAPE</div><div class="sub">SHAPE COLLECTION</div></div></div>
     <div class="top-right">
       <div class="stats"><div class="stat"><b id="time">00:00</b><span>TIME</span></div><div class="stat"><b id="moves">0</b><span>MOVE</span></div></div>
       <button id="hint" class="hint-mini" type="button">💡 HINT<span id="hintCount">0</span></button>
@@ -205,23 +221,26 @@ button{font:inherit;color:inherit;touch-action:manipulation}
     </div>
   </header>
 
-  <div class="quest"><strong>STAGE 01</strong> — 60個の小さな四角で、大きなハートを完成させよう！</div>
+  <div class="quest">
+    <div id="questCopy" class="quest-copy"></div>
+    <button id="stageOpen" class="stage-open" type="button">SHAPES <span id="progressMini">0/18</span></button>
+  </div>
 
   <section class="board-wrap">
-    <div class="board-title">❤️ 60 BLOCK HEART</div>
-    <div id="board" class="board" aria-label="60マスのハート型パズル盤"></div>
+    <div id="boardTitle" class="board-title"></div>
+    <div id="board" class="board"></div>
   </section>
 
-  <div id="msg" class="msg">8つのブロックを組み合わせてハートを完成させよう！</div>
+  <div id="msg" class="msg"></div>
 
   <div class="guide">
     <div><b>↻ タップ</b>90°回転</div>
-    <div><b>↔ フリック</b>反転</div>
+    <div><b>↔ フリック</b><span id="flipGuide">反転</span></div>
     <div><b>☝ ドラッグ</b>移動</div>
     <div><b>◉ 長押し</b>戻す</div>
   </div>
 
-  <div class="tray-head"><strong>HEART PIECES</strong><span><b id="count">0</b> / 8</span></div>
+  <div class="tray-head"><strong id="trayTitle">SHAPE PIECES</strong><span><b id="count">0</b> / <b id="pieceTotal">0</b></span></div>
   <section id="tray" class="tray"></section>
 </main>
 
@@ -229,314 +248,490 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 <div id="holdRing" class="hold-ring"><svg viewBox="0 0 56 56"><circle class="track" cx="28" cy="28" r="22"/><circle class="prog" cx="28" cy="28" r="22"/></svg></div>
 
 <div id="overlay" class="overlay" role="dialog" aria-modal="true">
-  <div class="card">
-    <div class="gold-heart" aria-hidden="true"></div>
-    <h2>HEART COMPLETE!</h2>
+  <div class="clear-card">
+    <div id="clearIcon" class="clear-icon">◆</div>
+    <h2>SHAPE COMPLETE!</h2>
     <p id="clearText"></p>
-    <button id="again" type="button">もういちど作る！</button>
+    <div class="clear-actions"><button id="nextStage" type="button">NEXT SHAPE</button><button id="again" type="button">REPLAY</button></div>
   </div>
 </div>
 
+<div id="stageOverlay" class="stage-overlay" role="dialog" aria-modal="true">
+  <section class="stage-panel">
+    <header class="stage-head">
+      <div><h2>SHAPE COLLECTION</h2><p>いろんな形を完成させて、全部を黄金にしよう。</p></div>
+      <button id="stageClose" class="stage-close" type="button">×</button>
+    </header>
+    <div class="collection-progress">
+      <div class="collection-line"><span>DISCOVERED</span><strong id="collectionCount">0 / 18</strong></div>
+      <div class="collection-bar"><span id="collectionBar"></span></div>
+    </div>
+    <div id="stageScroll" class="stage-scroll"></div>
+  </section>
+</div>
+
+<script src="stages.js?v=2"></script>
 <script>
 (()=>{
-const ROWS=8,COLS=11;
-const maskRows=[
- ".###...###.",
- "#####.#####",
- "###########",
- "###########",
- ".#########.",
- "..#######..",
- "...#####...",
- ".....#....."
-];
-const mask=new Set();
-maskRows.forEach((row,r)=>[...row].forEach((ch,c)=>{if(ch==="#")mask.add(r+","+c)}));
+const STAGES=Array.isArray(window.BOON_SHAPE_STAGES)?window.BOON_SHAPE_STAGES:[];
+const COLORS=["var(--c0)","var(--c1)","var(--c2)","var(--c3)","var(--c4)","var(--c5)","var(--c6)","var(--c7)","var(--c8)","var(--c9)","var(--c10)","var(--c11)"];
+const SAVE_KEY="boonShapeProgressV1";
+const $=s=>document.querySelector(s);
+const board=$("#board"),tray=$("#tray"),msg=$("#msg"),timeEl=$("#time"),movesEl=$("#moves"),countEl=$("#count"),pieceTotalEl=$("#pieceTotal"),hintCountEl=$("#hintCount");
+const overlay=$("#overlay"),clearText=$("#clearText"),clearIcon=$("#clearIcon"),stageOverlay=$("#stageOverlay"),stageScroll=$("#stageScroll");
+const progressMini=$("#progressMini"),collectionCount=$("#collectionCount"),collectionBar=$("#collectionBar"),boardTitle=$("#boardTitle"),questCopy=$("#questCopy"),trayTitle=$("#trayTitle"),flipGuide=$("#flipGuide");
+const dragVisual=$("#dragVisual"),holdRing=$("#holdRing");
 
-const defs={
- A:[[0,1],[0,2],[0,3],[1,0],[1,1],[1,3],[2,0],[2,3]],
- B:[[0,1],[0,2],[0,3],[1,0],[1,1],[2,1],[2,2],[2,3]],
- C:[[0,1],[1,0],[1,1],[1,2],[2,0],[2,2],[2,3],[3,3]],
- D:[[0,0],[0,1],[0,2],[1,2],[2,0],[2,1],[2,2],[3,1]],
- E:[[0,0],[0,2],[1,0],[1,2],[2,0],[2,1],[2,2]],
- F:[[0,1],[1,0],[1,1],[2,1],[2,2],[2,3],[3,2]],
- G:[[0,0],[0,1],[1,1],[1,2],[2,2],[2,3],[3,3]],
- H:[[0,0],[0,2],[1,0],[1,1],[1,2],[1,3],[2,2]]
-};
-const master={
- A:{r:0,c:0},B:{r:0,c:6},C:{r:3,c:4},D:{r:1,c:8},
- E:{r:1,c:2},F:{r:2,c:0},G:{r:2,c:5},H:{r:5,c:3}
-};
-const ids=Object.keys(defs),names={A:"LOVE",B:"JOY",C:"SMILE",D:"HUG",E:"KIND",F:"DREAM",G:"HOPE",H:"BOON"};
-const colors=["var(--c0)","var(--c1)","var(--c2)","var(--c3)","var(--c4)","var(--c5)","var(--c6)","var(--c7)"];
-const $=s=>document.querySelector(s),board=$("#board"),tray=$("#tray"),msg=$("#msg");
-const timeEl=$("#time"),movesEl=$("#moves"),countEl=$("#count"),hintCountEl=$("#hintCount"),overlay=$("#overlay"),clearText=$("#clearText"),dragVisual=$("#dragVisual"),holdRing=$("#holdRing");
+const TAP_MOVE=10,DRAG_START=13,FLICK_DISTANCE=46,FLICK_TIME=280,FLICK_RATIO=1.45,LONG_PRESS_MS=520,LONG_PRESS_MOVE=9;
 
-const TAP_MOVE=10,DRAG_START=13,FLICK_DISTANCE=46,FLICK_TIME=280,FLICK_RATIO=1.45;
-const LONG_PRESS_MS=520,LONG_PRESS_MOVE=9;
+let stageIndex=0,stage=null,runtime=null,pieces={},ids=[],selected=null,target=null,moves=0,start=0,timer=0;
+let gesture=null,drag=null,longPressTimer=null,hintCount=0,hintStage=0,hintPlan=null,justPlaced=null,clearAnimating=false;
 
+function loadProgress(){
+  try{
+    const p=JSON.parse(localStorage.getItem(SAVE_KEY)||"{}");
+    if(!p||typeof p!=="object")throw 0;
+    if(!p.completed||typeof p.completed!=="object")p.completed={};
+    return p
+  }catch(_){return {completed:{}}}
+}
+function saveProgress(p){try{localStorage.setItem(SAVE_KEY,JSON.stringify(p))}catch(_){}}
+function completedCount(){return Object.keys(loadProgress().completed||{}).filter(k=>STAGES.some(s=>s.key===k)).length}
+function haptic(ms=12){if(navigator.vibrate)navigator.vibrate(ms)}
+function fmt(ms){const s=Math.floor(ms/1000),m=Math.floor(s/60);return String(m).padStart(2,"0")+":"+String(s%60).padStart(2,"0")}
+function setMsg(t,k=""){msg.textContent=t;msg.className="msg"+(k?" "+k:"")}
+function rng32(seed){let a=seed>>>0;return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const keyOf=(r,c)=>r+","+c;
 const norm=s=>{
- const mr=Math.min(...s.map(a=>a[0])),mc=Math.min(...s.map(a=>a[1]));
- return s.map(([r,c])=>[r-mr,c-mc]).sort((a,b)=>a[0]-b[0]||a[1]-b[1])
+  const mr=Math.min(...s.map(a=>a[0])),mc=Math.min(...s.map(a=>a[1]));
+  return s.map(([r,c])=>[r-mr,c-mc]).sort((a,b)=>a[0]-b[0]||a[1]-b[1])
 };
 const rot=s=>norm(s.map(([r,c])=>[c,-r]));
 const flip=s=>norm(s.map(([r,c])=>[r,-c]));
-const cellsKey=cells=>cells.map(([r,c])=>r+","+c).sort().join("|");
+const shapeKey=s=>norm(s).map(x=>x.join(",")).join("|");
+const cellsKey=s=>s.map(x=>x.join(",")).sort().join("|");
+function bounds(s){return {h:Math.max(...s.map(a=>a[0]))+1,w:Math.max(...s.map(a=>a[1]))+1}}
+function neighbors(r,c){return [[r-1,c],[r+1,c],[r,c-1],[r,c+1]]}
 
-const pieces={};
-ids.forEach(id=>pieces[id]={shape:norm(defs[id]),placed:null});
-const scramble={
- A:{rot:1,flip:false},B:{rot:3,flip:true},C:{rot:2,flip:false},D:{rot:1,flip:true},
- E:{rot:3,flip:false},F:{rot:2,flip:true},G:{rot:1,flip:false},H:{rot:3,flip:true}
-};
-function applyScramble(){
- ids.forEach(id=>{
-   let s=norm(defs[id]);
-   for(let i=0;i<scramble[id].rot;i++)s=rot(s);
-   if(scramble[id].flip)s=flip(s);
-   pieces[id].shape=s;pieces[id].placed=null
- })
+function stageMask(s){
+  const cells=[];
+  s.mask.forEach((row,r)=>[...row].forEach((ch,c)=>{if(ch==="#")cells.push([r,c])}));
+  return cells
 }
-applyScramble();
+function partitionMask(s){
+  const cells=stageMask(s),keys=cells.map(x=>keyOf(...x)),maskSet=new Set(keys),k=s.pieces;
+  let best=null;
+  for(let attempt=0;attempt<90;attempt++){
+    const rand=rng32(s.seed*1009+attempt*7919+17),pool=[...keys],seedKeys=[];
+    while(seedKeys.length<k&&pool.length){
+      const at=Math.floor(rand()*pool.length);seedKeys.push(pool.splice(at,1)[0])
+    }
+    const owner=new Map(),sizes=Array(k).fill(1),front=Array.from({length:k},()=>new Set()),un=new Set(keys);
+    seedKeys.forEach((sk,i)=>{owner.set(sk,i);un.delete(sk)});
+    seedKeys.forEach((sk,i)=>{
+      const [r,c]=sk.split(",").map(Number);
+      neighbors(r,c).forEach(([rr,cc])=>{const kk=keyOf(rr,cc);if(un.has(kk))front[i].add(kk)})
+    });
+    let failed=false;
+    while(un.size){
+      const choices=[];
+      for(let i=0;i<k;i++){let ok=false;for(const x of front[i])if(un.has(x)){ok=true;break}if(ok)choices.push(i)}
+      if(!choices.length){failed=true;break}
+      const min=Math.min(...choices.map(i=>sizes[i])),small=choices.filter(i=>sizes[i]<=min+1),ri=small[Math.floor(rand()*small.length)];
+      const opts=[...front[ri]].filter(x=>un.has(x)).map(x=>{
+        const [r,c]=x.split(",").map(Number);
+        let same=0;neighbors(r,c).forEach(([rr,cc])=>{if(owner.get(keyOf(rr,cc))===ri)same++});
+        return {x,score:same+rand()*.35}
+      }).sort((a,b)=>b.score-a.score);
+      const pick=opts[0].x;owner.set(pick,ri);un.delete(pick);front[ri].delete(pick);sizes[ri]++;
+      const [r,c]=pick.split(",").map(Number);
+      neighbors(r,c).forEach(([rr,cc])=>{const kk=keyOf(rr,cc);if(maskSet.has(kk)&&un.has(kk))front[ri].add(kk)})
+    }
+    if(failed)continue;
+    const avg=cells.length/k,variance=sizes.reduce((a,n)=>a+(n-avg)*(n-avg),0),minSize=Math.min(...sizes);
+    const score=variance+(minSize<4?(4-minSize)*120:0);
+    if(!best||score<best.score){
+      const regs=Array.from({length:k},()=>[]);
+      owner.forEach((i,key)=>regs[i].push(key.split(",").map(Number)));
+      best={score,regs}
+    }
+  }
+  if(!best)throw new Error("partition failed: "+s.key);
+  return best.regs.map((cells,i)=>{
+    const mr=Math.min(...cells.map(x=>x[0])),mc=Math.min(...cells.map(x=>x[1]));
+    return {id:String.fromCharCode(65+i),base:norm(cells),master:{r:mr,c:mc},size:cells.length}
+  })
+}
 
-let selected="A",target=null,moves=0,start=0,timer=0,gesture=null,drag=null,longPressTimer=null;
-let hintCount=0,hintStage=0,hintPlan=null,justPlaced=null,clearAnimating=false;
+function uniqueTransforms(shape,allowFlip){
+  const map=new Map();let cur=norm(shape);
+  for(let i=0;i<4;i++){
+    [cur,...(allowFlip?[flip(cur)]:[])].forEach(s=>map.set(shapeKey(s),norm(s)));
+    cur=rot(cur)
+  }
+  return [...map.values()]
+}
+function makeRuntime(s){
+  const maskCells=stageMask(s),maskSet=new Set(maskCells.map(x=>keyOf(...x))),cellIndex=new Map(maskCells.map((x,i)=>[keyOf(...x),i]));
+  const defs=partitionMask(s),fullMask=(1n<<BigInt(maskCells.length))-1n,placements={},byCell=Array.from({length:maskCells.length},()=>[]);
+  function toMask(cells){
+    let m=0n;
+    for(const [r,c] of cells){const ix=cellIndex.get(keyOf(r,c));if(ix===undefined)return null;m|=1n<<BigInt(ix)}
+    return m
+  }
+  defs.forEach(def=>{
+    const arr=[],seen=new Set(),masterCells=def.base.map(([r,c])=>[r+def.master.r,c+def.master.c]),masterKey=cellsKey(masterCells);
+    for(const sh of uniqueTransforms(def.base,s.allowFlip)){
+      const b=bounds(sh);
+      for(let r=0;r<=s.mask.length-b.h;r++)for(let c=0;c<=s.mask[0].length-b.w;c++){
+        const cells=sh.map(([rr,cc])=>[rr+r,cc+c]);
+        if(!cells.every(([rr,cc])=>maskSet.has(keyOf(rr,cc))))continue;
+        const mask=toMask(cells),mk=mask.toString();
+        if(seen.has(mk))continue;seen.add(mk);
+        arr.push({id:def.id,mask,cells,isMaster:cellsKey(cells)===masterKey})
+      }
+    }
+    arr.sort((a,b)=>(b.isMaster?1:0)-(a.isMaster?1:0));
+    placements[def.id]=arr;
+    arr.forEach(pl=>{
+      let x=pl.mask,ix=0;
+      while(x){if(x&1n)byCell[ix].push(pl);x>>=1n;ix++}
+    })
+  });
+  return {maskCells,maskSet,cellIndex,defs,fullMask,placements,byCell,toMask,rows:s.mask.length,cols:s.mask[0].length}
+}
+
+function currentCellMask(cells){return runtime.toMask(cells)}
+function solve(fixed={},nodeLimit=90000){
+  let occ=0n,nodes=0;const assignment={},remaining=new Set(ids);
+  for(const id of Object.keys(fixed)){
+    const mask=fixed[id];
+    if(mask===null||(mask&occ)!==0n)return null;
+    const pl=runtime.placements[id].find(p=>p.mask===mask);if(!pl)return null;
+    occ|=mask;assignment[id]=pl;remaining.delete(id)
+  }
+  function dfs(used,rem){
+    nodes++;if(nodes>nodeLimit)return null;
+    if(!rem.size)return used===runtime.fullMask?{}:null;
+    let bestId=null,bestArr=null;
+    for(const id of rem){
+      const arr=runtime.placements[id].filter(p=>(p.mask&used)===0n);
+      if(!arr.length)return null;
+      if(!bestArr||arr.length<bestArr.length){bestId=id;bestArr=arr}
+    }
+    let uncovered=runtime.fullMask^used,bestCellArr=null,ix=0;
+    while(uncovered){
+      if(uncovered&1n){
+        const arr=runtime.byCell[ix].filter(p=>rem.has(p.id)&&(p.mask&used)===0n);
+        if(!arr.length)return null;
+        if(!bestCellArr||arr.length<bestCellArr.length){bestCellArr=arr;if(arr.length===1)break}
+      }
+      uncovered>>=1n;ix++
+    }
+    if(bestCellArr&&bestCellArr.length<bestArr.length){
+      for(const pl of bestCellArr){
+        const nr=new Set(rem);nr.delete(pl.id);const res=dfs(used|pl.mask,nr);
+        if(res){res[pl.id]=pl;return res}
+      }
+    }else{
+      for(const pl of bestArr){
+        const nr=new Set(rem);nr.delete(bestId);const res=dfs(used|pl.mask,nr);
+        if(res){res[bestId]=pl;return res}
+      }
+    }
+    return null
+  }
+  const res=dfs(occ,remaining);if(!res)return null;Object.assign(res,assignment);return res
+}
+function combos(arr,n,start=0,prefix=[],out=[]){
+  if(prefix.length===n){out.push([...prefix]);return out}
+  for(let i=start;i<=arr.length-(n-prefix.length);i++){prefix.push(arr[i]);combos(arr,n,i+1,prefix,out);prefix.pop()}
+  return out
+}
+function buildHintPlan(){
+  const placed=ids.filter(id=>pieces[id].placed),fixed={};
+  placed.forEach(id=>fixed[id]=currentCellMask(pieces[id].placed));
+  let sol=solve(fixed);
+  if(sol){
+    const focus=ids.find(id=>!pieces[id].placed);
+    return {good:[...placed],bad:[],focus,cells:focus?sol[focus].cells:[]}
+  }
+  for(let n=1;n<=Math.min(3,placed.length);n++){
+    for(const removed of combos(placed,n)){
+      const rm=new Set(removed),kept=placed.filter(id=>!rm.has(id)),fx={};kept.forEach(id=>fx[id]=fixed[id]);
+      sol=solve(fx,50000);
+      if(sol){
+        const focus=removed[0]||ids.find(id=>!pieces[id].placed);
+        return {good:kept,bad:removed,focus,cells:focus?sol[focus].cells:[]}
+      }
+    }
+  }
+  sol=solve({},50000);
+  const focus=placed[0]||ids[0];
+  return {good:[],bad:[...placed],focus,cells:sol&&sol[focus]?sol[focus].cells:[]}
+}
 
 function occupied(ignore){
- const m=new Map();
- ids.forEach(id=>{
-   if(id===ignore)return;
-   const p=pieces[id];
-   if(p.placed)p.placed.forEach(([r,c])=>m.set(r+","+c,id))
- });
- return m
+  const m=new Map();ids.forEach(id=>{if(id!==ignore&&pieces[id].placed)pieces[id].placed.forEach(([r,c])=>m.set(keyOf(r,c),id))});return m
 }
 function validFor(id,cells){
- const occ=occupied(id);
- return cells.length===defs[id].length&&cells.every(([r,c])=>mask.has(r+","+c)&&!occ.has(r+","+c))
+  const occ=occupied(id);
+  return cells.length===pieces[id].base.length&&cells.every(([r,c])=>runtime.maskSet.has(keyOf(r,c))&&!occ.has(keyOf(r,c)))
 }
 function ghostCells(){
- if(!selected||!target)return [];
- return pieces[selected].shape.map(([r,c])=>[target.r+r,target.c+c])
+  if(!selected||!target)return [];
+  return pieces[selected].shape.map(([r,c])=>[target.r+r,target.c+c])
 }
-function bounds(shape){return {h:Math.max(...shape.map(a=>a[0]))+1,w:Math.max(...shape.map(a=>a[1]))+1}}
 function anchorOf(cells){return {r:Math.min(...cells.map(a=>a[0])),c:Math.min(...cells.map(a=>a[1]))}}
-function setMsg(t,k=""){msg.textContent=t;msg.className="msg"+(k?" "+k:"")}
-function fmt(ms){const s=Math.floor(ms/1000),m=Math.floor(s/60);return String(m).padStart(2,"0")+":"+String(s%60).padStart(2,"0")}
 function startClock(){if(start)return;start=Date.now();timer=setInterval(()=>timeEl.textContent=fmt(Date.now()-start),500)}
-function haptic(ms=12){if(navigator.vibrate)navigator.vibrate(ms)}
 
-function sizeBoard(){
- const app=document.querySelector(".app"),wrap=document.querySelector(".board-wrap"),top=document.querySelector(".top"),quest=document.querySelector(".quest"),guide=document.querySelector(".guide"),trayHead=document.querySelector(".tray-head");
- const vh=window.visualViewport?window.visualViewport.height:window.innerHeight;
- const cs=getComputedStyle(app),pad=parseFloat(cs.paddingTop)+parseFloat(cs.paddingBottom);
- const fixed=top.offsetHeight+quest.offsetHeight+guide.offsetHeight+trayHead.offsetHeight+tray.offsetHeight+pad+84;
- const byH=Math.floor((vh-fixed)/ROWS),byW=Math.floor((wrap.clientWidth-20)/COLS);
- const cell=Math.max(20,Math.min(33,byH,byW));
- board.style.setProperty("--cell-size",cell+"px")
+function stageColor(i){return COLORS[i%COLORS.length]}
+function makeMini(shape,color,maxW=45,maxH=33){
+  const b=bounds(shape),unit=Math.max(3,Math.min(7,Math.floor(maxW/b.w),Math.floor(maxH/b.h)));
+  const d=document.createElement("div");d.className="mini";d.style.width=(b.w*unit)+"px";d.style.height=(b.h*unit)+"px";
+  shape.forEach(([r,c])=>{const x=document.createElement("span");x.className="mcell";x.style.width=unit+"px";x.style.height=unit+"px";x.style.left=(c*unit)+"px";x.style.top=(r*unit)+"px";x.style.background=color;d.appendChild(x)});
+  return d
 }
-window.addEventListener("resize",sizeBoard);
-if(window.visualViewport)window.visualViewport.addEventListener("resize",sizeBoard);
-
-function buildDragVisual(){
- dragVisual.innerHTML="";
- const s=pieces[selected].shape,b=bounds(s),unit=25;
- dragVisual.style.width=(b.w*unit)+"px";dragVisual.style.height=(b.h*unit)+"px";
- s.forEach(([r,c])=>{
-   const x=document.createElement("span");x.className="drag-cell";x.style.left=(c*unit)+"px";x.style.top=(r*unit)+"px";x.style.background=colors[ids.indexOf(selected)];dragVisual.appendChild(x)
- })
-}
-function targetFromPointer(x,y){
- const rect=board.getBoundingClientRect(),cell=rect.width/COLS,b=bounds(pieces[selected].shape),lift=y-cell*.62;
- return {
-   c:Math.floor((x-rect.left)/cell)-Math.floor((b.w-1)/2),
-   r:Math.floor((lift-rect.top)/cell)-Math.floor((b.h-1)/2)
- }
-}
-function pointerNearBoard(x,y){
- const r=board.getBoundingClientRect(),pad=38;
- return x>=r.left-pad&&x<=r.right+pad&&y>=r.top-pad&&y<=r.bottom+pad
-}
-function masterCells(id){return defs[id].map(([r,c])=>[r+master[id].r,c+master[id].c])}
-function isMasterPlaced(id){
- const p=pieces[id];if(!p.placed)return false;
- return cellsKey(p.placed)===cellsKey(masterCells(id))
-}
-
-function mini(shape,color){
- const b=bounds(shape),unit=9,d=document.createElement("div");d.className="mini";
- d.style.width=(b.w*unit)+"px";d.style.height=(b.h*unit)+"px";
- shape.forEach(([r,c])=>{
-   const x=document.createElement("span");x.className="mcell";x.style.left=(c*unit)+"px";x.style.top=(r*unit)+"px";x.style.background=color;d.appendChild(x)
- });
- return d
-}
-function addCell(r,c,className,styleBg,id){
- const x=document.createElement("div");x.className=className;
- x.style.left="calc(var(--cell-size)*"+c+")";x.style.top="calc(var(--cell-size)*"+r+")";
- if(styleBg)x.style.background=styleBg;
- if(id)x.dataset.piece=id;
- board.appendChild(x);return x
+function addBoardCell(r,c,className,bg,id){
+  const x=document.createElement("div");x.className=className;x.style.left="calc(var(--cell-size)*"+c+")";x.style.top="calc(var(--cell-size)*"+r+")";
+  if(bg)x.style.background=bg;if(id)x.dataset.piece=id;board.appendChild(x);return x
 }
 function renderBoard(){
- board.innerHTML="";
- const occ=occupied();
- for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){
-   if(!mask.has(r+","+c))continue;
-   const id=occ.get(r+","+c),x=addCell(r,c,"cell "+(id?"filled":"slot"),id?colors[ids.indexOf(id)]:null,id);
-   if(id){
-     if(id===justPlaced)x.classList.add("hint-focus");
-     if(clearAnimating)x.style.setProperty("--delay",((r*COLS+c)*15)+"ms");
-     if(hintPlan&&hintStage>=1){
-       if(hintPlan.good.includes(id))x.classList.add("hint-good");
-       if(hintPlan.bad.includes(id)&&id!==hintPlan.focus)x.classList.add("hint-bad");
-       if(hintStage>=2&&id===hintPlan.focus)x.classList.add("hint-focus")
-     }
-     x.addEventListener("pointerdown",e=>beginGesture(id,e))
-   }
- }
- const g=ghostCells();
- if(g.length){
-   const ok=validFor(selected,g);
-   g.forEach(([r,c])=>{if(mask.has(r+","+c))addCell(r,c,"preview-cell"+(ok?"":" bad"),colors[ids.indexOf(selected)])})
- }
- if(hintPlan&&hintStage===2){
-   hintPlan.cells.forEach(([r,c])=>addCell(r,c,"hint-area"))
- }
- if(hintPlan&&hintStage>=3){
-   hintPlan.cells.forEach(([r,c])=>addCell(r,c,"hint-exact",colors[ids.indexOf(hintPlan.focus)]))
- }
- if(clearAnimating)board.classList.add("clearing");else board.classList.remove("clearing")
+  board.innerHTML="";const occ=occupied();
+  for(const [r,c] of runtime.maskCells){
+    const id=occ.get(keyOf(r,c)),x=addBoardCell(r,c,"cell "+(id?"filled":"slot"),id?stageColor(ids.indexOf(id)):null,id);
+    if(id){
+      if(id===justPlaced)x.classList.add("just");
+      if(clearAnimating)x.style.setProperty("--delay",((r*runtime.cols+c)*12)+"ms");
+      if(hintPlan&&hintStage>=1){
+        if(hintPlan.good.includes(id))x.classList.add("hint-good");
+        if(hintPlan.bad.includes(id)&&id!==hintPlan.focus)x.classList.add("hint-bad");
+        if(hintStage>=2&&id===hintPlan.focus)x.classList.add("hint-focus")
+      }
+      x.addEventListener("pointerdown",e=>beginGesture(id,e))
+    }
+  }
+  const g=ghostCells();
+  if(g.length){
+    const ok=validFor(selected,g);
+    g.forEach(([r,c])=>{if(runtime.maskSet.has(keyOf(r,c)))addBoardCell(r,c,"preview-cell"+(ok?"":" bad"),stageColor(ids.indexOf(selected)))})
+  }
+  if(hintPlan&&hintStage===2&&hintPlan.cells)hintPlan.cells.forEach(([r,c])=>addBoardCell(r,c,"hint-area"));
+  if(hintPlan&&hintStage>=3&&hintPlan.cells)hintPlan.cells.forEach(([r,c])=>addBoardCell(r,c,"hint-exact",stageColor(ids.indexOf(hintPlan.focus))));
+  if(clearAnimating)board.classList.add("clearing");else board.classList.remove("clearing")
 }
 function renderTray(){
- tray.innerHTML="";
- ids.forEach((id,i)=>{
-   const p=pieces[id],b=document.createElement("button");b.type="button";b.className="piece";
-   if(id===selected)b.classList.add("selected");if(p.placed)b.classList.add("placed");
-   const n=document.createElement("span");n.className="piece-name";n.textContent=names[id];
-   b.append(n,mini(p.shape,colors[i]));b.addEventListener("pointerdown",e=>beginGesture(id,e));tray.appendChild(b)
- });
- countEl.textContent=ids.filter(id=>pieces[id].placed).length
+  tray.innerHTML="";
+  const cols=Math.min(6,ids.length),rows=Math.ceil(ids.length/cols);
+  tray.style.gridTemplateColumns="repeat("+cols+",minmax(0,1fr))";tray.style.gridTemplateRows="repeat("+rows+",55px)";
+  ids.forEach((id,i)=>{
+    const p=pieces[id],b=document.createElement("button");b.type="button";b.className="piece";
+    if(id===selected)b.classList.add("selected");if(p.placed)b.classList.add("placed");
+    const n=document.createElement("span");n.className="piece-name";n.textContent=id+" · "+p.base.length;
+    b.append(n,makeMini(p.shape,stageColor(i)));b.addEventListener("pointerdown",e=>beginGesture(id,e));tray.appendChild(b)
+  });
+  countEl.textContent=ids.filter(id=>pieces[id].placed).length
+}
+function sizeBoard(){
+  const app=document.querySelector(".app"),top=document.querySelector(".top"),quest=document.querySelector(".quest"),guide=document.querySelector(".guide"),trayHead=document.querySelector(".tray-head"),wrap=document.querySelector(".board-wrap");
+  const vh=window.visualViewport?window.visualViewport.height:window.innerHeight,cs=getComputedStyle(app),pad=parseFloat(cs.paddingTop)+parseFloat(cs.paddingBottom);
+  const fixed=top.offsetHeight+quest.offsetHeight+guide.offsetHeight+trayHead.offsetHeight+tray.offsetHeight+msg.offsetHeight+pad+73;
+  const maxW=Math.min(app.clientWidth-30,410),byW=Math.floor(maxW/runtime.cols),byH=Math.floor(Math.max(145,vh-fixed)/runtime.rows);
+  const cell=Math.max(15,Math.min(31,byW,byH));
+  board.style.setProperty("--cell-size",cell+"px");board.style.width=(cell*runtime.cols)+"px";board.style.height=(cell*runtime.rows)+"px";
+  wrap.style.maxWidth=(cell*runtime.cols+28)+"px"
 }
 function renderAll(){renderBoard();renderTray();requestAnimationFrame(sizeBoard)}
 
 function resetHint(){hintStage=0;hintPlan=null}
-function makeHintPlan(){
- const good=ids.filter(isMasterPlaced),bad=ids.filter(id=>pieces[id].placed&&!isMasterPlaced(id));
- const focus=bad[0]||ids.find(id=>!pieces[id].placed);
- return {good,bad,focus,cells:focus?masterCells(focus):[]}
-}
 function useHint(){
- if(hintStage===0||hintStage>=3||!hintPlan){hintPlan=makeHintPlan();hintStage=0}
- if(!hintPlan.focus){setMsg("もう完成してるよ！","ok");return}
- hintStage++;hintCount++;hintCountEl.textContent=hintCount;renderAll();
- if(hintPlan.bad.length){
-   if(hintStage===1)setMsg("赤いピースを動かすと、正解ルートに戻れるよ","bad");
-   else if(hintStage===2)setMsg(names[hintPlan.focus]+" が入る場所を光らせたよ","ok");
-   else setMsg(names[hintPlan.focus]+" はここ！","ok")
- }else{
-   if(hintStage===1)setMsg("水色はそのままOK。次は "+names[hintPlan.focus],"ok");
-   else if(hintStage===2)setMsg(names[hintPlan.focus]+" のエリアを光らせたよ","ok");
-   else setMsg(names[hintPlan.focus]+" はここに置いてみよう！","ok")
- }
- haptic(10)
+  if(hintStage===0||hintStage>=3||!hintPlan){setMsg("ヒントを考え中…");hintPlan=buildHintPlan();hintStage=0}
+  if(!hintPlan||!hintPlan.focus){setMsg("もう完成してるよ！","ok");return}
+  hintStage++;hintCount++;hintCountEl.textContent=hintCount;renderAll();
+  if(hintPlan.bad.length){
+    if(hintStage===1)setMsg("赤いピースを動かすと完成ルートに戻れるよ","bad");
+    else if(hintStage===2)setMsg("次は "+hintPlan.focus+"。入る場所を光らせたよ","ok");
+    else setMsg(hintPlan.focus+" はここ！","ok")
+  }else{
+    if(hintStage===1)setMsg("水色はそのままでOK。次は "+hintPlan.focus,"ok");
+    else if(hintStage===2)setMsg(hintPlan.focus+" が入る場所を光らせたよ","ok");
+    else setMsg(hintPlan.focus+" はここに置いてみよう！","ok")
+  }
+  haptic(10)
 }
 
 function transformPiece(id,kind){
- resetHint();selected=id;
- const p=pieces[id],next=kind==="rotate"?rot(p.shape):flip(p.shape);
- if(p.placed){
-   const a=anchorOf(p.placed),cells=next.map(([r,c])=>[a.r+r,a.c+c]);
-   if(!validFor(id,cells)){setMsg("そこでは形を変えられないよ","bad");haptic(18);return}
-   p.shape=next;p.placed=cells;justPlaced=id
- }else p.shape=next;
- renderAll();setMsg(kind==="rotate"?"くるっ！ 90°回転":"ひっくり返したよ","ok");haptic()
+  resetHint();selected=id;
+  if(kind==="flip"&&!stage.allowFlip){renderAll();setMsg("EASYは反転なし！回転だけで解けるよ","ok");haptic();return}
+  const p=pieces[id],next=kind==="rotate"?rot(p.shape):flip(p.shape);
+  if(p.placed){
+    const a=anchorOf(p.placed),cells=next.map(([r,c])=>[a.r+r,a.c+c]);
+    if(!validFor(id,cells)){setMsg("そこでは形を変えられないよ","bad");haptic(18);return}
+    p.shape=next;p.placed=cells;justPlaced=id
+  }else p.shape=next;
+  renderAll();setMsg(kind==="rotate"?"くるっ！ 90°回転":"ひっくり返したよ","ok");haptic()
 }
-function showHoldRing(x,y){
- holdRing.style.left=x+"px";holdRing.style.top=y+"px";holdRing.classList.remove("show");void holdRing.offsetWidth;holdRing.classList.add("show")
-}
+function showHoldRing(x,y){holdRing.style.left=x+"px";holdRing.style.top=y+"px";holdRing.classList.remove("show");void holdRing.offsetWidth;holdRing.classList.add("show")}
 function clearLongPress(){if(longPressTimer){clearTimeout(longPressTimer);longPressTimer=null}holdRing.classList.remove("show")}
-function returnToWait(id){
- resetHint();pieces[id].placed=null;selected=id;target=null;drag=null;dragVisual.classList.remove("show");renderAll();setMsg(names[id]+" を下にもどしたよ","ok");haptic(16)
-}
+function returnToWait(id){resetHint();pieces[id].placed=null;selected=id;target=null;drag=null;dragVisual.classList.remove("show");renderAll();setMsg(id+" を下にもどしたよ","ok");haptic(16)}
 function beginGesture(id,e){
- if(e.pointerType==="mouse"&&e.button!==0)return;e.preventDefault();selected=id;target=null;
- gesture={id,pointerId:e.pointerId,startX:e.clientX,startY:e.clientY,lastX:e.clientX,lastY:e.clientY,startTime:performance.now(),dragging:false,original:pieces[id].placed?pieces[id].placed.map(a=>[...a]):null};
- if(pieces[id].placed){
-   showHoldRing(e.clientX,e.clientY);
-   longPressTimer=setTimeout(()=>{
-     if(!gesture||gesture.id!==id||gesture.dragging)return;
-     const dx=gesture.lastX-gesture.startX,dy=gesture.lastY-gesture.startY;
-     if(Math.hypot(dx,dy)<=LONG_PRESS_MOVE){gesture=null;longPressTimer=null;holdRing.classList.remove("show");returnToWait(id)}
-   },LONG_PRESS_MS)
- }
- renderTray()
+  if(e.pointerType==="mouse"&&e.button!==0)return;e.preventDefault();selected=id;target=null;
+  gesture={id,pointerId:e.pointerId,startX:e.clientX,startY:e.clientY,lastX:e.clientX,lastY:e.clientY,startTime:performance.now(),dragging:false,original:pieces[id].placed?pieces[id].placed.map(a=>[...a]):null};
+  if(pieces[id].placed){
+    showHoldRing(e.clientX,e.clientY);
+    longPressTimer=setTimeout(()=>{
+      if(!gesture||gesture.id!==id||gesture.dragging)return;
+      const dx=gesture.lastX-gesture.startX,dy=gesture.lastY-gesture.startY;
+      if(Math.hypot(dx,dy)<=LONG_PRESS_MOVE){gesture=null;longPressTimer=null;holdRing.classList.remove("show");returnToWait(id)}
+    },LONG_PRESS_MS)
+  }
+  renderTray()
+}
+function buildDragVisual(){
+  dragVisual.innerHTML="";const s=pieces[selected].shape,b=bounds(s),boardCell=parseFloat(getComputedStyle(board).getPropertyValue("--cell-size"))||24,unit=Math.max(15,Math.min(25,boardCell));
+  dragVisual.style.width=(b.w*unit)+"px";dragVisual.style.height=(b.h*unit)+"px";
+  s.forEach(([r,c])=>{const x=document.createElement("span");x.className="drag-cell";x.style.width=unit+"px";x.style.height=unit+"px";x.style.left=(c*unit)+"px";x.style.top=(r*unit)+"px";x.style.background=stageColor(ids.indexOf(selected));dragVisual.appendChild(x)})
 }
 function beginDrag(){
- if(!gesture||gesture.dragging)return;clearLongPress();resetHint();gesture.dragging=true;selected=gesture.id;
- if(pieces[selected].placed)pieces[selected].placed=null;
- drag={id:selected};buildDragVisual();dragVisual.classList.add("show");renderAll();setMsg("ハートの中へ運ぼう！")
+  if(!gesture||gesture.dragging)return;clearLongPress();resetHint();gesture.dragging=true;selected=gesture.id;
+  if(pieces[selected].placed)pieces[selected].placed=null;
+  drag={id:selected};buildDragVisual();dragVisual.classList.add("show");renderAll();setMsg(stage.icon+" の中へ運ぼう！")
 }
+function targetFromPointer(x,y){
+  const rect=board.getBoundingClientRect(),cell=rect.width/runtime.cols,b=bounds(pieces[selected].shape),lift=y-cell*.62;
+  return {c:Math.floor((x-rect.left)/cell)-Math.floor((b.w-1)/2),r:Math.floor((lift-rect.top)/cell)-Math.floor((b.h-1)/2)}
+}
+function pointerNearBoard(x,y){const r=board.getBoundingClientRect(),pad=38;return x>=r.left-pad&&x<=r.right+pad&&y>=r.top-pad&&y<=r.bottom+pad}
 function updateDrag(x,y){
- dragVisual.style.left=x+"px";dragVisual.style.top=y+"px";
- if(pointerNearBoard(x,y)){target=targetFromPointer(x,y);renderBoard();const ok=validFor(selected,ghostCells());setMsg(ok?"ここに置けるよ！":"そこは入らないよ",ok?"ok":"bad")}
- else{target=null;renderBoard()}
+  dragVisual.style.left=x+"px";dragVisual.style.top=y+"px";
+  if(pointerNearBoard(x,y)){target=targetFromPointer(x,y);renderBoard();const ok=validFor(selected,ghostCells());setMsg(ok?"ここに置けるよ！":"そこは入らないよ",ok?"ok":"bad")}
+  else{target=null;renderBoard()}
 }
-function restoreOriginal(g){
- if(g.original)pieces[g.id].placed=g.original.map(a=>[...a]);
- target=null;drag=null;dragVisual.classList.remove("show")
+function restoreOriginal(g){if(g.original)pieces[g.id].placed=g.original.map(a=>[...a]);target=null;drag=null;dragVisual.classList.remove("show")}
+function registerClear(){
+  const p=loadProgress(),now=Date.now(),elapsed=start?now-start:0,prev=p.completed[stage.key]||{};
+  p.completed[stage.key]={
+    clears:(prev.clears||0)+1,
+    bestTime:prev.bestTime?Math.min(prev.bestTime,elapsed):elapsed,
+    bestMoves:prev.bestMoves===undefined?moves:Math.min(prev.bestMoves,moves),
+    bestHints:prev.bestHints===undefined?hintCount:Math.min(prev.bestHints,hintCount),
+    lastClear:new Date().toISOString()
+  };
+  p.lastStage=stage.key;saveProgress(p);renderProgress();
+  return p.completed[stage.key]
 }
 function lockSelected(){
- const cells=ghostCells();if(!validFor(selected,cells))return false;
- startClock();const id=selected;pieces[id].placed=cells.map(a=>[...a]);justPlaced=id;moves++;movesEl.textContent=moves;
- const next=ids.find(x=>!pieces[x].placed);target=null;if(next)selected=next;
- drag=null;dragVisual.classList.remove("show");renderAll();setMsg("カチッ！ ぴったり！","ok");haptic(18);
- if(ids.every(x=>pieces[x].placed)){
-   clearInterval(timer);timeEl.textContent=fmt(Date.now()-start);clearAnimating=true;renderAll();
-   setMsg("カチャッ！ 60マスのハートが完成した！","ok");
-   clearText.textContent="TIME "+timeEl.textContent+" / MOVE "+moves+" / HINT "+hintCount;
-   haptic(35);setTimeout(()=>overlay.classList.add("show"),1050)
- }
- return true
+  const cells=ghostCells();if(!validFor(selected,cells))return false;
+  startClock();const id=selected;pieces[id].placed=cells.map(a=>[...a]);justPlaced=id;moves++;movesEl.textContent=moves;
+  const next=ids.find(x=>!pieces[x].placed);target=null;if(next)selected=next;
+  drag=null;dragVisual.classList.remove("show");renderAll();setMsg("カチッ！ ぴったり！","ok");haptic(18);
+  if(ids.every(x=>pieces[x].placed)){
+    clearInterval(timer);if(start)timeEl.textContent=fmt(Date.now()-start);const rec=registerClear();
+    clearAnimating=true;renderAll();setMsg("カチャッ！ "+stage.jp+" が黄金化した！","ok");
+    clearIcon.textContent=stage.icon;clearText.textContent=stage.difficulty+" / "+runtime.maskCells.length+" BLOCKS / "+ids.length+" PIECES\\nTIME "+timeEl.textContent+" / MOVE "+moves+" / HINT "+hintCount;
+    haptic(35);setTimeout(()=>overlay.classList.add("show"),1050)
+  }
+  return true
 }
 function finishGesture(e){
- if(!gesture||e.pointerId!==gesture.pointerId)return;clearLongPress();
- const g=gesture,dx=e.clientX-g.startX,dy=e.clientY-g.startY,ax=Math.abs(dx),ay=Math.abs(dy),dist=Math.hypot(dx,dy),dt=performance.now()-g.startTime;
- const isFlick=ax>=FLICK_DISTANCE&&dt<=FLICK_TIME&&ax>ay*FLICK_RATIO;
- if(isFlick){
-   if(g.dragging)restoreOriginal(g);gesture=null;transformPiece(g.id,"flip");return
- }
- if(g.dragging){
-   if(target&&validFor(g.id,ghostCells())){gesture=null;lockSelected()}
-   else{restoreOriginal(g);gesture=null;renderAll();setMsg(target?"そこは入らないよ":"もとの場所にもどしたよ",target?"bad":"")}
-   return
- }
- gesture=null;if(dist<=TAP_MOVE)transformPiece(g.id,"rotate")
+  if(!gesture||e.pointerId!==gesture.pointerId)return;clearLongPress();
+  const g=gesture,dx=e.clientX-g.startX,dy=e.clientY-g.startY,ax=Math.abs(dx),ay=Math.abs(dy),dist=Math.hypot(dx,dy),dt=performance.now()-g.startTime;
+  const isFlick=ax>=FLICK_DISTANCE&&dt<=FLICK_TIME&&ax>ay*FLICK_RATIO;
+  if(isFlick){if(g.dragging)restoreOriginal(g);gesture=null;transformPiece(g.id,"flip");return}
+  if(g.dragging){
+    if(target&&validFor(g.id,ghostCells())){gesture=null;lockSelected()}
+    else{restoreOriginal(g);gesture=null;renderAll();setMsg(target?"そこは入らないよ":"もとの場所にもどしたよ",target?"bad":"")}
+    return
+  }
+  gesture=null;if(dist<=TAP_MOVE)transformPiece(g.id,"rotate")
 }
 
+function scramblePieces(){
+  pieces={};ids=runtime.defs.map(d=>d.id);
+  runtime.defs.forEach((d,i)=>{
+    let sh=norm(d.base),turns=1+((stage.seed+i*7)%3);
+    for(let n=0;n<turns;n++)sh=rot(sh);
+    if(stage.allowFlip&&((stage.seed+i*11)%2))sh=flip(sh);
+    pieces[d.id]={base:norm(d.base),shape:sh,placed:null,size:d.size}
+  });
+  selected=ids[0]
+}
+function updateStageChrome(){
+  const stars="★".repeat(stage.difficulty==="EASY"?1:stage.difficulty==="NORMAL"?2:3);
+  questCopy.innerHTML='<span class="diff '+stage.difficulty+'">'+stage.difficulty+" "+stars+'</span>'+stage.icon+" "+stage.jp+" · "+runtime.maskCells.length+" BLOCKS";
+  boardTitle.textContent=stage.icon+" "+stage.name+" · "+runtime.maskCells.length;
+  trayTitle.textContent=stage.name+" PIECES";pieceTotalEl.textContent=ids.length;
+  flipGuide.textContent=stage.allowFlip?"反転":"反転なし";
+  board.setAttribute("aria-label",stage.jp+" "+runtime.maskCells.length+"マスのパズル盤")
+}
+function resetRound(){
+  clearInterval(timer);clearLongPress();start=0;timer=0;moves=0;hintCount=0;hintStage=0;hintPlan=null;clearAnimating=false;gesture=null;drag=null;target=null;justPlaced=null;
+  movesEl.textContent="0";timeEl.textContent="00:00";hintCountEl.textContent="0";overlay.classList.remove("show");dragVisual.classList.remove("show");board.classList.remove("clearing");
+  scramblePieces();updateStageChrome();renderAll();setMsg(stage.difficulty+" "+stage.icon+" "+stage.jp+" — "+ids.length+"ピースで完成させよう！")
+}
+function loadStage(index){
+  if(!STAGES.length)return setMsg("ステージデータを読み込めなかったよ","bad");
+  stageIndex=(index+STAGES.length)%STAGES.length;stage=STAGES[stageIndex];runtime=makeRuntime(stage);
+  const p=loadProgress();p.lastStage=stage.key;saveProgress(p);resetRound();renderStageBook()
+}
+
+function stageMini(card,s){
+  const cells=stageMask(s),rows=s.mask.length,cols=s.mask[0].length,unit=Math.max(2,Math.min(5,Math.floor(47/cols),Math.floor(38/rows)));
+  const d=document.createElement("div");d.className="stage-mini";d.style.width=(cols*unit)+"px";d.style.height=(rows*unit)+"px";
+  cells.forEach(([r,c])=>{const x=document.createElement("i");x.className="stage-pixel";x.style.width=unit+"px";x.style.height=unit+"px";x.style.left=(c*unit)+"px";x.style.top=(r*unit)+"px";d.appendChild(x)});
+  card.appendChild(d)
+}
+function renderProgress(){
+  const n=completedCount();progressMini.textContent=n+"/"+STAGES.length;collectionCount.textContent=n+" / "+STAGES.length;collectionBar.style.width=(STAGES.length?n/STAGES.length*100:0)+"%"
+}
+function renderStageBook(){
+  renderProgress();stageScroll.innerHTML="";const progress=loadProgress();
+  ["EASY","NORMAL","HARD"].forEach(level=>{
+    const title=document.createElement("div");title.className="level-title";
+    const stars=level==="EASY"?"★":level==="NORMAL"?"★★":"★★★";
+    title.innerHTML='<span class="'+level+'">'+level+" "+stars+"</span><b>"+(level==="EASY"?"やさしい形":level==="NORMAL"?"ひねりのある形":"激ムズ形状")+"</b>";
+    stageScroll.appendChild(title);
+    const grid=document.createElement("div");grid.className="stage-grid";
+    STAGES.forEach((s,i)=>{
+      if(s.difficulty!==level)return;
+      const done=!!progress.completed[s.key],card=document.createElement("button");card.type="button";card.className="stage-card"+(done?" done":"")+(i===stageIndex?" current":"");
+      stageMini(card,s);
+      const strong=document.createElement("strong");strong.textContent=String(i+1).padStart(2,"0")+" "+s.name;card.appendChild(strong);
+      const small=document.createElement("small");small.textContent=stageMask(s).length+" BLOCKS · "+s.pieces+" PIECES";card.appendChild(small);
+      const medal=document.createElement("span");medal.className="medal";medal.textContent=done?"GOLD ✓":"?";card.appendChild(medal);
+      card.addEventListener("click",()=>{stageOverlay.classList.remove("show");loadStage(i)});grid.appendChild(card)
+    });
+    stageScroll.appendChild(grid)
+  })
+}
+function openStageBook(){renderStageBook();stageOverlay.classList.add("show")}
+function closeStageBook(){stageOverlay.classList.remove("show")}
+
 window.addEventListener("pointermove",e=>{
- if(!gesture||e.pointerId!==gesture.pointerId)return;e.preventDefault();gesture.lastX=e.clientX;gesture.lastY=e.clientY;
- const dx=e.clientX-gesture.startX,dy=e.clientY-gesture.startY,dist=Math.hypot(dx,dy);
- if(dist>LONG_PRESS_MOVE)clearLongPress();
- if(!gesture.dragging&&dist>=DRAG_START)beginDrag();
- if(gesture&&gesture.dragging)updateDrag(e.clientX,e.clientY)
+  if(!gesture||e.pointerId!==gesture.pointerId)return;e.preventDefault();gesture.lastX=e.clientX;gesture.lastY=e.clientY;
+  const dx=e.clientX-gesture.startX,dy=e.clientY-gesture.startY,dist=Math.hypot(dx,dy);
+  if(dist>LONG_PRESS_MOVE)clearLongPress();
+  if(!gesture.dragging&&dist>=DRAG_START)beginDrag();
+  if(gesture&&gesture.dragging)updateDrag(e.clientX,e.clientY)
 },{passive:false});
 window.addEventListener("pointerup",finishGesture);
 window.addEventListener("pointercancel",e=>{
- if(!gesture||e.pointerId!==gesture.pointerId)return;clearLongPress();
- if(gesture.dragging)restoreOriginal(gesture);gesture=null;renderAll();setMsg("キャンセルしたよ")
+  if(!gesture||e.pointerId!==gesture.pointerId)return;clearLongPress();
+  if(gesture.dragging)restoreOriginal(gesture);gesture=null;renderAll();setMsg("キャンセルしたよ")
 });
+window.addEventListener("resize",()=>runtime&&sizeBoard());
+if(window.visualViewport)window.visualViewport.addEventListener("resize",()=>runtime&&sizeBoard());
 
-function reset(){
- clearInterval(timer);clearLongPress();start=0;timer=0;moves=0;hintCount=0;hintStage=0;hintPlan=null;clearAnimating=false;gesture=null;drag=null;target=null;justPlaced=null;
- movesEl.textContent="0";timeEl.textContent="00:00";hintCountEl.textContent="0";overlay.classList.remove("show");dragVisual.classList.remove("show");board.classList.remove("clearing");
- applyScramble();selected="A";renderAll();setMsg("8つのブロックを組み合わせてハートを完成させよう！")
-}
 $("#hint").addEventListener("click",useHint);
-$("#reset").addEventListener("click",reset);
-$("#again").addEventListener("click",reset);
+$("#reset").addEventListener("click",resetRound);
+$("#again").addEventListener("click",resetRound);
+$("#nextStage").addEventListener("click",()=>loadStage(stageIndex+1));
+$("#stageOpen").addEventListener("click",openStageBook);
+$("#stageClose").addEventListener("click",closeStageBook);
+stageOverlay.addEventListener("pointerdown",e=>{if(e.target===stageOverlay)closeStageBook()});
 
-renderAll();requestAnimationFrame(sizeBoard);
+const saved=loadProgress(),savedIndex=Math.max(0,STAGES.findIndex(s=>s.key===saved.lastStage));
+loadStage(savedIndex>=0?savedIndex:0);
 })();
 </script>
 </body>
