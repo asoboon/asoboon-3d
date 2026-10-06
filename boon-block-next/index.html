@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="format-detection" content="telephone=no">
 <title>BOON BLOCK — CHRISTMAS QUEST</title>
-<!-- BOON BLOCK live build v30: 192-route mystery gallery foundation -->
+<!-- BOON BLOCK live build v31: gallery records cleared routes -->
 <style>
 :root{
   --sky:#7a49c6;--sky2:#372052;--jungle:#294932;--jungle2:#182b21;
@@ -679,6 +679,13 @@ body::after{right:-55px;transform:scaleX(-1) rotate(-3deg)}
   box-shadow:inset 0 2px 0 rgba(255,255,255,.62),0 0 8px rgba(241,197,75,.32)
 }
 .route-box.found .q{font-size:15px}
+.route-mini{
+  width:30px;height:30px;display:grid;grid-template-columns:repeat(5,1fr);grid-template-rows:repeat(5,1fr);
+  gap:1px;padding:2px;border-radius:5px;background:rgba(91,64,12,.20);box-shadow:inset 0 1px 1px rgba(255,255,255,.28)
+}
+.route-mini i{display:block;border-radius:1px}
+.route-mini .g-A{background:#d86d4f}.route-mini .g-B{background:#5bb4b6}.route-mini .g-C{background:#9480ac}
+.route-mini .g-D{background:#7f995d}.route-mini .g-E{background:#b98b53}.route-mini .g-O{background:#fff1a5;box-shadow:0 0 3px #ffe06d}
 .gallery-empty{color:#6a8490;text-align:center;font-size:8px;font-weight:900;padding:2px 8px 7px}
 @media(max-width:360px){
   .gallery-grid{grid-template-columns:repeat(6,minmax(0,1fr));gap:5px}
@@ -774,7 +781,7 @@ body::after{right:-55px;transform:scaleX(-1) rotate(-3deg)}
   </div>
 </div>
 
-<script src="solutions.js?v=30"></script>
+<script src="solutions.js?v=31"></script>
 <script>
 (()=>{
 const defs={
@@ -903,16 +910,45 @@ function loadGalleryRoutes(){
     return Array.isArray(raw)?new Set(raw.filter(n=>Number.isInteger(n)&&n>=0&&n<GALLERY_TOTAL)):new Set()
   }catch(_){return new Set()}
 }
+function saveGalleryRoutes(found){
+  try{localStorage.setItem(GALLERY_STORAGE_KEY,JSON.stringify([...found].sort((a,b)=>a-b)))}catch(_){}
+}
+function currentSolutionSignature(){
+  const occ=occupied(),out=[];
+  for(let r=0;r<5;r++)for(let c=0;c<5;c++){
+    const id=occ.get(r+","+c);
+    if(!id)return null;
+    out.push(symbols[id])
+  }
+  return out.join("")
+}
+function registerClearRoute(){
+  const sig=currentSolutionSignature();
+  if(!sig)return {index:-1,isNew:false};
+  const index=SOLUTIONS.indexOf(sig);
+  if(index<0)return {index:-1,isNew:false};
+  const found=loadGalleryRoutes(),isNew=!found.has(index);
+  found.add(index);saveGalleryRoutes(found);renderGallery();
+  return {index,isNew}
+}
+function buildRouteMini(solution){
+  const mini=document.createElement("span");mini.className="route-mini";
+  for(const ch of solution){
+    const x=document.createElement("i");x.className="g-"+ch;mini.appendChild(x)
+  }
+  return mini
+}
 function renderGallery(){
   const found=loadGalleryRoutes();
   galleryGrid.innerHTML="";
   for(let i=0;i<GALLERY_TOTAL;i++){
-    const b=document.createElement("button");
-    b.type="button";b.className="route-box"+(found.has(i)?" found":"");
-    b.setAttribute("aria-label","ROUTE "+String(i+1).padStart(3,"0")+(found.has(i)?" 発見済み":" 未発見"));
-    const q=document.createElement("span");q.className="q";q.textContent=found.has(i)?"✦":"?";
+    const isFound=found.has(i),b=document.createElement("button");
+    b.type="button";b.className="route-box"+(isFound?" found":"");
+    b.setAttribute("aria-label","ROUTE "+String(i+1).padStart(3,"0")+(isFound?" 発見済み":" 未発見"));
+    if(isFound&&SOLUTIONS[i])b.appendChild(buildRouteMini(SOLUTIONS[i]));
+    else{const q=document.createElement("span");q.className="q";q.textContent="?";b.appendChild(q)}
     const no=document.createElement("span");no.className="no";no.textContent=String(i+1).padStart(3,"0");
-    b.append(q,no);galleryGrid.appendChild(b)
+    b.appendChild(no);galleryGrid.appendChild(b)
   }
   const n=found.size;
   galleryCount.textContent=n+" / "+GALLERY_TOTAL;
@@ -1123,11 +1159,13 @@ function lockSelected(){
 
  if(ids.every(id=>pieces[id].placed&&!pieces[id].floating)){
    clearInterval(timer);timeEl.textContent=fmt(Date.now()-start);
+   const discovered=registerClearRoute();
    clearAnimating=true;
    board.classList.add("clearing");
    renderAll();
-   setMsg("カチャッ！ 聖夜の黄金石板が完成した！","ok");
-   clearText.textContent="TIME "+timeEl.textContent+" / MOVE "+moves+" / HINT "+hintCount;
+   const routeText=discovered.index>=0?" ROUTE "+String(discovered.index+1).padStart(3,"0"):"";
+   setMsg(discovered.isNew?"NEW"+routeText+"！ ギャラリーに登録！":"カチャッ！"+routeText+" 聖夜の黄金石板が完成！","ok");
+   clearText.textContent=(discovered.isNew?"NEW ROUTE "+String(discovered.index+1).padStart(3,"0")+"! / ":"")+"TIME "+timeEl.textContent+" / MOVE "+moves+" / HINT "+hintCount;
    haptic(35);
    setTimeout(()=>overlay.classList.add("show"),980)
  }
