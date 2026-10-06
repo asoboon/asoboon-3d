@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-<meta name="theme-color" content="#246878">
+<meta name="theme-color" content="#6a35a5">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="format-detection" content="telephone=no">
-<title>BOON SHAPE — SHAPE COLLECTION</title>
-<!-- BOON SHAPE v2: complete 18-stage EASY/NORMAL/HARD shape collection -->
+<title>BOON SHAPE — HAUNTED SHAPE COLLECTION</title>
+<!-- BOON SHAPE v3: MAX Halloween overload theme / 18-stage collection -->
 <style>
 :root{
   --sky:#4f9bab;--sky2:#24576d;--deep:#163b4f;--ink:#183f4d;--muted:#67838d;
@@ -208,12 +208,230 @@ button{font:inherit;color:inherit;touch-action:manipulation}
   .brand{font-size:15px}.stat{min-width:42px;padding:3px 4px}.stage-open{min-width:66px}
   .stage-card{min-height:108px}.stage-grid{gap:5px}.clear-card{padding:20px}
 }
+
+/* =========================================================
+   MAX HALLOWEEN OVERLOAD — v3
+   Bright, readable, and intentionally over-decorated.
+   ========================================================= */
+:root{
+  --sky:#8a4fd1;--sky2:#4a2b72;--deep:#241838;--ink:#fff1d6;--muted:#dec7ef;
+  --stone:#927d9d;--stone2:#5a4a64;
+  --c0:linear-gradient(145deg,#ff9d37,#e15e16);
+  --c1:linear-gradient(145deg,#a877ff,#6840c4);
+  --c2:linear-gradient(145deg,#baff58,#67ae2b);
+  --c3:linear-gradient(145deg,#5fe4c8,#229e84);
+  --c4:linear-gradient(145deg,#ff6aa7,#c83e7a);
+  --c5:linear-gradient(145deg,#ffcd55,#d68d20);
+  --c6:linear-gradient(145deg,#7ad8ff,#348fbd);
+  --c7:linear-gradient(145deg,#f189ff,#a543c3);
+  --c8:linear-gradient(145deg,#9cff6d,#55a73d);
+  --c9:linear-gradient(145deg,#ff754c,#cb3829);
+  --c10:linear-gradient(145deg,#e99b61,#9b5a32);
+  --c11:linear-gradient(145deg,#60f0d6,#228e7a);
+}
+body{
+  background:
+    radial-gradient(circle at 80% 9%,rgba(255,169,47,.98) 0 7.5%,rgba(255,112,21,.30) 8.5%,transparent 14.5%),
+    radial-gradient(circle at 17% 16%,rgba(189,255,72,.12) 0 2%,transparent 3%),
+    radial-gradient(circle at 35% 10%,rgba(255,255,255,.20) 0 .7%,transparent 1.3%),
+    radial-gradient(circle at 55% 19%,rgba(255,255,255,.17) 0 .6%,transparent 1.2%),
+    radial-gradient(ellipse at 47% 58%,rgba(182,94,231,.28) 0 30%,transparent 56%),
+    linear-gradient(180deg,#9b55dc 0%,#683a91 26%,#442660 51%,#2f253b 73%,#1d2f25 100%);
+}
+body::before,body::after{
+  width:230px;height:275px;bottom:-88px;opacity:.92;
+  background:
+    linear-gradient(90deg,transparent 0 44%,#1e2c24 45% 55%,transparent 56%),
+    radial-gradient(ellipse at 46% 72%,#233b2c 0 27%,transparent 28%),
+    radial-gradient(ellipse at 50% 51%,#2f4b37 0 24%,transparent 25%),
+    radial-gradient(ellipse at 50% 30%,#3b5d43 0 18%,transparent 19%);
+  filter:drop-shadow(0 10px 13px rgba(14,10,21,.30))
+}
+.brand-mark{
+  border-radius:48% 48% 44% 44%;transform:none;
+  background:
+    linear-gradient(90deg,transparent 0 44%,rgba(108,42,8,.22) 45% 55%,transparent 56%),
+    linear-gradient(145deg,#ffba47,#ff7d22 58%,#c84d11);
+  border-color:rgba(255,232,151,.74);
+  box-shadow:inset 0 3px 0 rgba(255,255,255,.34),0 5px 0 rgba(75,37,19,.30),0 0 14px rgba(255,122,31,.38)
+}
+.brand-mark::after{
+  inset:auto;left:7px;top:12px;width:8px;height:7px;border-radius:0;
+  background:#291a37;box-shadow:16px 0 0 #291a37;
+  clip-path:polygon(50% 0,100% 100%,0 100%)
+}
+.brand-mark::before{
+  content:"";position:absolute;left:12px;top:24px;width:12px;height:5px;border-radius:0 0 10px 10px;
+  background:#291a37;box-shadow:0 0 0 0 transparent
+}
+.brand{color:#fff2cf;text-shadow:0 2px 0 #3d1f57,0 0 10px rgba(255,127,34,.52),0 0 17px rgba(190,98,255,.25)}
+.sub{background:#2a183f;color:#ffd881;border:1px solid rgba(255,155,50,.22)}
+.stat{background:linear-gradient(180deg,#60487a,#3f2d56);color:#fff0d3;border:2px solid rgba(255,143,37,.20);box-shadow:inset 0 2px 0 rgba(255,255,255,.10),0 3px 0 rgba(18,11,29,.25)}
+.stat span{color:#ddb9f3}
+.hint-mini{background:linear-gradient(#ffbd4d,#ff7a22);color:#40200e}
+.reset-mini{background:linear-gradient(#baff5c,#6dc52d);color:#21300f}
+.quest{
+  background:linear-gradient(180deg,rgba(89,49,113,.98),rgba(49,28,67,.98));
+  color:#fff3d5;border:2px solid rgba(255,139,31,.38);
+  box-shadow:inset 0 2px 0 rgba(255,255,255,.08),0 3px 0 rgba(18,10,29,.24)
+}
+.diff.EASY{background:#a9f34d;color:#26350f}.diff.NORMAL{background:#ffad36;color:#4d260c}.diff.HARD{background:#ff5d78;color:#3d1020}
+.stage-open{background:linear-gradient(#8f55cf,#5c337e);color:#fff0cf;box-shadow:inset 0 2px 0 rgba(255,255,255,.12),0 3px 0 rgba(27,14,39,.26)}
+.stage-open span{color:#baff57}
+.board-wrap{
+  background:
+    radial-gradient(circle at 13% 18%,rgba(189,255,74,.15) 0 4%,transparent 4.7%),
+    radial-gradient(circle at 86% 76%,rgba(255,120,32,.14) 0 5%,transparent 5.7%),
+    repeating-radial-gradient(circle at 50% 50%,rgba(255,148,37,.025) 0 2px,transparent 3px 13px),
+    linear-gradient(145deg,#93819d,#685973 58%,#4c4056);
+  border-color:#30243a;
+  box-shadow:inset 0 4px 0 rgba(255,255,255,.12),inset 0 -5px 0 rgba(16,12,21,.24),0 8px 0 rgba(17,10,24,.42),0 0 28px rgba(174,82,235,.23),0 0 15px rgba(255,122,32,.12)
+}
+.board-title{background:linear-gradient(#ffb640,#ff7a20);color:#38200f;box-shadow:0 3px 0 rgba(83,35,9,.28),0 0 10px rgba(255,124,31,.26)}
+.cell.slot{
+  background:
+    radial-gradient(circle at 50% 50%,rgba(190,255,70,.035) 0 12%,transparent 13%),
+    rgba(111,97,120,.18)
+}
+.cell{outline-color:rgba(33,26,39,.25)}
+.msg{color:#fff0d6;background:rgba(48,29,65,.88)}
+.msg.ok{color:#ddff9d;background:rgba(47,64,28,.91)}
+.msg.bad{color:#ffd1ca;background:rgba(91,35,52,.92)}
+.guide div{border-color:rgba(255,139,31,.17);background:rgba(54,34,70,.90);color:#d8c3e8;box-shadow:0 3px 0 rgba(18,10,29,.24)}
+.guide b{color:#ffb34a}
+.tray-head{color:#fff1d5}
+.tray-head span{background:#3e2954;border:2px solid rgba(255,136,33,.20);color:#ffe4a1}
+.piece{
+  border-color:rgba(255,129,31,.17);
+  background:
+    radial-gradient(circle at 83% 20%,rgba(190,255,76,.11) 0 5%,transparent 5.8%),
+    radial-gradient(circle at 17% 79%,rgba(255,122,31,.09) 0 7%,transparent 7.8%),
+    linear-gradient(180deg,rgba(93,53,115,.99),rgba(50,30,68,.99));
+  box-shadow:inset 0 3px 0 rgba(255,255,255,.10),0 4px 0 rgba(18,11,28,.32)
+}
+.piece-name{color:#ffe1a7}
+.piece.selected{outline-color:#baff58}
+.overlay,.stage-overlay{background:rgba(30,14,43,.85)}
+.clear-card{
+  background:linear-gradient(180deg,#5d3b75,#342143);border-color:#ff8a27;
+  box-shadow:inset 0 4px 0 rgba(255,255,255,.09),0 12px 0 rgba(28,14,40,.28),0 24px 70px rgba(15,7,25,.48),0 0 28px rgba(255,126,31,.18)
+}
+.clear-card h2{color:#ffd367;text-shadow:0 2px 0 #291738,0 0 12px rgba(255,136,37,.35)}
+.clear-card p{color:#ead6f7}
+#nextStage{background:linear-gradient(#baff5d,#72c932);color:#23350f}
+#again{background:linear-gradient(#ffbd4c,#ff7a21);color:#3f200d}
+.stage-panel{
+  background:linear-gradient(#5e3d77,#352244);border-color:#ff8928;
+  box-shadow:inset 0 4px 0 rgba(255,255,255,.08),0 20px 70px rgba(16,8,26,.48)
+}
+.stage-head{border-color:rgba(255,143,37,.16)}
+.stage-head h2{color:#ffd36d}.stage-head p{color:#dec5ef}
+.stage-close{background:#79c933;color:#23350f}
+.collection-line{color:#d9c6e6}.collection-line strong{color:#ffd16a}
+.collection-bar{background:#4c365f}.collection-bar span{background:linear-gradient(90deg,#ff7b22,#ffe166,#baff57)}
+.level-title{color:#f0def9}
+.level-title .EASY{background:#a9f34d;color:#26350f}.level-title .NORMAL{background:#ffad36;color:#4d260c}.level-title .HARD{background:#ff5d78;color:#3d1020}
+.stage-card{
+  border-color:rgba(255,135,31,.16);background:linear-gradient(#65487d,#432f58);color:#ffeecf;
+  box-shadow:inset 0 2px rgba(255,255,255,.08),0 3px 0 rgba(18,11,28,.28)
+}
+.stage-card.current{outline-color:#baff57}
+.stage-card.done{border-color:#c89022;background:linear-gradient(145deg,#fff6bc,#ffe071 44%,#c9942d);color:#63460f}
+.stage-pixel{background:#b68cd2}
+.stage-card.done .stage-pixel{background:#946216}
+.stage-card .medal{color:#ffce63}
+.halloween-sky{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.halloween-fog{
+  position:absolute;left:-30%;width:160%;height:95px;border-radius:50%;
+  background:radial-gradient(ellipse,rgba(236,213,255,.20) 0%,rgba(161,105,197,.11) 42%,transparent 72%);
+  filter:blur(10px);opacity:.75
+}
+.halloween-fog.f1{top:27%;animation:fogDrift 12s ease-in-out infinite alternate}
+.halloween-fog.f2{top:54%;animation:fogDrift 16s ease-in-out infinite alternate-reverse;opacity:.52}
+@keyframes fogDrift{from{transform:translateX(-7%)}to{transform:translateX(7%)}}
+.hbat{
+  position:absolute;width:36px;height:19px;background:#17101f;opacity:.85;
+  clip-path:polygon(0 34%,18% 15%,35% 36%,50% 6%,65% 36%,82% 15%,100% 34%,82% 58%,65% 47%,50% 68%,35% 47%,18% 58%);
+  animation:batFly 6s ease-in-out infinite alternate
+}
+.hbat.b1{left:7%;top:16%;transform:scale(.72);animation-delay:-1s}
+.hbat.b2{left:23%;top:7%;transform:scale(.48);animation-delay:-4s}
+.hbat.b3{right:13%;top:22%;transform:scale(.60);animation-delay:-2s}
+.hbat.b4{right:34%;top:13%;transform:scale(.43);animation-delay:-5s}
+@keyframes batFly{from{translate:-8px 0;rotate:-4deg}to{translate:10px 7px;rotate:5deg}}
+.ghost-wisp{
+  position:absolute;width:26px;height:32px;border-radius:48% 48% 35% 35%;background:rgba(225,255,244,.65);
+  box-shadow:0 0 14px rgba(174,255,223,.42);animation:ghostFloat 5.5s ease-in-out infinite alternate
+}
+.ghost-wisp::before,.ghost-wisp::after{content:"";position:absolute;top:11px;width:4px;height:5px;border-radius:50%;background:#5f4071}
+.ghost-wisp::before{left:7px}.ghost-wisp::after{right:7px}
+.ghost-wisp.g1{left:4%;top:43%;transform:scale(.72);animation-delay:-2s}
+.ghost-wisp.g2{right:5%;top:48%;transform:scale(.58);animation-delay:-4s}
+@keyframes ghostFloat{from{translate:0 -5px;rotate:-3deg}to{translate:5px 8px;rotate:4deg}}
+.hstar{
+  position:absolute;width:8px;height:8px;transform:rotate(45deg);background:#baff57;box-shadow:0 0 9px rgba(186,255,87,.75);
+  animation:twinkle 1.6s ease-in-out infinite alternate
+}
+.hstar.s1{left:12%;top:28%}.hstar.s2{left:44%;top:8%;animation-delay:-.7s}.hstar.s3{right:8%;top:33%;animation-delay:-1s}.hstar.s4{right:30%;top:6%;animation-delay:-.4s}
+@keyframes twinkle{from{opacity:.35;scale:.7}to{opacity:1;scale:1.2}}
+.grave{
+  position:absolute;bottom:2%;width:30px;height:39px;background:#33303d;border-radius:14px 14px 3px 3px;opacity:.55;
+  box-shadow:inset 0 3px rgba(255,255,255,.05)
+}
+.grave::after{content:"+";position:absolute;left:9px;top:8px;color:#777080;font-size:13px;font-weight:900}
+.grave.v1{left:8%;transform:rotate(-5deg)}.grave.v2{left:18%;bottom:0;transform:scale(.72) rotate(4deg)}.grave.v3{right:9%;transform:rotate(5deg)}.grave.v4{right:20%;bottom:-2%;transform:scale(.78) rotate(-4deg)}
+.haunted-castle{
+  position:absolute;left:50%;bottom:0;width:180px;height:118px;transform:translateX(-50%);opacity:.18;
+  background:
+    linear-gradient(90deg,transparent 0 13%,#17141e 14% 28%,transparent 29% 36%,#17141e 37% 63%,transparent 64% 71%,#17141e 72% 86%,transparent 87%),
+    linear-gradient(180deg,transparent 0 35%,#17141e 36% 100%);
+  clip-path:polygon(0 100%,0 38%,10% 38%,10% 23%,18% 23%,18% 38%,34% 38%,34% 16%,42% 16%,50% 0,58% 16%,66% 16%,66% 38%,82% 38%,82% 23%,90% 23%,90% 38%,100% 38%,100% 100%)
+}
+.board-wrap .web{
+  position:absolute;z-index:5;top:-5px;width:46px;height:46px;border-radius:50%;
+  background:
+    radial-gradient(circle,transparent 0 23%,rgba(238,226,248,.55) 24% 26%,transparent 27% 48%,rgba(238,226,248,.45) 49% 51%,transparent 52%),
+    conic-gradient(from 0deg,transparent 0 8%,rgba(238,226,248,.5) 9% 10%,transparent 11% 20%,rgba(238,226,248,.5) 21% 22%,transparent 23% 32%,rgba(238,226,248,.5) 33% 34%,transparent 35% 44%,rgba(238,226,248,.5) 45% 46%,transparent 47% 56%,rgba(238,226,248,.5) 57% 58%,transparent 59% 68%,rgba(238,226,248,.5) 69% 70%,transparent 71% 80%,rgba(238,226,248,.5) 81% 82%,transparent 83% 92%,rgba(238,226,248,.5) 93% 94%,transparent 95%)
+}
+.board-wrap .web.w1{left:-7px}.board-wrap .web.w2{right:-7px;transform:scaleX(-1)}
+.pumpkin-deco{
+  position:absolute;z-index:5;bottom:-16px;width:38px;height:30px;border-radius:48% 48% 44% 44%;
+  background:linear-gradient(90deg,#d85b13 0 22%,#ff8b25 23% 48%,#df6414 49% 73%,#ff8e26 74%);
+  border:2px solid rgba(101,41,9,.30);box-shadow:0 4px 0 rgba(66,30,11,.24),0 0 10px rgba(255,123,30,.20)
+}
+.pumpkin-deco::before,.pumpkin-deco::after{
+  content:"";position:absolute;top:10px;width:7px;height:6px;background:#2b1934;clip-path:polygon(50% 0,100% 100%,0 100%)
+}
+.pumpkin-deco::before{left:7px}.pumpkin-deco::after{right:7px}
+.pumpkin-deco.p1{left:12px;transform:rotate(-7deg)}.pumpkin-deco.p2{right:12px;transform:rotate(7deg)}
+.candy{
+  position:absolute;z-index:5;top:50%;width:13px;height:28px;border-radius:5px;
+  background:repeating-linear-gradient(135deg,#fff3db 0 6px,#ff6d4d 6px 12px);box-shadow:0 3px 0 rgba(70,33,23,.17)
+}
+.candy.c1{left:-8px;transform:rotate(-15deg)}.candy.c2{right:-8px;transform:rotate(15deg)}
+.tray::before{
+  content:"TRICK  OR  SHAPE";position:absolute;left:50%;transform:translateX(-50%);margin-top:-16px;
+  color:#ffd77e;font-size:7px;font-weight:1000;letter-spacing:.24em;text-shadow:0 0 8px rgba(255,126,31,.40);pointer-events:none
+}
+.tray{position:relative}
+.clear-card::before{
+  content:"🎃  HAPPY HALLOWEEN  🎃";display:block;margin:-6px 0 7px;color:#baff57;font-size:9px;font-weight:1000;letter-spacing:.08em
+}
+
 </style>
 </head>
 <body>
+<div class="halloween-sky" aria-hidden="true">
+  <span class="halloween-fog f1"></span><span class="halloween-fog f2"></span>
+  <span class="hbat b1"></span><span class="hbat b2"></span><span class="hbat b3"></span><span class="hbat b4"></span>
+  <span class="ghost-wisp g1"></span><span class="ghost-wisp g2"></span>
+  <span class="hstar s1"></span><span class="hstar s2"></span><span class="hstar s3"></span><span class="hstar s4"></span>
+  <span class="grave v1"></span><span class="grave v2"></span><span class="grave v3"></span><span class="grave v4"></span>
+  <span class="haunted-castle"></span>
+</div>
 <main class="app">
   <header class="top">
-    <div class="brand-wrap"><div class="brand-mark" aria-hidden="true"></div><div><div class="brand">BOON SHAPE</div><div class="sub">SHAPE COLLECTION</div></div></div>
+    <div class="brand-wrap"><div class="brand-mark" aria-hidden="true"></div><div><div class="brand">BOON SHAPE</div><div class="sub">HAUNTED SHAPE COLLECTION</div></div></div>
     <div class="top-right">
       <div class="stats"><div class="stat"><b id="time">00:00</b><span>TIME</span></div><div class="stat"><b id="moves">0</b><span>MOVE</span></div></div>
       <button id="hint" class="hint-mini" type="button">💡 HINT<span id="hintCount">0</span></button>
@@ -227,6 +445,9 @@ button{font:inherit;color:inherit;touch-action:manipulation}
   </div>
 
   <section class="board-wrap">
+    <span class="web w1" aria-hidden="true"></span><span class="web w2" aria-hidden="true"></span>
+    <span class="pumpkin-deco p1" aria-hidden="true"></span><span class="pumpkin-deco p2" aria-hidden="true"></span>
+    <span class="candy c1" aria-hidden="true"></span><span class="candy c2" aria-hidden="true"></span>
     <div id="boardTitle" class="board-title"></div>
     <div id="board" class="board"></div>
   </section>
@@ -250,7 +471,7 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 <div id="overlay" class="overlay" role="dialog" aria-modal="true">
   <div class="clear-card">
     <div id="clearIcon" class="clear-icon">◆</div>
-    <h2>SHAPE COMPLETE!</h2>
+    <h2>HALLOWEEN CLEAR!</h2>
     <p id="clearText"></p>
     <div class="clear-actions"><button id="nextStage" type="button">NEXT SHAPE</button><button id="again" type="button">REPLAY</button></div>
   </div>
@@ -259,7 +480,7 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 <div id="stageOverlay" class="stage-overlay" role="dialog" aria-modal="true">
   <section class="stage-panel">
     <header class="stage-head">
-      <div><h2>SHAPE COLLECTION</h2><p>いろんな形を完成させて、全部を黄金にしよう。</p></div>
+      <div><h2>HAUNTED SHAPES</h2><p>18の呪われた形を完成させて、全部を黄金にしよう。</p></div>
       <button id="stageClose" class="stage-close" type="button">×</button>
     </header>
     <div class="collection-progress">
